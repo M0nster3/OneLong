@@ -19,7 +19,7 @@ import (
 	"time"
 )
 
-func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
+func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
 	//respons := gjson.Get(response, "events").Array()
 	//zuo := strings.ReplaceAll(response, "[", "")
 	//you := strings.ReplaceAll(zuo, "[", "")
@@ -48,7 +48,7 @@ func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) 
 
 }
 
-func PostBuffer(domain string, options *Utils.ENOptions, token string, client *resty.Client) string {
+func PostBuffer(domain string, options *Utils.ENOptions, token string, client *resty.Client, DomainsIP *outputfile.DomainsIP) string {
 	urls := "https://dnsdumpster.com/"
 	client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
 	client.SetTimeout(time.Duration(options.TimeOut) * time.Minute)
@@ -129,7 +129,7 @@ func PostBuffer(domain string, options *Utils.ENOptions, token string, client *r
 		result += "{\"address\"" + ":" + "\"" + Hostname[i] + "\"" + "," + "\"hostname\"" + ":" + "\"" + Address[i] + "\"" + "},"
 	}
 	result = result + "]}"
-	res, ensOutMap := GetEnInfo(result)
+	res, ensOutMap := GetEnInfo(result, DomainsIP)
 
 	outputfile.MergeOutPut(res, ensOutMap, "Dnsdumpster Dns查询", options)
 	//res, ensOutMap := GetEnInfo(respjoin)
@@ -138,7 +138,7 @@ func PostBuffer(domain string, options *Utils.ENOptions, token string, client *r
 	return ""
 }
 
-func Dnsdumpster(domain string, options *Utils.ENOptions) string {
+func Dnsdumpster(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
 	gologger.Infof("Dnsdumpster  API DNS反差域名 \n")
 	urls := "https://dnsdumpster.com/"
 	client := resty.New()
@@ -168,7 +168,7 @@ func Dnsdumpster(domain string, options *Utils.ENOptions) string {
 	SetCookie := resp.Header().Get("Set-Cookie")
 	csrftoken := strings.Split(SetCookie, ";")
 	csrftoken[0] = strings.ReplaceAll(csrftoken[0], "csrftoken=", "")
-	res := PostBuffer(domain, options, csrftoken[0], client)
+	res := PostBuffer(domain, options, csrftoken[0], client, DomainsIP)
 	if res == "Kill" {
 		gologger.Labelf("Dnsdumpster  Api 未发现域名\n")
 	}

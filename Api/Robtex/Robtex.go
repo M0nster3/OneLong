@@ -17,7 +17,7 @@ import (
 	"time"
 )
 
-func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
+func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
 	respons := gjson.Get(response, "passive_dns").Array()
 
 	ensInfos := &Utils.EnInfos{}
@@ -44,7 +44,7 @@ func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) 
 
 }
 
-func Robtex(domain string, options *Utils.ENOptions) string {
+func Robtex(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
 	gologger.Infof("Robtex Api查詢\n")
 
 	urls := fmt.Sprintf("https://freeapi.robtex.com/pdns/forward/%s", domain)
@@ -112,7 +112,7 @@ func Robtex(domain string, options *Utils.ENOptions) string {
 	}
 
 	result1 = result1 + "]}"
-	res, ensOutMap := GetEnInfo(result1)
+	res, ensOutMap := GetEnInfo(result1, DomainsIP)
 
 	outputfile.MergeOutPut(res, ensOutMap, "Robtex Api", options)
 	//outputfile.OutPutExcelByMergeEnInfo(options)

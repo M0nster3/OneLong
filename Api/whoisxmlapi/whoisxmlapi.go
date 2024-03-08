@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
+func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
 	responselist := gjson.Get(response, "result.records.#.domain").Array()
 	ensInfos := &Utils.EnInfos{}
 	ensInfos.Infos = make(map[string][]gjson.Result)
@@ -49,7 +49,7 @@ func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) 
 
 }
 
-func Whoisxmlapi(domain string, options *Utils.ENOptions) string {
+func Whoisxmlapi(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
 	gologger.Infof("Whoisxmlapi Api查询\n")
 
 	urls := fmt.Sprintf("https://subdomains.whoisxmlapi.com/api/v1?apiKey=%s&domainName=%s", options.ENConfig.Cookies.Whoisxmlapi, domain)
@@ -78,7 +78,7 @@ func Whoisxmlapi(domain string, options *Utils.ENOptions) string {
 		gologger.Labelf("Whoisxmlapi Api查询未发现域名\n")
 		return ""
 	}
-	res, ensOutMap := GetEnInfo(string(resp.Body()))
+	res, ensOutMap := GetEnInfo(string(resp.Body()), DomainsIP)
 
 	outputfile.MergeOutPut(res, ensOutMap, "Whoisxmlapi", options)
 	//outputfile.OutPutExcelByMergeEnInfo(options)

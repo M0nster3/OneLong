@@ -17,7 +17,7 @@ import (
 	"time"
 )
 
-func GetEnInfo(response string, domain string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
+func GetEnInfo(response string, domain string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
 	responselist := gjson.Get(response, "data").Array()
 	ensInfos := &Utils.EnInfos{}
 	ensInfos.Infos = make(map[string][]gjson.Result)
@@ -70,7 +70,7 @@ func GetEnInfo(response string, domain string) (*Utils.EnInfos, map[string]*outp
 
 }
 
-func Shodan(domain string, options *Utils.ENOptions) string {
+func Shodan(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
 	gologger.Infof("Shodan 威胁平台查询\n")
 
 	urls := fmt.Sprintf("https://api.shodan.io/dns/domain/%s?key=%s", domain, options.ENConfig.Cookies.Shodan)
@@ -103,7 +103,7 @@ func Shodan(domain string, options *Utils.ENOptions) string {
 		gologger.Labelf("Shodan 威胁平台 Token 不正确\n")
 		return ""
 	}
-	res, ensOutMap := GetEnInfo(string(resp.Body()), domain)
+	res, ensOutMap := GetEnInfo(string(resp.Body()), domain, DomainsIP)
 
 	outputfile.MergeOutPut(res, ensOutMap, "Shodan", options)
 	//outputfile.OutPutExcelByMergeEnInfo(options)

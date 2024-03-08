@@ -1,17 +1,19 @@
 package main
 
 import (
-	"OneLong/Script"
+	"OneLong/Api/alienvault"
 	"OneLong/Utils"
+	outputfile "OneLong/Utils/OutPutfile"
 )
 
 func main() {
 	var enOptions Utils.ENOptions
+	var Domainip outputfile.DomainsIP
 	Utils.Flag(&enOptions)
 	Utils.ConfigParse(&enOptions)
 	////如果不是API模式就直接运行了
-	//doamin := "sadadadadad.com"
-	//alienvault.Alienvault(doamin, &enOptions)
+	doamin := "freebuf.com"
+	alienvault.Alienvault(doamin, &enOptions, &Domainip)
 	////anubis.Anubis(doamin, &enOptions)
 	////binaryedge.Binaryedge(doamin, &enOptions)
 	////digitorus.Digitorus(doamin, &enOptions) //Digitorus  API 证书查询域名
@@ -39,6 +41,8 @@ func main() {
 	//certspotter.Certspotter(doamin, &enOptions)
 	//outputfile.OutPutExcelByMergeEnInfo(&enOptions)
 	////Gogogo.RunJob(&enOptions)
-	Script.Massdns("baidu.com", &enOptions)
+	//Script.Massdns("baidu.com", &enOptions)
+
+	//CDN.IPIPPP("baidu.com")
 
 }

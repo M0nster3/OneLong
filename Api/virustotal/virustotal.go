@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
+func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
 	responselist := gjson.Get(response, "data.#.id").Array()
 	ensInfos := &Utils.EnInfos{}
 	ensInfos.Infos = make(map[string][]gjson.Result)
@@ -50,7 +50,7 @@ func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) 
 
 }
 
-func Virustotal(domain string, options *Utils.ENOptions) string {
+func Virustotal(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
 	gologger.Infof("virustotal Api查询\n")
 
 	urls := fmt.Sprintf("https://www.virustotal.com/api/v3/domains/%s/subdomains?limit=1000", domain)
@@ -80,7 +80,7 @@ func Virustotal(domain string, options *Utils.ENOptions) string {
 		gologger.Labelf("virustotal Api 未发现域名\n")
 		return ""
 	}
-	res, ensOutMap := GetEnInfo(string(resp.Body()))
+	res, ensOutMap := GetEnInfo(string(resp.Body()), DomainsIP)
 
 	outputfile.MergeOutPut(res, ensOutMap, "virustotal", options)
 	//outputfile.OutPutExcelByMergeEnInfo(options)

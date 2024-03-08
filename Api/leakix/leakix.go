@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
+func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
 	respons := gjson.Parse(response).Array()
 
 	ensInfos := &Utils.EnInfos{}
@@ -52,7 +52,7 @@ func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) 
 
 }
 
-func Leakix(domain string, options *Utils.ENOptions) string {
+func Leakix(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
 	gologger.Infof("Leakix 威胁平台查询\n")
 	urls := "https://leakix.net/api/subdomains/" + domain
 	client := resty.New()
@@ -81,7 +81,7 @@ func Leakix(domain string, options *Utils.ENOptions) string {
 		gologger.Labelf("Leakix 威胁平台需要输入验证码\n")
 		return ""
 	}
-	res, ensOutMap := GetEnInfo(string(resp.Body()))
+	res, ensOutMap := GetEnInfo(string(resp.Body()), DomainsIP)
 
 	outputfile.MergeOutPut(res, ensOutMap, "Leakix", options)
 	//outputfile.OutPutExcelByMergeEnInfo(options)

@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
+func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
 	respons := gjson.Get(response, "passive_dns").Array()
 	ensInfos := &Utils.EnInfos{}
 	ensInfos.Infos = make(map[string][]gjson.Result)
@@ -39,7 +39,7 @@ func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) 
 
 }
 
-func Alienvault(domain string, options *Utils.ENOptions) {
+func Alienvault(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
 	gologger.Infof("Alienvault\n")
 	urls := "https://otx.alienvault.com/api/v1/indicators/domain/" + domain + "/passive_dns"
 	client := resty.New()
@@ -71,7 +71,7 @@ func Alienvault(domain string, options *Utils.ENOptions) {
 		return
 	}
 
-	res, ensOutMap := GetEnInfo(string(resp.Body()))
+	res, ensOutMap := GetEnInfo(string(resp.Body()), DomainsIP)
 
 	outputfile.MergeOutPut(res, ensOutMap, "alienvault", options)
 	//outputfile.OutPutExcelByMergeEnInfo(options)

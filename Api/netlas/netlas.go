@@ -18,7 +18,7 @@ import (
 	"time"
 )
 
-func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
+func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
 	respons := gjson.Get(response, "passive_dns").Array()
 
 	ensInfos := &Utils.EnInfos{}
@@ -44,7 +44,7 @@ func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) 
 
 }
 
-func Netlas(domain string, options *Utils.ENOptions) string {
+func Netlas(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
 
 	gologger.Infof("Netlas 威胁平台查询\n")
 	//urls := "https://leakix.net/api/subdomains/" + domain
@@ -126,7 +126,7 @@ func Netlas(domain string, options *Utils.ENOptions) string {
 		passive_dns += "{\"hostname\"" + ":" + "\"" + hostname[add] + "\"" + "," + "\"address\"" + ":" + "\"" + address[add] + "\"" + "},"
 	}
 	passive_dns = passive_dns + "]}"
-	res, ensOutMap := GetEnInfo(passive_dns)
+	res, ensOutMap := GetEnInfo(passive_dns, DomainsIP)
 
 	outputfile.MergeOutPut(res, ensOutMap, "Netlas", options)
 	//outputfile.OutPutExcelByMergeEnInfo(options)

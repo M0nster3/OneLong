@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
+func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
 	respons := gjson.Get(response, "subdomains").Array()
 
 	ensInfos := &Utils.EnInfos{}
@@ -51,7 +51,7 @@ func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) 
 
 }
 
-func Bevigil(domain string, options *Utils.ENOptions) string {
+func Bevigil(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
 	gologger.Infof("Bevigil 空间探测\n")
 	urls := "https://osint.bevigil.com/api/" + domain + "/subdomains/"
 	client := resty.New()
@@ -83,7 +83,7 @@ func Bevigil(domain string, options *Utils.ENOptions) string {
 	if strings.Contains(string(resp.Body()), "Access Token Invalid") {
 		gologger.Labelf("Anubis Cookie 不正确\n")
 	}
-	res, ensOutMap := GetEnInfo(string(resp.Body()))
+	res, ensOutMap := GetEnInfo(string(resp.Body()), DomainsIP)
 
 	outputfile.MergeOutPut(res, ensOutMap, "Bevigil", options)
 	//outputfile.OutPutExcelByMergeEnInfo(options)

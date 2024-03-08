@@ -6,9 +6,11 @@ require (
 	github.com/PuerkitoBio/goquery v1.9.0
 	github.com/antchfx/htmlquery v1.3.0
 	github.com/go-resty/resty/v2 v2.11.0
+	github.com/likexian/whois v1.15.1
 	github.com/logrusorgru/aurora v2.0.3+incompatible
 	github.com/mattn/go-colorable v0.1.13
 	github.com/olekukonko/tablewriter v0.0.5
+	github.com/oschwald/geoip2-golang v1.9.0
 	github.com/projectdiscovery/chaos-client v0.5.1
 	github.com/projectdiscovery/shuffledns v1.0.9
 	github.com/robertkrimen/otto v0.3.0
@@ -57,6 +59,7 @@ require (
 	github.com/muesli/reflow v0.3.0 // indirect
 	github.com/muesli/termenv v0.15.1 // indirect
 	github.com/nwaples/rardecode v1.1.3 // indirect
+	github.com/oschwald/maxminddb-golang v1.11.0 // indirect
 	github.com/pierrec/lz4 v2.6.1+incompatible // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/projectdiscovery/goflags v0.1.8 // indirect

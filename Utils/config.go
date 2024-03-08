@@ -103,6 +103,9 @@ type ENConfig struct {
 		Wordlist    string `yaml:"wordlist"`
 		MassdnsPath string `yaml:"massdnsPath"`
 	}
+	Script struct {
+		Httpx string `yaml:"httpx"`
+	}
 }
 
 type EnInfos struct {
@@ -213,5 +216,7 @@ massdns:
   resolvers: ''			# resolvers 文件名称
   wordlist: ''			# 子域名爆破文件名称
   massdnsPath: ''		# Massdns工具名称
+script:
+  httpx: ''				# httpx 工具名称
   
 `

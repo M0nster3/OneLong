@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
+func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
 
 	//respons := gjson.Get(response, "events").Array()
 	//zuo := strings.ReplaceAll(response, "[", "")
@@ -42,7 +42,7 @@ func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) 
 
 }
 
-func Hackertarget(domain string, options *Utils.ENOptions) string {
+func Hackertarget(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
 	gologger.Infof("Hackertarget API 查询 \n")
 	//gologger.Labelf("只实现普通Api 如果是企业修改Api接口 免费的每月250次\n")
 	urls := "https://api.hackertarget.com/hostsearch/?q=" + domain
@@ -90,7 +90,7 @@ func Hackertarget(domain string, options *Utils.ENOptions) string {
 	}
 
 	passive_dns = passive_dns + "]}"
-	res, ensOutMap := GetEnInfo(passive_dns)
+	res, ensOutMap := GetEnInfo(passive_dns, DomainsIP)
 
 	outputfile.MergeOutPut(res, ensOutMap, "Hackertarget Api", options)
 	//outputfile.OutPutExcelByMergeEnInfo(options)

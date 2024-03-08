@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
+func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
 	respons := gjson.Parse(response).Array()
 
 	ensInfos := &Utils.EnInfos{}
@@ -37,6 +37,7 @@ func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) 
 		if !addedURLs[url] {
 			// 如果不存在重复则将 URL 添加到 Infos["Urls"] 中，并在 map 中标记为已添加
 			ensInfos.Infos["Urls"] = append(ensInfos.Infos["Urls"], gjson.Parse(ResponseJia))
+
 			addedURLs[url] = true
 		}
 
@@ -50,7 +51,7 @@ func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) 
 
 }
 
-func Anubis(domain string, options *Utils.ENOptions) string {
+func Anubis(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
 	gologger.Infof("Anubis\n")
 	urls := "https://jonlu.ca/anubis/subdomains/" + domain
 	client := resty.New()
@@ -79,7 +80,7 @@ func Anubis(domain string, options *Utils.ENOptions) string {
 		gologger.Labelf("Anubis Api 未发现域名\n")
 		return ""
 	}
-	res, ensOutMap := GetEnInfo(string(resp.Body()))
+	res, ensOutMap := GetEnInfo(string(resp.Body()), DomainsIP)
 
 	outputfile.MergeOutPut(res, ensOutMap, "Anubis", options)
 	//outputfile.OutPutExcelByMergeEnInfo(options)

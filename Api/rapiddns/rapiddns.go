@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
+func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
 	respons := gjson.Get(response, "passive_dns").Array()
 	ensInfos := &Utils.EnInfos{}
 	ensInfos.Infos = make(map[string][]gjson.Result)
@@ -41,7 +41,7 @@ func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) 
 
 }
 
-func Rapiddns(domain string, options *Utils.ENOptions) string {
+func Rapiddns(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
 	gologger.Infof("Rapiddns Api搜索域名 \n")
 	client := resty.New()
 	client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
@@ -85,7 +85,7 @@ func Rapiddns(domain string, options *Utils.ENOptions) string {
 		result += "{\"hostname\"" + ":" + "\"" + Hostname[i] + "\"" + "},"
 	}
 	result = result + "]}"
-	res, ensOutMap := GetEnInfo(result)
+	res, ensOutMap := GetEnInfo(result, DomainsIP)
 
 	outputfile.MergeOutPut(res, ensOutMap, "Rapiddns", options)
 

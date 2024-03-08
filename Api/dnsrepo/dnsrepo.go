@@ -18,7 +18,7 @@ import (
 	"time"
 )
 
-func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
+func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
 	//respons := gjson.Get(response, "events").Array()
 	//zuo := strings.ReplaceAll(response, "[", "")
 	//you := strings.ReplaceAll(zuo, "[", "")
@@ -47,7 +47,7 @@ func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) 
 
 }
 
-func Dnsrepo(domain string, options *Utils.ENOptions) string {
+func Dnsrepo(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
 	gologger.Infof("Dnsrepo API 域名查询 \n")
 	urls := "https://dnsrepo.noc.org/?search=" + domain
 	client := resty.New()
@@ -137,7 +137,7 @@ func Dnsrepo(domain string, options *Utils.ENOptions) string {
 	}
 
 	result = result + "]}"
-	res, ensOutMap := GetEnInfo(result)
+	res, ensOutMap := GetEnInfo(result, DomainsIP)
 
 	outputfile.MergeOutPut(res, ensOutMap, "Dnsdumpster Dns查询", options)
 	return "Success"

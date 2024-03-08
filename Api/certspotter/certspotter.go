@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
+func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
 	//respons := gjson.Get(response, "events").Array()
 	//zuo := strings.ReplaceAll(response, "[", "")
 	//you := strings.ReplaceAll(zuo, "[", "")
@@ -58,7 +58,7 @@ func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) 
 
 }
 
-func Certspotter(domain string, options *Utils.ENOptions) string {
+func Certspotter(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
 	gologger.Infof("Certspotter API 查询域名 \n")
 	//gologger.Labelf("只实现普通Api 如果是企业修改Api接口 免费的每月250次\n")
 	urls := "https://api.certspotter.com/v1/issuances?domain=" + domain + "&include_subdomains=true&expand=dns_names"
@@ -90,7 +90,7 @@ func Certspotter(domain string, options *Utils.ENOptions) string {
 		gologger.Errorf("Certspotter API 未发现域名\n")
 		return ""
 	}
-	res, ensOutMap := GetEnInfo(string(resp.Body()))
+	res, ensOutMap := GetEnInfo(string(resp.Body()), DomainsIP)
 
 	outputfile.MergeOutPut(res, ensOutMap, "Certspotter", options)
 	//outputfile.OutPutExcelByMergeEnInfo(options)

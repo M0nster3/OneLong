@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
+func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
 	respons := gjson.Parse(response).Array()
 
 	ensInfos := &Utils.EnInfos{}
@@ -52,7 +52,7 @@ func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) 
 
 }
 
-func Censys(domain string, options *Utils.ENOptions) string {
+func Censys(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
 	gologger.Infof("Censys 空间探测\n")
 	urls := "https://search.censys.io/api/v2/certificates/search"
 	client := resty.New()
@@ -118,7 +118,7 @@ func Censys(domain string, options *Utils.ENOptions) string {
 		cursor = next
 	}
 	result = result + "]"
-	res, ensOutMap := GetEnInfo(result)
+	res, ensOutMap := GetEnInfo(result, DomainsIP)
 
 	outputfile.MergeOutPut(res, ensOutMap, "Censys", options)
 	//outputfile.OutPutExcelByMergeEnInfo(options)

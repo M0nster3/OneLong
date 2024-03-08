@@ -17,7 +17,7 @@ import (
 	"time"
 )
 
-func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
+func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
 	var result []string
 	responselist := strings.Split(response, "\n")
 	//responselist := gjson.Get(response, "result.records.#.domain").Array()
@@ -62,7 +62,7 @@ func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) 
 
 }
 
-func Waybackarchive(domain string, options *Utils.ENOptions) string {
+func Waybackarchive(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
 	gologger.Infof("waybackarchive 历史快照查询\n")
 
 	urls := fmt.Sprintf("http://web.archive.org/cdx/search/cdx?url=*.%s/*&output=txt&fl=original&collapse=urlkey", domain)
@@ -91,7 +91,7 @@ func Waybackarchive(domain string, options *Utils.ENOptions) string {
 		gologger.Labelf("waybackarchive 历史快照未发现域名\n")
 		return ""
 	}
-	res, ensOutMap := GetEnInfo(string(resp.Body()))
+	res, ensOutMap := GetEnInfo(string(resp.Body()), DomainsIP)
 
 	outputfile.MergeOutPut(res, ensOutMap, "waybackarchive 历史快照", options)
 	//outputfile.OutPutExcelByMergeEnInfo(options)

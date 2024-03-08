@@ -18,7 +18,7 @@ import (
 	"time"
 )
 
-func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
+func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
 	responselist := gjson.Parse(response).Array()
 	ensInfos := &Utils.EnInfos{}
 	ensInfos.Infos = make(map[string][]gjson.Result)
@@ -53,7 +53,7 @@ func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) 
 
 }
 
-func Sitedossier(domain string, options *Utils.ENOptions) string {
+func Sitedossier(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
 	gologger.Infof("Sitedossier Api查询\n")
 
 	urls := fmt.Sprintf("http://www.sitedossier.com/parentdomain/%s", domain)
@@ -116,7 +116,7 @@ func Sitedossier(domain string, options *Utils.ENOptions) string {
 
 	}
 	result = result + "]"
-	res, ensOutMap := GetEnInfo(result)
+	res, ensOutMap := GetEnInfo(result, DomainsIP)
 
 	outputfile.MergeOutPut(res, ensOutMap, "Sitedossier", options)
 	//outputfile.OutPutExcelByMergeEnInfo(options)

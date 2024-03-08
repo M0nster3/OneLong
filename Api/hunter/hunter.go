@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
+func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
 	responsip := gjson.Get(response, "data.arr.#.ip").Array()
 	responsdomain := gjson.Get(response, "data.arr.#.domain").Array()
 	ensInfos := &Utils.EnInfos{}
@@ -51,7 +51,7 @@ func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) 
 
 }
 
-func Hunter(domain string, options *Utils.ENOptions) string {
+func Hunter(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
 	gologger.Infof("Hunter 威胁平台查询\n")
 	base64a := base64.URLEncoding.EncodeToString([]byte(fmt.Sprintf("domain=\"%s\"", domain)))
 	urls := "https://hunter.qianxin.com/openApi/search?api-key=" + options.ENConfig.Cookies.Hunter + "&search=" + base64a + "&page=1&page_size=100&is_web=3"
@@ -80,7 +80,7 @@ func Hunter(domain string, options *Utils.ENOptions) string {
 		gologger.Labelf("Hunter 威胁平台未发现域名\n")
 		return ""
 	}
-	res, ensOutMap := GetEnInfo(string(resp.Body()))
+	res, ensOutMap := GetEnInfo(string(resp.Body()), DomainsIP)
 
 	outputfile.MergeOutPut(res, ensOutMap, "Hunter", options)
 	//outputfile.OutPutExcelByMergeEnInfo(options)

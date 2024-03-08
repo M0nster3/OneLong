@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
+func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
 
 	//respons := gjson.Get(response, "events").Array()
 	//zuo := strings.ReplaceAll(response, "[", "")
@@ -39,7 +39,7 @@ func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) 
 
 }
 
-func Chaos(domain string, options *Utils.ENOptions) string {
+func Chaos(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
 	gologger.Infof("Chaos API 域名查询 \n")
 	var Hostname []string
 	chaosClient := chaos.New(options.ENConfig.Cookies.Chaos)
@@ -68,7 +68,7 @@ func Chaos(domain string, options *Utils.ENOptions) string {
 		result += "{\"hostname\"" + ":" + "\"" + Hostname[add] + "\"" + "},"
 	}
 	result = result + "]}"
-	res, ensOutMap := GetEnInfo(result)
+	res, ensOutMap := GetEnInfo(result, DomainsIP)
 
 	outputfile.MergeOutPut(res, ensOutMap, "Chaos Api查询", options)
 	//outputfile.OutPutExcelByMergeEnInfo(options)
