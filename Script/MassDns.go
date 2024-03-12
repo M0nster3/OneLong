@@ -2,6 +2,7 @@ package Script
 
 import (
 	"OneLong/Utils"
+	outputfile "OneLong/Utils/OutPutfile"
 	"OneLong/Utils/gologger"
 	"fmt"
 	"github.com/projectdiscovery/shuffledns/pkg/runner"
@@ -28,7 +29,7 @@ func checkWildcardDNS(domain string) bool {
 	return true
 }
 
-func Massdns(domain string, ENOptions *Utils.ENOptions) {
+func Massdns(domain string, ENOptions *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
 	if checkWildcardDNS(domain) {
 		gologger.Infof("[存在泛解析不进行爆破]\n")
 		return
@@ -75,6 +76,7 @@ func Massdns(domain string, ENOptions *Utils.ENOptions) {
 
 	for _, line := range strings.Split(string(content), "\n") {
 		domains := strings.TrimSpace(line)
+		DomainsIP.Domains = append(DomainsIP.Domains, domains)
 		fmt.Printf(domains)
 	}
 }

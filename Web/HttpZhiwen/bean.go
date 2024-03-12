@@ -11,8 +11,8 @@ func getENMap() map[string]*EnsGo {
 	ensInfoMap = map[string]*EnsGo{
 		"Urls": {
 			name:    "整合域名IP",
-			field:   []string{"address", "hostname", "hostnameip", "status_code", "title", "zhiwen"},
-			keyWord: []string{"整合收集IP", "整合收集域名", "收集域名对应", "响应码", "标题", "漏洞指纹"},
+			field:   []string{"address", "hostname", "hostnameip", "status_code", "title"},
+			keyWord: []string{"整合收集IP", "整合收集域名", "收集域名对应", "响应码", "标题"},
 		},
 	}
 	for k, _ := range ensInfoMap {
