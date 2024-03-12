@@ -32,6 +32,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 	for aa, _ := range responselist {
 		ResponseJia := "{" + "\"hostname\"" + ":" + "\"" + responselist[aa].String() + "\"" + "}"
 		urls := gjson.Parse(ResponseJia).Get("hostname").String()
+		DomainsIP.Domains = append(DomainsIP.Domains, responselist[aa].String())
 
 		// 检查是否已存在相同的 URL
 		if !addedURLs[urls] {
@@ -76,7 +77,15 @@ func Virustotal(domain string, options *Utils.ENOptions, DomainsIP *outputfile.D
 
 	clientR.URL = urls
 	resp, _ := clientR.Send()
-	if resp.Body() == nil || gjson.Get(string(resp.Body()), "meta.#,count").Int() == 0 {
+	for {
+		if resp.RawResponse == nil {
+			resp, _ = clientR.Send()
+			time.Sleep(2 * time.Second)
+		} else if resp.Body() != nil {
+			break
+		}
+	}
+	if resp.Body() == nil || gjson.Get(string(resp.Body()), "meta.count").Int() == 0 {
 		gologger.Labelf("virustotal Api 未发现域名\n")
 		return ""
 	}

@@ -63,9 +63,17 @@ func Rapiddns(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Dom
 	clientR := client.R()
 	clientR.URL = urls
 	response, _ := clientR.Send()
+	for {
+		if response.RawResponse == nil {
+			response, _ = clientR.Send()
+			time.Sleep(2 * time.Second)
+		} else if response.Body() != nil {
+			break
+		}
+	}
 	//Total: <span style="color: #39cfca; ">0
 	if strings.Contains(string(response.Body()), "Total: <span style=\"color: #39cfca; \">0") {
-		gologger.Errorf("Rapiddns Api未发现域名")
+		gologger.Labelf("Rapiddns Api未发现域名\n")
 		return ""
 	}
 	host := regexp.MustCompile(`<td>((?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,})</td>`)
@@ -83,6 +91,7 @@ func Rapiddns(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Dom
 	result = "{\"passive_dns\":["
 	for i := 0; i < len(Hostname); i++ {
 		result += "{\"hostname\"" + ":" + "\"" + Hostname[i] + "\"" + "},"
+		DomainsIP.Domains = append(DomainsIP.Domains, Hostname[i])
 	}
 	result = result + "]}"
 	res, ensOutMap := GetEnInfo(result, DomainsIP)

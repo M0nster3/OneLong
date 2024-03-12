@@ -104,9 +104,6 @@ func MergeOutPut(ensInfos *Utils.EnInfos, ensMap map[string]*ENSMap, info string
 			ENSMapList[k] = ensMap[k]
 			var data [][]interface{}
 			for _, y := range s {
-				if ensMap[k].Field[0] == "address" || ensMap[k].Field[1] == "hostname" {
-					gjson.Get(y.Raw, "address").String()
-				}
 				results := gjson.GetMany(y.Raw, ensMap[k].Field...)
 				var str []interface{}
 				for _, t := range results {

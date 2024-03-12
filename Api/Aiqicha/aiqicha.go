@@ -37,7 +37,7 @@ func GetReq(url string, options *Utils.ENOptions) string {
 			client.RemoveProxy()
 		}
 		gologger.Errorf("【AQC】请求发生错误， %s 5秒后重试\n%s\n", url, err)
-		time.Sleep(5 * time.Second)
+		time.Sleep(2 * time.Second)
 		return GetReq(url, options)
 	}
 	if resp.StatusCode() == 200 {

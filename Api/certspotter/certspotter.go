@@ -43,6 +43,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 			if !addedURLs[url] {
 				// 如果不存在重复则将 URL 添加到 Infos["Urls"] 中，并在 map 中标记为已添加
 				ensInfos.Infos["Urls"] = append(ensInfos.Infos["Urls"], gjson.Parse(ResponseJia))
+				DomainsIP.Domains = append(DomainsIP.Domains, url)
 				addedURLs[url] = true
 			}
 
@@ -86,8 +87,16 @@ func Certspotter(domain string, options *Utils.ENOptions, DomainsIP *outputfile.
 
 	clientR.URL = urls
 	resp, _ := clientR.Send()
+	for {
+		if resp.RawResponse == nil {
+			resp, _ = clientR.Send()
+			time.Sleep(2 * time.Second)
+		} else if resp.Body() != nil {
+			break
+		}
+	}
 	if resp.Size() == 4 {
-		gologger.Errorf("Certspotter API 未发现域名\n")
+		gologger.Labelf("Certspotter API 未发现域名\n")
 		return ""
 	}
 	res, ensOutMap := GetEnInfo(string(resp.Body()), DomainsIP)

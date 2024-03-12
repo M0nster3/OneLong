@@ -24,7 +24,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 	for _, urlString := range responselist {
 		u, err := url.Parse(urlString)
 		if err != nil {
-			fmt.Printf("Error parsing URL '%s': %v\n", urlString, err)
+			//fmt.Printf("Error parsing URL '%s': %v\n", urlString, err)
 			continue
 		}
 		result = append(result, u.Hostname())
@@ -44,7 +44,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 	for aa, _ := range result {
 		ResponseJia := "{" + "\"hostname\"" + ":" + "\"" + result[aa] + "\"" + "}"
 		urls := gjson.Parse(ResponseJia).Get("hostname").String()
-
+		DomainsIP.Domains = append(DomainsIP.Domains, responselist[aa])
 		// 检查是否已存在相同的 URL
 		if !addedURLs[urls] {
 			// 如果不存在重复则将 URL 添加到 Infos["Urls"] 中，并在 map 中标记为已添加
@@ -87,6 +87,14 @@ func Waybackarchive(domain string, options *Utils.ENOptions, DomainsIP *outputfi
 
 	clientR.URL = urls
 	resp, _ := clientR.Send()
+	for {
+		if resp.RawResponse == nil {
+			resp, _ = clientR.Send()
+			time.Sleep(2 * time.Second)
+		} else if resp.Body() != nil {
+			break
+		}
+	}
 	if resp.Body() == nil {
 		gologger.Labelf("waybackarchive 历史快照未发现域名\n")
 		return ""

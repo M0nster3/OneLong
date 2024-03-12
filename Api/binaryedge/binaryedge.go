@@ -36,6 +36,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 		if !addedURLs[url] {
 			// 如果不存在重复则将 URL 添加到 Infos["Urls"] 中，并在 map 中标记为已添加
 			ensInfos.Infos["Urls"] = append(ensInfos.Infos["Urls"], gjson.Parse(ResponseJia))
+			DomainsIP.Domains = append(DomainsIP.Domains, url)
 			addedURLs[url] = true
 		}
 
@@ -50,8 +51,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 }
 
 func Binaryedge(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
-	gologger.Infof("Binaryedge API 查询域名 \n")
-	gologger.Labelf("只实现普通Api 如果是企业修改Api接口 免费的每月250次\n")
+	gologger.Infof("Binaryedge API 查询域名 只实现普通Api 如果是企业修改Api接口 免费的每月250次\n")
 	urls := "https://api.binaryedge.io/v2/query/domains/subdomain/" + domain
 	client := resty.New()
 	client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
@@ -77,7 +77,14 @@ func Binaryedge(domain string, options *Utils.ENOptions, DomainsIP *outputfile.D
 
 	clientR.URL = urls
 	resp, _ := clientR.Send()
-
+	for {
+		if resp.RawResponse == nil {
+			resp, _ = clientR.Send()
+			time.Sleep(2 * time.Second)
+		} else if resp.Body() != nil {
+			break
+		}
+	}
 	if gjson.Get(string(resp.Body()), "total").Int() == 0 {
 		gologger.Labelf("Binaryedge Api 未发现域名\n")
 		return ""

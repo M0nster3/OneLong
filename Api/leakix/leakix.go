@@ -33,6 +33,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 	for _, item := range respons {
 		res := item.Get("subdomain").String()
 		ResponseJia := "{" + "\"hostname\"" + ":" + "\"" + res + "\"" + "}"
+		DomainsIP.Domains = append(DomainsIP.Domains, res)
 		url := gjson.Parse(ResponseJia).Get("hostname").String()
 
 		// 检查是否已存在相同的 URL
@@ -77,6 +78,14 @@ func Leakix(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 
 	clientR.URL = urls
 	resp, _ := clientR.Send()
+	for {
+		if resp.RawResponse == nil {
+			resp, _ = clientR.Send()
+			time.Sleep(2 * time.Second)
+		} else if resp.Body() != nil {
+			break
+		}
+	}
 	if strings.Contains(string(resp.Body()), "is currently undergoing applicative DDoS") {
 		gologger.Labelf("Leakix 威胁平台需要输入验证码\n")
 		return ""

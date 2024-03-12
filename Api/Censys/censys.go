@@ -39,6 +39,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 		if !addedURLs[url] {
 			// 如果不存在重复则将 URL 添加到 Infos["Urls"] 中，并在 map 中标记为已添加
 			ensInfos.Infos["Urls"] = append(ensInfos.Infos["Urls"], gjson.Parse(ResponseJia))
+			DomainsIP.Domains = append(DomainsIP.Domains, url)
 			addedURLs[url] = true
 		}
 
@@ -88,10 +89,23 @@ func Censys(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 		resp, _ := clientR.
 			SetBody(requestBody).
 			Post(urls)
+		for {
+			if resp.RawResponse == nil {
+				resp, _ = clientR.
+					SetBody(requestBody).
+					Post(urls)
+				time.Sleep(2 * time.Second)
+			} else if resp.Body() != nil {
+				break
+			}
+		}
 		if resp.StatusCode() == 401 {
 			gologger.Labelf("Censys 空间探测 Token 错误\n")
 			return ""
-		} else if gjson.Get(string(resp.Body()), "result.#.total").Int() == 0 {
+		} else if strings.Contains(string(resp.Body()), "our account is limited to 10 page") {
+			gologger.Labelf("Censys 空间探测当前Token只能查询10页 \n")
+			return ""
+		} else if gjson.Get(string(resp.Body()), "result.total").Int() == 0 {
 			gologger.Labelf("Censys 空间探测未发现域名\n")
 			return ""
 		}

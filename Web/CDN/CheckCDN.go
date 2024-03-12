@@ -2,9 +2,6 @@ package CDN
 
 import (
 	"OneLong/Utils"
-	"OneLong/Utils/gologger"
-	"fmt"
-	"github.com/likexian/whois"
 	"github.com/oschwald/geoip2-golang"
 	"net"
 	"path/filepath"
@@ -113,7 +110,7 @@ var asns = []string{
 
 // CheckIP 检查IP是否为CDN
 func CheckIP(ip string) (isCDN bool) {
-	gologger.Infof("检测IP是否是CDN\n")
+	//gologger.Infof("检测IP是否是CDN\n")
 	for _, cdn := range cdns {
 		_, network1, _ := net.ParseCIDR(cdn)
 		if strings.Contains(network1.String(), ip) {
@@ -148,6 +145,7 @@ func CheckASN(ip string) (isCDN bool) {
 
 // CheckCName 检查域名的CNAME，判断是否是CDN
 func CheckCName(domain string) (isCDN bool, CDNName string, CName string) {
+
 	cname, err := net.LookupCNAME(domain)
 	if err != nil || len(cname) == 0 {
 		return
@@ -161,49 +159,8 @@ func CheckCName(domain string) (isCDN bool, CDNName string, CName string) {
 			return true, cn, cname
 		}
 	}
+	if CheckASN(domain) {
+		return true, "", ""
+	}
 	return false, "", cname
-}
-func SSSP() {
-	result, err := whois.Whois("baidu.com")
-	if err == nil {
-		fmt.Println(result)
-	}
-}
-
-//func AAA() {
-//	aaaa := Utils.SetStr(cnames)
-//	var bbbba string
-//	for bbb, aaaaa := range aaaa {
-//
-//		file, err := os.OpenFile("C:\\Users\\test\\AppData\\Local\\Temp\\GoLand\\hello.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
-//		if err != nil {
-//			log.Fatalf("打开文件出错: %v", err)
-//		}
-//		defer file.Close()
-//		if bbb%10 == 0 {
-//			bbbba = fmt.Sprintf("\"%s\""+",\n", aaaaa)
-//		} else {
-//			bbbba = fmt.Sprintf("\"%s\""+",", aaaaa)
-//		}
-//		// 将内容写入文件
-//		if _, err := file.WriteString(bbbba); err != nil {
-//			log.Fatalf("写入文件出错: %v", err)
-//		}
-//	}
-//}
-
-func IPIPPP(domain string) bool {
-	// 生成一个很可能不存在的子域名
-	//randomSubdomain := "random-subdomain-that-probably-doesnt-exist." + domain
-
-	// 尝试解析这个子域名
-	_, err := net.LookupIP(domain)
-	if err != nil {
-		// 解析错误，很可能是因为不存在泛解析
-		return false
-	}
-
-	// 解析成功，打印解析到的IP地址
-
-	return true
 }

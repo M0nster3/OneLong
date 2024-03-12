@@ -38,6 +38,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 		if !addedURLs[url] {
 			// 如果不存在重复则将 URL 添加到 Infos["Urls"] 中，并在 map 中标记为已添加
 			ensInfos.Infos["Urls"] = append(ensInfos.Infos["Urls"], gjson.Parse(ResponseJia))
+			DomainsIP.Domains = append(DomainsIP.Domains, url)
 			addedURLs[url] = true
 		}
 
@@ -76,6 +77,14 @@ func Bevigil(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Doma
 
 	clientR.URL = urls
 	resp, _ := clientR.Send()
+	for {
+		if resp.RawResponse == nil {
+			resp, _ = clientR.Send()
+			time.Sleep(2 * time.Second)
+		} else if resp.Body() != nil {
+			break
+		}
+	}
 	if len(gjson.Get(string(resp.Body()), "subdomains").Array()) == 0 || len(gjson.Get(string(resp.Body()), "subdomains").Array()) == 1 {
 		gologger.Labelf("Bevigil 空间探测未发现域名\n")
 		return ""

@@ -70,6 +70,14 @@ func Hackertarget(domain string, options *Utils.ENOptions, DomainsIP *outputfile
 
 	clientR.URL = urls
 	resp, _ := clientR.Send()
+	for {
+		if resp.RawResponse == nil {
+			resp, _ = clientR.Send()
+			time.Sleep(2 * time.Second)
+		} else if resp.Body() != nil {
+			break
+		}
+	}
 	//error invalid host
 	if strings.Contains(string(resp.Body()), "error invalid host") {
 		gologger.Labelf("Hackertarget API 未发现到域名\n")
@@ -86,7 +94,8 @@ func Hackertarget(domain string, options *Utils.ENOptions, DomainsIP *outputfile
 			break // 如果不是键值对格式，跳过
 		}
 		passive_dns += "{\"hostname\"" + ":" + "\"" + parts[0] + "\"" + "," + "\"address\"" + ":" + "\"" + parts[1] + "\"" + "},"
-
+		DomainsIP.Domains = append(DomainsIP.Domains, parts[0])
+		DomainsIP.IP = append(DomainsIP.IP, parts[1])
 	}
 
 	passive_dns = passive_dns + "]}"

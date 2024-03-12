@@ -63,6 +63,7 @@ func Quake(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domain
 	clientR := client.R()
 	requestBody := fmt.Sprintf(`{"query":"domain: %s", "include":["service.http.host"], "latest": true, "start":0, "size":500}`, domain)
 	response, _ := clientR.SetBody(requestBody).Post(urls)
+
 	if len(gjson.Get(string(response.Body()), "data").Array()) == 0 {
 		gologger.Labelf("Quake 空间探测未发现域名\n")
 		return ""
@@ -75,6 +76,7 @@ func Quake(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domain
 	result = "{\"passive_dns\":["
 	for i := 0; i < len(Hostname); i++ {
 		result += "{\"hostname\"" + ":" + "\"" + Hostname[i].String() + "\"" + "},"
+		DomainsIP.Domains = append(DomainsIP.Domains, Hostname[i].String())
 	}
 	result = result + "]}"
 	res, ensOutMap := GetEnInfo(result, DomainsIP)

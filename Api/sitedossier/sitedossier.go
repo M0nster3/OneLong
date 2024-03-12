@@ -35,7 +35,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 	for aa, _ := range responselist {
 		ResponseJia := "{" + "\"hostname\"" + ":" + "\"" + responselist[aa].String() + "\"" + "}"
 		urls := gjson.Parse(ResponseJia).Get("hostname").String()
-
+		DomainsIP.Domains = append(DomainsIP.Domains, responselist[aa].String())
 		// 检查是否已存在相同的 URL
 		if !addedURLs[urls] {
 			// 如果不存在重复则将 URL 添加到 Infos["Urls"] 中，并在 map 中标记为已添加
@@ -81,6 +81,14 @@ func Sitedossier(domain string, options *Utils.ENOptions, DomainsIP *outputfile.
 		//强制延时1s
 		time.Sleep(3 * time.Second)
 		resp, _ := clientR.Send()
+		for {
+			if resp.RawResponse == nil {
+				resp, _ = clientR.Send()
+				time.Sleep(2 * time.Second)
+			} else if resp.Body() != nil {
+				break
+			}
+		}
 		if strings.Contains(string(resp.Body()), "No data currently available") {
 			gologger.Labelf("Sitedossier Api 未发现域名\n")
 			return ""

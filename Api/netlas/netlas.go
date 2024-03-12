@@ -76,6 +76,14 @@ func Netlas(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 
 	clientR.URL = urls
 	resp, _ := clientR.Send()
+	for {
+		if resp.RawResponse == nil {
+			resp, _ = clientR.Send()
+			time.Sleep(2 * time.Second)
+		} else if resp.Body() != nil {
+			break
+		}
+	}
 	if gjson.Get(string(resp.Body()), "count").Int() == 0 {
 		gologger.Labelf("Netlas 威胁平台未发现域名\n")
 		return ""
@@ -124,6 +132,12 @@ func Netlas(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 	var add int
 	for add = 0; add < len(hostname); add++ {
 		passive_dns += "{\"hostname\"" + ":" + "\"" + hostname[add] + "\"" + "," + "\"address\"" + ":" + "\"" + address[add] + "\"" + "},"
+		ips := strings.Split(address[add], "\n")
+		for _, ip := range ips {
+			DomainsIP.IP = append(DomainsIP.IP, ip)
+		}
+		DomainsIP.Domains = append(DomainsIP.Domains, hostname[add])
+
 	}
 	passive_dns = passive_dns + "]}"
 	res, ensOutMap := GetEnInfo(passive_dns, DomainsIP)

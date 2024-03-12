@@ -4,44 +4,50 @@ import (
 	"OneLong/Api/alienvault"
 	"OneLong/Utils"
 	outputfile "OneLong/Utils/OutPutfile"
+	"OneLong/Web/HttpZhiwen"
 )
 
 func main() {
 	var enOptions Utils.ENOptions
 	var Domainip outputfile.DomainsIP
-	Utils.Flag(&enOptions)
-	Utils.ConfigParse(&enOptions)
-	////如果不是API模式就直接运行了
+	//Utils.Flag(&enOptions)
+	//Utils.ConfigParse(&enOptions)
+	//////如果不是API模式就直接运行了
 	doamin := "freebuf.com"
 	alienvault.Alienvault(doamin, &enOptions, &Domainip)
-	////anubis.Anubis(doamin, &enOptions)
-	////binaryedge.Binaryedge(doamin, &enOptions)
-	////digitorus.Digitorus(doamin, &enOptions) //Digitorus  API 证书查询域名
-	////dnsdumpster.Dnsdumpster(doamin, &enOptions)
-	////dnsrepo.Dnsrepo(doamin, &enOptions)
-	////fullhunt.Fullhunt(doamin, &enOptions)
-	////hunter.Hunter(doamin, &enOptions)
-	////bevigil.Bevigil(doamin, &enOptions)
-	////whoisxmlapi.Whoisxmlapi(doamin, &enOptions)
-	////waybackarchive.Waybackarchive(doamin, &enOptions)
-	////virustotal.Virustotal(doamin, &enOptions)
-	////sitedossier.Sitedossier(doamin, &enOptions)
-	////shodan.Shodan(doamin, &enOptions)
-	////Robtex.Robtex(doamin, &enOptions)
-	////ZoomEye.ZoomEye(doamin, &enOptions)
-	////Censys.Censys(doamin, &enOptions)
-	////chaos.Chaos(doamin, &enOptions)
-	////commoncrawl.Commoncrawl(doamin, &enOptions)
-	////Crtsh.Crtsh(doamin, &enOptions)
-	////hackertarget.Hackertarget(doamin, &enOptions)
-	////leakix.Leakix(doamin, &enOptions)
-	////netlas.Netlas(doamin, &enOptions)
-	////Quake.Quake(doamin, &enOptions)
-	////rapiddns.Rapiddns(doamin, &enOptions)
-	//certspotter.Certspotter(doamin, &enOptions)
+	//anubis.Anubis(doamin, &enOptions, &Domainip)
+	//binaryedge.Binaryedge(doamin, &enOptions, &Domainip)
+	//digitorus.Digitorus(doamin, &enOptions, &Domainip) //Digitorus  API 证书查询域名
+	//dnsdumpster.Dnsdumpster(doamin, &enOptions, &Domainip)
+	//dnsrepo.Dnsrepo(doamin, &enOptions, &Domainip)
+	//fullhunt.Fullhunt(doamin, &enOptions, &Domainip)
+	//hunter.Hunter(doamin, &enOptions, &Domainip)
+	//bevigil.Bevigil(doamin, &enOptions, &Domainip)
+	//whoisxmlapi.Whoisxmlapi(doamin, &enOptions, &Domainip)
+	//waybackarchive.Waybackarchive(doamin, &enOptions, &Domainip)
+	//virustotal.Virustotal(doamin, &enOptions, &Domainip)
+	//sitedossier.Sitedossier(doamin, &enOptions, &Domainip)
+	//shodan.Shodan(doamin, &enOptions, &Domainip)
+	//Robtex.Robtex(doamin, &enOptions, &Domainip)
+	//ZoomEye.ZoomEye(doamin, &enOptions, &Domainip)
+	//Censys.Censys(doamin, &enOptions, &Domainip)
+	//chaos.Chaos(doamin, &enOptions, &Domainip)
+	//commoncrawl.Commoncrawl(doamin, &enOptions, &Domainip)
+	//Crtsh.Crtsh(doamin, &enOptions, &Domainip)
+	//hackertarget.Hackertarget(doamin, &enOptions, &Domainip)
+	//leakix.Leakix(doamin, &enOptions, &Domainip)
+	//netlas.Netlas(doamin, &enOptions, &Domainip)
+	//Quake.Quake(doamin, &enOptions, &Domainip)
+	//rapiddns.Rapiddns(doamin, &enOptions, &Domainip)
+	//certspotter.Certspotter(doamin, &enOptions, &Domainip)
+	//Domainip.IP = Utils.SetStr(Domainip.IP)
+	//Domainip.Domains = Utils.SetStr(Domainip.Domains)
+	//
 	//outputfile.OutPutExcelByMergeEnInfo(&enOptions)
-	////Gogogo.RunJob(&enOptions)
-	//Script.Massdns("baidu.com", &enOptions)
+	HttpZhiwen.Status(doamin, &enOptions, &Domainip)
+	//Gogogo.RunJob(&enOptions)
+	//IP.IpWhois("39.106.155.178", &enOptions, &Domainip)
+	//Script.Massdns("baidu.com",&enOptions, &Domainip)
 
 	//CDN.IPIPPP("baidu.com")
 

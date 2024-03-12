@@ -34,6 +34,8 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 	for aa, _ := range responsdomain {
 
 		ResponseJia := "{\"address\"" + ":" + "\"" + responsip[aa].String() + "\"" + "," + "\"hostname\"" + ":" + "\"" + responsdomain[aa].String() + "\"" + "},"
+		DomainsIP.Domains = append(DomainsIP.Domains, responsip[aa].String())
+		DomainsIP.IP = append(DomainsIP.IP, responsdomain[aa].String())
 		url := gjson.Parse(ResponseJia).Get("hostname").String()
 		if !addedURLs[url] {
 			// 如果不存在重复则将 URL 添加到 Infos["Urls"] 中，并在 map 中标记为已添加
@@ -76,8 +78,16 @@ func Hunter(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 
 	clientR.URL = urls
 	resp, _ := clientR.Send()
-	if gjson.Get(string(resp.Body()), "total").Int() == 0 {
-		gologger.Labelf("Hunter 威胁平台未发现域名\n")
+	for {
+		if resp.RawResponse == nil {
+			resp, _ = clientR.Send()
+			time.Sleep(2 * time.Second)
+		} else if resp.Body() != nil {
+			break
+		}
+	}
+	if gjson.Get(string(resp.Body()), "data.total").Int() == 0 {
+		gologger.Labelf("Hunter 威胁平台未查询到域名\n")
 		return ""
 	}
 	res, ensOutMap := GetEnInfo(string(resp.Body()), DomainsIP)

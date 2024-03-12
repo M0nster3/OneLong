@@ -57,7 +57,8 @@ func GetEnInfo(response string, domain string, DomainsIP *outputfile.DomainsIP) 
 
 		// 构建包含 hostname 和所有 IP 地址的 JSON 字符串
 		responseJia := fmt.Sprintf("{\"hostname\": \"%s\", \"address\": [%s]}", responsdomain, ipStr)
-
+		DomainsIP.Domains = append(DomainsIP.Domains, responsdomain)
+		DomainsIP.IP = append(DomainsIP.IP, ipStr)
 		// 将构建的 JSON 字符串解析为 gjson.Result 并追加到 ensInfos.Infos["Urls"]
 		ensInfos.Infos["Urls"] = append(ensInfos.Infos["Urls"], gjson.Parse(responseJia))
 	}
@@ -95,6 +96,14 @@ func Shodan(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 
 	clientR.URL = urls
 	resp, _ := clientR.Send()
+	for {
+		if resp.RawResponse == nil {
+			resp, _ = clientR.Send()
+			time.Sleep(2 * time.Second)
+		} else if resp.Body() != nil {
+			break
+		}
+	}
 	if strings.Contains(string(resp.Body()), "No information available for that domain") {
 		gologger.Labelf("Shodan 威胁平台未发现域名\n")
 		return ""

@@ -73,6 +73,14 @@ func Commoncrawl(domain string, options *Utils.ENOptions, DomainsIP *outputfile.
 
 	clientR.URL = urls
 	resp, _ := clientR.Send()
+	for {
+		if resp.RawResponse == nil {
+			resp, _ = clientR.Send()
+			time.Sleep(2 * time.Second)
+		} else if resp.Body() != nil {
+			break
+		}
+	}
 	buff := gjson.Parse(string(resp.Body())).Array()
 	var result []string
 	addedURLs := make(map[string]bool)
@@ -99,7 +107,7 @@ func Commoncrawl(domain string, options *Utils.ENOptions, DomainsIP *outputfile.
 		url := fmt.Sprintf("%s?url=*.%s", cdx, domain)
 		clientR.URL = url
 		var respa *resty.Response
-		time.Sleep(5 * time.Second)
+		time.Sleep(2 * time.Second)
 		respa, _ = clientR.Send()
 		if respa.StatusCode() == 503 {
 			continue
@@ -142,6 +150,7 @@ func Commoncrawl(domain string, options *Utils.ENOptions, DomainsIP *outputfile.
 	var add int
 	for add = 0; add < len(result); add++ {
 		passive_dns += "{\"hostname\"" + ":" + "\"" + result[add] + "\"" + "},"
+		DomainsIP.Domains = append(DomainsIP.Domains, result[add])
 	}
 	passive_dns = passive_dns + "]}"
 	res, ensOutMap := GetEnInfo(passive_dns, DomainsIP)

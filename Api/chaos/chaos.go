@@ -66,6 +66,7 @@ func Chaos(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domain
 	var add int
 	for add = 0; add < len(Hostname); add++ {
 		result += "{\"hostname\"" + ":" + "\"" + Hostname[add] + "\"" + "},"
+		DomainsIP.Domains = append(DomainsIP.Domains, Hostname[add])
 	}
 	result = result + "]}"
 	res, ensOutMap := GetEnInfo(result, DomainsIP)

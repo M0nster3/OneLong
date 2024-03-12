@@ -32,7 +32,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 	for aa, _ := range respons {
 		ResponseJia := "{" + "\"hostname\"" + ":" + "\"" + respons[aa].String() + "\"" + "}"
 		url := gjson.Parse(ResponseJia).Get("hostname").String()
-
+		DomainsIP.Domains = append(DomainsIP.Domains, respons[aa].String())
 		// 检查是否已存在相同的 URL
 		if !addedURLs[url] {
 			// 如果不存在重复则将 URL 添加到 Infos["Urls"] 中，并在 map 中标记为已添加
@@ -75,6 +75,14 @@ func Fullhunt(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Dom
 
 	clientR.URL = urls
 	resp, _ := clientR.Send()
+	for {
+		if resp.RawResponse == nil {
+			resp, _ = clientR.Send()
+			time.Sleep(2 * time.Second)
+		} else if resp.Body() != nil {
+			break
+		}
+	}
 	if gjson.Get(string(resp.Body()), "status").Int() == 404 {
 		gologger.Labelf("Fullhunt 威胁平台未发现域名\n")
 		return ""

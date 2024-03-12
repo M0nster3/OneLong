@@ -4,11 +4,13 @@ import (
 	"OneLong/Utils"
 	outputfile "OneLong/Utils/OutPutfile"
 	"OneLong/Utils/gologger"
-
 	"crypto/tls"
 	"github.com/go-resty/resty/v2"
 	"github.com/tidwall/gjson"
 	"net/http"
+	"regexp"
+	"strings"
+
 	//"strconv"
 	//"strings"
 	"time"
@@ -27,9 +29,34 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 	//ensInfos.Infoss = make(map[string][]map[string]string)
 	//获取公司信息
 	//ensInfos.Infos["passive_dns"] = append(ensInfos.Infos["passive_dns"], gjson.Parse(Result[0].String()))
+	addedURLs := make(map[string]bool)
 	for aa, _ := range respons {
+		if strings.Contains(respons[aa].String(), "address") {
+			re := regexp.MustCompile(`(?:\d{1,3}\.){3}\d{1,3}`)
+			ip := gjson.Get(respons[aa].String(), "address").String()
+			matches := re.FindAllStringSubmatch(strings.TrimSpace(ip), -1)
+			for _, bu := range matches {
+				if !addedURLs[bu[0]] {
+					// 如果不存在重复则将 URL 添加到 Infos["Urls"] 中，并在 map 中标记为已添加
+					DomainsIP.IP = append(DomainsIP.IP, bu[0])
+					addedURLs[bu[0]] = true
+				}
+				break
+			}
+
+		}
+		if strings.Contains(respons[aa].String(), "hostname") {
+			hostname := gjson.Get(respons[aa].String(), "hostname").String()
+			if !addedURLs[hostname] {
+				// 如果不存在重复则将 URL 添加到 Infos["Urls"] 中，并在 map 中标记为已添加
+				DomainsIP.Domains = append(DomainsIP.Domains, hostname)
+				addedURLs[hostname] = true
+			}
+
+		}
 		ensInfos.Infos["Urls"] = append(ensInfos.Infos["Urls"], gjson.Parse(respons[aa].String()))
 	}
+
 	//zuo := strings.ReplaceAll(response, "[", "")
 	//you := strings.ReplaceAll(zuo, "]", "")
 
@@ -65,6 +92,14 @@ func Alienvault(domain string, options *Utils.ENOptions, DomainsIP *outputfile.D
 	clientR.URL = urls
 	resp, _ := clientR.Send()
 
+	for {
+		if resp.RawResponse == nil {
+			resp, _ = clientR.Send()
+			time.Sleep(2 * time.Second)
+		} else if resp.Body() != nil {
+			break
+		}
+	}
 	count := gjson.GetBytes(resp.Body(), "count").Int()
 	if count == 0 {
 		gologger.Labelf("Alienvault Api 未发现域名\n")

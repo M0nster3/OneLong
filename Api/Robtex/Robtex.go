@@ -70,6 +70,14 @@ func Robtex(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 
 	clientR.URL = urls
 	resp, _ := clientR.Send() //ratelimited
+	for {
+		if resp.RawResponse == nil {
+			resp, _ = clientR.Send()
+			time.Sleep(2 * time.Second)
+		} else if resp.Body() != nil {
+			break
+		}
+	}
 	if len(resp.Body()) == 0 {
 		gologger.Labelf("Robtex Api 未发现域名\n")
 		return ""
@@ -97,17 +105,23 @@ func Robtex(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 	if len(hostname) < len(address) {
 		for add = 0; add < len(hostname); add++ {
 			result1 += "{\"hostname\"" + ":" + "\"" + hostname[add] + "\"" + "," + "\"address\"" + ":" + "\"" + address[add] + "\"" + "},"
+			DomainsIP.Domains = append(DomainsIP.Domains, hostname[add])
+			DomainsIP.IP = append(DomainsIP.IP, address[add])
 		}
 		for ii := add; ii < len(address); ii++ {
 			result1 += "{\"address\"" + ":" + "\"" + address[ii] + "\"" + "},"
+			DomainsIP.IP = append(DomainsIP.IP, address[ii])
 		}
 
 	} else {
 		for add = 0; add < len(address); add++ {
 			result1 += "{\"hostname\"" + ":" + "\"" + hostname[add] + "\"" + "," + "\"address\"" + ":" + "\"" + address[add] + "\"" + "},"
+			DomainsIP.Domains = append(DomainsIP.Domains, hostname[add])
+			DomainsIP.IP = append(DomainsIP.IP, address[add])
 		}
 		for ii := add; ii < len(hostname); ii++ {
 			result1 += "{\"hostname\"" + ":" + "\"" + hostname[ii] + "\"" + "},"
+			DomainsIP.Domains = append(DomainsIP.Domains, hostname[ii])
 		}
 	}
 

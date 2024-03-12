@@ -71,6 +71,14 @@ func Crtsh(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domain
 
 	clientR.URL = urls
 	resp, _ := clientR.Send()
+	for {
+		if resp.RawResponse == nil {
+			resp, _ = clientR.Send()
+			time.Sleep(2 * time.Second)
+		} else if resp.Body() != nil {
+			break
+		}
+	}
 	if resp.Size() == 2 {
 		gologger.Labelf("Crtsh API 未发现到域名\n")
 		return ""
@@ -90,6 +98,7 @@ func Crtsh(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domain
 	var add int
 	for add = 0; add < len(result); add++ {
 		passive_dns += "{\"hostname\"" + ":" + "\"" + result[add] + "\"" + "},"
+		DomainsIP.Domains = append(DomainsIP.Domains, result[add])
 	}
 	passive_dns = passive_dns + "]}"
 	res, ensOutMap := GetEnInfo(passive_dns, DomainsIP)

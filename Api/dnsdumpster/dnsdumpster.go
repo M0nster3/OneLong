@@ -127,6 +127,7 @@ func PostBuffer(domain string, options *Utils.ENOptions, token string, client *r
 	result = "{\"passive_dns\":["
 	for i := 0; i < len(Hostname) && i < len(Address); i++ {
 		result += "{\"address\"" + ":" + "\"" + Hostname[i] + "\"" + "," + "\"hostname\"" + ":" + "\"" + Address[i] + "\"" + "},"
+		DomainsIP.Domains = append(DomainsIP.Domains, Address[i])
 	}
 	result = result + "]}"
 	res, ensOutMap := GetEnInfo(result, DomainsIP)
@@ -165,6 +166,14 @@ func Dnsdumpster(domain string, options *Utils.ENOptions, DomainsIP *outputfile.
 
 	clientR.URL = urls
 	resp, _ := clientR.Send()
+	for {
+		if resp.RawResponse == nil {
+			resp, _ = clientR.Send()
+			time.Sleep(2 * time.Second)
+		} else if resp.Body() != nil {
+			break
+		}
+	}
 	SetCookie := resp.Header().Get("Set-Cookie")
 	csrftoken := strings.Split(SetCookie, ";")
 	csrftoken[0] = strings.ReplaceAll(csrftoken[0], "csrftoken=", "")

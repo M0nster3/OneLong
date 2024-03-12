@@ -74,6 +74,14 @@ func Dnsrepo(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Doma
 
 	clientR.URL = urls
 	resp, _ := clientR.Send()
+	for {
+		if resp.RawResponse == nil {
+			resp, _ = clientR.Send()
+			time.Sleep(2 * time.Second)
+		} else if resp.Body() != nil {
+			break
+		}
+	}
 	if resp.Body() == nil || strings.Contains(string(resp.Body()), "nothing found") {
 		gologger.Labelf("Dnsrepo API 未查询到域名 \n")
 		return ""
@@ -122,17 +130,23 @@ func Dnsrepo(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Doma
 	if len(Hostname) < len(Address) {
 		for add = 0; add < len(Hostname); add++ {
 			result += "{\"hostname\"" + ":" + "\"" + Hostname[add] + "\"" + "," + "\"address\"" + ":" + "\"" + Address[add] + "\"" + "},"
+			DomainsIP.Domains = append(DomainsIP.Domains, Hostname[add])
+			DomainsIP.IP = append(DomainsIP.IP, Address[add])
 		}
 		for ii := add; ii < len(Address); ii++ {
 			result += "{\"address\"" + ":" + "\"" + Address[ii] + "\"" + "},"
+			DomainsIP.IP = append(DomainsIP.IP, Address[ii])
 		}
 
 	} else {
 		for add = 0; add < len(Address); add++ {
 			result += "{\"hostname\"" + ":" + "\"" + Hostname[add] + "\"" + "," + "\"address\"" + ":" + "\"" + Address[add] + "\"" + "},"
+			DomainsIP.Domains = append(DomainsIP.Domains, Hostname[add])
+			DomainsIP.IP = append(DomainsIP.IP, Address[add])
 		}
 		for ii := add; ii < len(Hostname); ii++ {
 			result += "{\"hostname\"" + ":" + "\"" + Hostname[ii] + "\"" + "},"
+			DomainsIP.Domains = append(DomainsIP.Domains, Hostname[ii])
 		}
 	}
 
