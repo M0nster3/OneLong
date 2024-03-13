@@ -7,6 +7,7 @@ import (
 )
 
 func Ehole(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
+
 	s := finger.NewScan([]string{domain}, 100, options.Proxy)
 	s.StartScan(DomainsIP)
 }

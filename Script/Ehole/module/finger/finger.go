@@ -2,6 +2,7 @@ package finger
 
 import (
 	"OneLong/Script/Ehole/module/queue"
+	"OneLong/Utils"
 	outputfile "OneLong/Utils/OutPutfile"
 	"encoding/json"
 	"fmt"
@@ -41,7 +42,7 @@ func NewScan(urls []string, thread int, proxy string) *FinScan {
 		AllResult:   []Outrestul{},
 		FocusResult: []Outrestul{},
 	}
-	err := LoadWebfingerprint("E:\\EHole-3.1\\finger.json")
+	err := LoadWebfingerprint(Utils.GetPathDir() + "/Ehole.json")
 	if err != nil {
 		color.RGBStyleFromString("237,64,35").Println("[error] fingerprint file error!!!")
 		os.Exit(1)
@@ -163,10 +164,17 @@ func (s *FinScan) fingerScan(DomainsIP *outputfile.DomainsIP) {
 				s.FocusResult = append(s.FocusResult, out)
 				zhiwen := out.Cms + "," + out.Server + "[可能存在漏洞]"
 				DomainsIP.Zhiwen = append(DomainsIP.Zhiwen, zhiwen)
+
 			} else {
 				outstr := fmt.Sprintf("[ %s | %s | %s | %d | %d | %s ]", out.Url, out.Cms, out.Server, out.Statuscode, out.Length, out.Title)
 				fmt.Println(outstr)
-				zhiwen := out.Cms + "," + out.Server
+				var zhiwen string
+				if out.Cms != "" {
+					zhiwen = out.Cms + "," + out.Server
+				} else {
+					zhiwen = out.Server
+				}
+
 				DomainsIP.Zhiwen = append(DomainsIP.Zhiwen, zhiwen)
 			}
 		default:

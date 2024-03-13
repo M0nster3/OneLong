@@ -20,6 +20,7 @@ type ENSMap struct {
 }
 type DomainsIP struct {
 	Domains     []string
+	DomainA     []string
 	IP          []string
 	TitleBUff   []string
 	Hostnameip  []string
