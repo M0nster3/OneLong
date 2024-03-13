@@ -34,8 +34,8 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 	for aa, _ := range responsdomain {
 
 		ResponseJia := "{\"address\"" + ":" + "\"" + responsip[aa].String() + "\"" + "," + "\"hostname\"" + ":" + "\"" + responsdomain[aa].String() + "\"" + "},"
-		DomainsIP.Domains = append(DomainsIP.Domains, responsip[aa].String())
-		DomainsIP.IP = append(DomainsIP.IP, responsdomain[aa].String())
+		DomainsIP.Domains = append(DomainsIP.Domains, responsdomain[aa].String())
+		DomainsIP.IP = append(DomainsIP.IP, responsip[aa].String())
 		url := gjson.Parse(ResponseJia).Get("hostname").String()
 		if !addedURLs[url] {
 			// 如果不存在重复则将 URL 添加到 Infos["Urls"] 中，并在 map 中标记为已添加

@@ -2,6 +2,7 @@ package HttpZhiwen
 
 import (
 	"OneLong/IP"
+	"OneLong/Script/Ehole"
 	"OneLong/Utils"
 	outputfile "OneLong/Utils/OutPutfile"
 	"OneLong/Utils/gologger"
@@ -46,9 +47,6 @@ func Status(domaina string, options *Utils.ENOptions, DomainsIP *outputfile.Doma
 		//client.SetProxy("192.168.203.111:1111")
 	}
 
-	var TitleBUff []string
-	var hostnameip []string
-	var status_code []string
 	for _, domain := range DomainsIP.Domains {
 		urls := domain
 		client.Header = http.Header{
@@ -56,18 +54,33 @@ func Status(domaina string, options *Utils.ENOptions, DomainsIP *outputfile.Doma
 			"Accept":     {"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"},
 		}
 		clientR := client.R()
+
+		if !strings.Contains(urls, "http://") || !strings.Contains(urls, "https://") {
+			urls = "http://" + urls
+		}
 		clientR.URL = urls
 		response, _ := clientR.Send()
+		add := 0
 		for {
+			if add == 3 {
+				urls = strings.ReplaceAll(urls, "http://", "https://")
+				clientR.URL = urls
+				add += 1
+				continue
+			}
 			if response.RawResponse == nil {
 				response, _ = clientR.Send()
 				time.Sleep(2 * time.Second)
+				add += 1
 			} else if response.Body() != nil {
 				break
+			} else if add == 6 {
+				break
 			}
+
 		}
 		if response.StatusCode() != 502 {
-			status_code = append(status_code, string(response.StatusCode()))
+			DomainsIP.Status_code = append(DomainsIP.Status_code, string(response.StatusCode()))
 			// 解析HTML响应体
 			doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(response.Body())))
 			if err != nil {
@@ -77,35 +90,37 @@ func Status(domaina string, options *Utils.ENOptions, DomainsIP *outputfile.Doma
 			// 查找<title>标签并获取其文本内容
 			title := doc.Find("title").Text()
 			fmt.Printf("Title: %s\n", title)
-			TitleBUff = append(TitleBUff, title)
+			DomainsIP.TitleBUff = append(DomainsIP.TitleBUff, title)
 			ips, _ := net.LookupIP(domain)
 			for _, ip := range ips {
-				hostnameip = append(hostnameip, ip.String())
+				DomainsIP.Hostnameip = append(DomainsIP.Hostnameip, ip.String())
 			}
+			Ehole.Ehole(domain, options, DomainsIP)
 
 		} else {
-			hostnameip = append(hostnameip, "")
-			status_code = append(status_code, "")
-			TitleBUff = append(TitleBUff, "")
+			DomainsIP.Hostnameip = append(DomainsIP.Hostnameip, "")
+			DomainsIP.Status_code = append(DomainsIP.Status_code, "")
+			DomainsIP.TitleBUff = append(DomainsIP.TitleBUff, "")
 		}
+
 	}
 	result := "{["
 	var add int
 	if len(DomainsIP.Domains) < len(DomainsIP.IP) {
 		for add = 0; add < len(DomainsIP.Domains); add++ {
-			result += "{\"hostname\"" + ":" + "\"" + DomainsIP.Domains[add] + "\"" + "," + "\"address\"" + ":" + "\"" + DomainsIP.IP[add] + "\"" + "," + "\"hostnameip\"" + ":" + "\"" + hostnameip[add] + "," + "\"status_code\"" + ":" + "\"" + status_code[add] + "," + "\"title\"" + ":" + "\"" + TitleBUff[add] + "," + "\"address\"" + ":" + "\"" + DomainsIP.IP[add] + "},"
+			result += "{\"hostname\"" + ":" + "\"" + DomainsIP.Domains[add] + "\"" + "," + "\"address\"" + ":" + "\"" + DomainsIP.IP[add] + "\"" + "," + "\"hostnameip\"" + ":" + "\"" + DomainsIP.Hostnameip[add] + "," + "\"status_code\"" + ":" + "\"" + DomainsIP.Status_code[add] + "," + "\"title\"" + ":" + "\"" + DomainsIP.TitleBUff[add] + "," + "\"address\"" + ":" + "\"" + DomainsIP.IP[add] + "},"
 		}
 		for ii := add; ii < len(DomainsIP.IP); ii++ {
-			result += "{\"address\"" + ":" + "\"" + DomainsIP.IP[add] + "\"" + "," + "\"hostnameip\"" + ":" + "\"" + hostnameip[add] + "," + "\"status_code\"" + ":" + "\"" + status_code[add] + "," + "\"title\"" + ":" + "\"" + TitleBUff[add] + "," + "\"address\"" + ":" + "\"" + DomainsIP.IP[add] + "},"
+			result += "{\"address\"" + ":" + "\"" + DomainsIP.IP[add] + "\"" + "," + "\"hostnameip\"" + ":" + "\"" + DomainsIP.Hostnameip[add] + "," + "\"status_code\"" + ":" + "\"" + DomainsIP.Status_code[add] + "," + "\"title\"" + ":" + "\"" + DomainsIP.TitleBUff[add] + "," + "\"address\"" + ":" + "\"" + DomainsIP.IP[add] + "},"
 		}
 
 	} else {
 		for add = 0; add < len(DomainsIP.IP); add++ {
-			result += "{\"hostname\"" + ":" + "\"" + DomainsIP.Domains[add] + "\"" + "," + "\"address\"" + ":" + "\"" + DomainsIP.IP[add] + "\"" + "," + "\"hostnameip\"" + ":" + "\"" + hostnameip[add] + "," + "\"status_code\"" + ":" + "\"" + status_code[add] + "," + "\"title\"" + ":" + "\"" + TitleBUff[add] + "," + "\"address\"" + ":" + "\"" + DomainsIP.IP[add] + "},"
+			result += "{\"hostname\"" + ":" + "\"" + DomainsIP.Domains[add] + "\"" + "," + "\"address\"" + ":" + "\"" + DomainsIP.IP[add] + "\"" + "," + "\"hostnameip\"" + ":" + "\"" + DomainsIP.Hostnameip[add] + "," + "\"status_code\"" + ":" + "\"" + DomainsIP.Status_code[add] + "," + "\"title\"" + ":" + "\"" + DomainsIP.TitleBUff[add] + "," + "\"address\"" + ":" + "\"" + DomainsIP.IP[add] + "},"
 
 		}
 		for ii := add; ii < len(DomainsIP.Domains); ii++ {
-			result += "{\"hostname\"" + ":" + "\"" + DomainsIP.Domains[add] + "\"" + "," + "\"hostnameip\"" + ":" + "\"" + hostnameip[add] + "," + "\"status_code\"" + ":" + "\"" + status_code[add] + "," + "\"title\"" + ":" + "\"" + TitleBUff[add] + "," + "\"address\"" + ":" + "\"" + DomainsIP.IP[add] + "},"
+			result += "{\"hostname\"" + ":" + "\"" + DomainsIP.Domains[add] + "\"" + "," + "\"hostnameip\"" + ":" + "\"" + DomainsIP.Hostnameip[add] + "," + "\"status_code\"" + ":" + "\"" + DomainsIP.Status_code[add] + "," + "\"title\"" + ":" + "\"" + DomainsIP.TitleBUff[add] + "," + "\"address\"" + ":" + "\"" + DomainsIP.IP[add] + "},"
 
 		}
 	}

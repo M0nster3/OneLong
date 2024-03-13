@@ -3,10 +3,11 @@ module OneLong
 go 1.20
 
 require (
+	github.com/360EntSecGroup-Skylar/excelize v1.4.1
 	github.com/PuerkitoBio/goquery v1.9.0
 	github.com/antchfx/htmlquery v1.3.0
 	github.com/go-resty/resty/v2 v2.11.0
-	github.com/likexian/whois v1.15.1
+	github.com/gookit/color v1.5.4
 	github.com/logrusorgru/aurora v2.0.3+incompatible
 	github.com/mattn/go-colorable v0.1.13
 	github.com/olekukonko/tablewriter v0.0.5
@@ -16,7 +17,9 @@ require (
 	github.com/robertkrimen/otto v0.3.0
 	github.com/tidwall/gjson v1.17.1
 	github.com/tidwall/sjson v1.2.5
+	github.com/twmb/murmur3 v1.1.8
 	github.com/xuri/excelize/v2 v2.8.0
+	github.com/yinheli/mahonia v0.0.0-20131226213531-0eef680515cc
 	go.mongodb.org/mongo-driver v1.14.0
 	golang.org/x/net v0.21.0
 	gopkg.in/yaml.v2 v2.4.0
@@ -78,6 +81,7 @@ require (
 	github.com/tidwall/pretty v1.2.0 // indirect
 	github.com/ulikunitz/xz v0.5.11 // indirect
 	github.com/xi2/xz v0.0.0-20171230120015-48954b6210f8 // indirect
+	github.com/xo/terminfo v0.0.0-20210125001918-ca9a967f8778 // indirect
 	github.com/xuri/efp v0.0.0-20230802181842-ad255f2331ca // indirect
 	github.com/xuri/nfp v0.0.0-20230819163627-dc951e3ffe1a // indirect
 	github.com/yuin/goldmark v1.5.4 // indirect

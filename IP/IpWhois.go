@@ -45,12 +45,16 @@ func IpWhois(domain string, ip string, options *Utils.ENOptions, DomainsIP *outp
 		}
 	}
 	Domains := gjson.Parse(string(resp.Body())).Array()
+	var add int
 	for _, appdomain := range Domains {
 		resdoamin := gjson.Get(appdomain.String(), "domain").String()
 		if strings.Contains(resdoamin, domain) {
 			DomainsIP.Domains = append(DomainsIP.Domains, resdoamin)
 
 		} else {
+			add += 1
+		}
+		if add == 5 {
 			return
 		}
 

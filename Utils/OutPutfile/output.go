@@ -19,8 +19,12 @@ type ENSMap struct {
 	Only    string
 }
 type DomainsIP struct {
-	Domains []string
-	IP      []string
+	Domains     []string
+	IP          []string
+	TitleBUff   []string
+	Hostnameip  []string
+	Status_code []string
+	Zhiwen      []string
 }
 
 var EnsInfosList = make(map[string][][]interface{})
