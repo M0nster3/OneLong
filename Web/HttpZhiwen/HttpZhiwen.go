@@ -23,7 +23,7 @@ import (
 
 var wg sync.WaitGroup
 
-func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
+func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
 	respons := gjson.Parse(response).Array()
 
 	ensInfos := &Utils.EnInfos{}
@@ -168,7 +168,7 @@ func Status(domaina string, options *Utils.ENOptions, DomainsIP *outputfile.Doma
 		}
 	}
 	result = result + "]"
-	res, ensOutMap := GetEnInfo(result, DomainsIP)
+	res, ensOutMap := GetEnInfo(result)
 
 	outputfile.MergeOutPut(res, ensOutMap, "Ehole", options)
 }
