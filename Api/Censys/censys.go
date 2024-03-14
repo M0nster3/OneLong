@@ -94,7 +94,7 @@ func Censys(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 				resp, _ = clientR.
 					SetBody(requestBody).
 					Post(urls)
-				time.Sleep(2 * time.Second)
+				time.Sleep(1 * time.Second)
 			} else if resp.Body() != nil {
 				break
 			}

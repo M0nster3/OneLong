@@ -31,9 +31,10 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 	for aa, _ := range responselist {
 		ResponseJia := "{" + "\"hostname\"" + ":" + "\"" + responselist[aa].String() + "\"" + "}"
 		url := gjson.Parse(ResponseJia).Get("hostname").String()
-		DomainsIP.Domains = append(DomainsIP.Domains, responselist[aa].String())
+
 		// 检查是否已存在相同的 URL
 		if !addedURLs[url] {
+			DomainsIP.Domains = append(DomainsIP.Domains, url)
 			// 如果不存在重复则将 URL 添加到 Infos["Urls"] 中，并在 map 中标记为已添加
 			ensInfos.Infos["Urls"] = append(ensInfos.Infos["Urls"], gjson.Parse(ResponseJia))
 			addedURLs[url] = true
@@ -77,7 +78,7 @@ func Whoisxmlapi(domain string, options *Utils.ENOptions, DomainsIP *outputfile.
 	for {
 		if resp.RawResponse == nil {
 			resp, _ = clientR.Send()
-			time.Sleep(2 * time.Second)
+			time.Sleep(1 * time.Second)
 		} else if resp.Body() != nil {
 			break
 		}

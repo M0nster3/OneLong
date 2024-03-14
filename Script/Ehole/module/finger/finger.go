@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/gookit/color"
 	"os"
+	"strconv"
 	"strings"
 	"sync"
 )
@@ -162,20 +163,33 @@ func (s *FinScan) fingerScan(DomainsIP *outputfile.DomainsIP) {
 				outstr := fmt.Sprintf("[ %s | %s | %s | %d | %d | %s ]", out.Url, out.Cms, out.Server, out.Statuscode, out.Length, out.Title)
 				color.RGBStyleFromString("237,64,35").Println(outstr)
 				s.FocusResult = append(s.FocusResult, out)
-				zhiwen := out.Cms + "," + out.Server + "[可能存在漏洞]"
+				zhiwen := out.Cms + " , " + out.Server + "[可能存在漏洞]"
+				if out.Url == "https://ecw.mmh.org.tw" {
+					fmt.Printf("111")
+				}
 				DomainsIP.Zhiwen = append(DomainsIP.Zhiwen, zhiwen)
+				DomainsIP.DomainA = append(DomainsIP.DomainA, out.Url)
+				DomainsIP.Status_code = append(DomainsIP.Status_code, strconv.Itoa(out.Statuscode))
+				DomainsIP.TitleBUff = append(DomainsIP.TitleBUff, out.Title)
+				DomainsIP.Size = append(DomainsIP.Size, strconv.Itoa(out.Length))
 
 			} else {
 				outstr := fmt.Sprintf("[ %s | %s | %s | %d | %d | %s ]", out.Url, out.Cms, out.Server, out.Statuscode, out.Length, out.Title)
 				fmt.Println(outstr)
 				var zhiwen string
 				if out.Cms != "" {
-					zhiwen = out.Cms + "," + out.Server
+					zhiwen = out.Cms + " , " + out.Server
 				} else {
 					zhiwen = out.Server
 				}
-
+				if out.Url == "https://ecw.mmh.org.tw" {
+					fmt.Printf("111")
+				}
 				DomainsIP.Zhiwen = append(DomainsIP.Zhiwen, zhiwen)
+				DomainsIP.DomainA = append(DomainsIP.DomainA, out.Url)
+				DomainsIP.Status_code = append(DomainsIP.Status_code, strconv.Itoa(out.Statuscode))
+				DomainsIP.TitleBUff = append(DomainsIP.TitleBUff, out.Title)
+				DomainsIP.Size = append(DomainsIP.Size, strconv.Itoa(out.Length))
 			}
 		default:
 			continue

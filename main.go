@@ -1,10 +1,34 @@
 package main
 
 import (
-	"OneLong/Api/hunter"
+	"OneLong/Api/Crtsh"
+	"OneLong/Api/Quake"
+	"OneLong/Api/Robtex"
+	"OneLong/Api/ZoomEye"
+	"OneLong/Api/alienvault"
+	"OneLong/Api/anubis"
+	"OneLong/Api/bevigil"
+	"OneLong/Api/binaryedge"
+	"OneLong/Api/certspotter"
+	"OneLong/Api/chaos"
+	"OneLong/Api/commoncrawl"
+	"OneLong/Api/digitorus"
+	"OneLong/Api/dnsdumpster"
+	"OneLong/Api/dnsrepo"
+	"OneLong/Api/fullhunt"
+	"OneLong/Api/hackertarget"
+	"OneLong/Api/leakix"
+	"OneLong/Api/netlas"
+	"OneLong/Api/rapiddns"
+	"OneLong/Api/shodan"
+	"OneLong/Api/sitedossier"
+	"OneLong/Api/virustotal"
+	"OneLong/Api/waybackarchive"
+	"OneLong/Api/whoisxmlapi"
 	"OneLong/Utils"
 	outputfile "OneLong/Utils/OutPutfile"
 	"OneLong/Web/HttpZhiwen"
+	"sync"
 )
 
 func main() {
@@ -13,35 +37,120 @@ func main() {
 	Utils.Flag(&enOptions)
 	Utils.ConfigParse(&enOptions)
 	//////如果不是API模式就直接运行了
-	doamin := "qianxin.com"
-	//alienvault.Alienvault(doamin, &enOptions, &Domainip)
-	//anubis.Anubis(doamin, &enOptions, &Domainip)
-	//binaryedge.Binaryedge(doamin, &enOptions, &Domainip)
-	//digitorus.Digitorus(doamin, &enOptions, &Domainip) //Digitorus  API 证书查询域名
-	//dnsdumpster.Dnsdumpster(doamin, &enOptions, &Domainip)
-	//dnsrepo.Dnsrepo(doamin, &enOptions, &Domainip)
-	//fullhunt.Fullhunt(doamin, &enOptions, &Domainip)
-	hunter.Hunter(doamin, &enOptions, &Domainip)
-	//bevigil.Bevigil(doamin, &enOptions, &Domainip)
-	//whoisxmlapi.Whoisxmlapi(doamin, &enOptions, &Domainip)
-	//waybackarchive.Waybackarchive(doamin, &enOptions, &Domainip)
-	//virustotal.Virustotal(doamin, &enOptions, &Domainip)
-	//sitedossier.Sitedossier(doamin, &enOptions, &Domainip)
-	//shodan.Shodan(doamin, &enOptions, &Domainip)
-	//Robtex.Robtex(doamin, &enOptions, &Domainip)
-	//ZoomEye.ZoomEye(doamin, &enOptions, &Domainip)
-	//Censys.Censys(doamin, &enOptions, &Domainip)
-	//chaos.Chaos(doamin, &enOptions, &Domainip)
-	//commoncrawl.Commoncrawl(doamin, &enOptions, &Domainip)
-	//Crtsh.Crtsh(doamin, &enOptions, &Domainip)
-	//hackertarget.Hackertarget(doamin, &enOptions, &Domainip)
-	//leakix.Leakix(doamin, &enOptions, &Domainip)
-	//netlas.Netlas(doamin, &enOptions, &Domainip)
-	//Quake.Quake(doamin, &enOptions, &Domainip)
-	//rapiddns.Rapiddns(doamin, &enOptions, &Domainip)
-	//certspotter.Certspotter(doamin, &enOptions, &Domainip)
-	//Domainip.IP = Utils.SetStr(Domainip.IP)
-	//Domainip.Domains = Utils.SetStr(Domainip.Domains)
+	doamin := "mmh.org.tw"
+	var wg sync.WaitGroup
+	wg.Add(26)
+	go func() {
+		alienvault.Alienvault(doamin, &enOptions, &Domainip)
+		wg.Done()
+	}()
+	go func() {
+		anubis.Anubis(doamin, &enOptions, &Domainip)
+		wg.Done()
+	}()
+	go func() {
+		binaryedge.Binaryedge(doamin, &enOptions, &Domainip)
+		wg.Done()
+	}()
+	go func() {
+		digitorus.Digitorus(doamin, &enOptions, &Domainip) //Digitorus  API 证书查询域名
+
+		wg.Done()
+	}()
+	go func() {
+		dnsdumpster.Dnsdumpster(doamin, &enOptions, &Domainip)
+
+		wg.Done()
+	}()
+	go func() {
+		dnsrepo.Dnsrepo(doamin, &enOptions, &Domainip)
+
+		wg.Done()
+	}()
+	go func() {
+		fullhunt.Fullhunt(doamin, &enOptions, &Domainip)
+		wg.Done()
+	}()
+	go func() {
+		//hunter.Hunter(doamin, &enOptions, &Domainip)
+
+		wg.Done()
+	}()
+	go func() {
+		bevigil.Bevigil(doamin, &enOptions, &Domainip)
+
+		wg.Done()
+	}()
+	go func() {
+		whoisxmlapi.Whoisxmlapi(doamin, &enOptions, &Domainip)
+		wg.Done()
+	}()
+	go func() {
+		waybackarchive.Waybackarchive(doamin, &enOptions, &Domainip)
+		wg.Done()
+	}()
+	go func() {
+		virustotal.Virustotal(doamin, &enOptions, &Domainip)
+		wg.Done()
+	}()
+	go func() {
+		sitedossier.Sitedossier(doamin, &enOptions, &Domainip)
+		wg.Done()
+	}()
+	go func() {
+		shodan.Shodan(doamin, &enOptions, &Domainip)
+		wg.Done()
+	}()
+	go func() {
+		Robtex.Robtex(doamin, &enOptions, &Domainip)
+		wg.Done()
+	}()
+	go func() {
+		ZoomEye.ZoomEye(doamin, &enOptions, &Domainip)
+		wg.Done()
+	}()
+	go func() {
+		//Censys.Censys(doamin, &enOptions, &Domainip)
+		wg.Done()
+	}()
+	go func() {
+		chaos.Chaos(doamin, &enOptions, &Domainip)
+		wg.Done()
+	}()
+	go func() {
+		commoncrawl.Commoncrawl(doamin, &enOptions, &Domainip)
+		wg.Done()
+	}()
+	go func() {
+		Crtsh.Crtsh(doamin, &enOptions, &Domainip)
+		wg.Done()
+	}()
+	go func() {
+		hackertarget.Hackertarget(doamin, &enOptions, &Domainip)
+		wg.Done()
+	}()
+	go func() {
+		leakix.Leakix(doamin, &enOptions, &Domainip)
+		wg.Done()
+	}()
+	go func() {
+		netlas.Netlas(doamin, &enOptions, &Domainip)
+		wg.Done()
+	}()
+	go func() {
+		Quake.Quake(doamin, &enOptions, &Domainip)
+		wg.Done()
+	}()
+	go func() {
+		rapiddns.Rapiddns(doamin, &enOptions, &Domainip)
+		wg.Done()
+	}()
+	go func() {
+		certspotter.Certspotter(doamin, &enOptions, &Domainip)
+		wg.Done()
+	}()
+	wg.Wait()
+
 	HttpZhiwen.Status(doamin, &enOptions, &Domainip) //这里的domain只起到比对
 	outputfile.OutPutExcelByMergeEnInfo(&enOptions)
 

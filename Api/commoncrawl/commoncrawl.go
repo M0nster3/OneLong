@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -76,7 +77,7 @@ func Commoncrawl(domain string, options *Utils.ENOptions, DomainsIP *outputfile.
 	for {
 		if resp.RawResponse == nil {
 			resp, _ = clientR.Send()
-			time.Sleep(2 * time.Second)
+			time.Sleep(1 * time.Second)
 		} else if resp.Body() != nil {
 			break
 		}
@@ -84,68 +85,61 @@ func Commoncrawl(domain string, options *Utils.ENOptions, DomainsIP *outputfile.
 	buff := gjson.Parse(string(resp.Body())).Array()
 	var result []string
 	addedURLs := make(map[string]bool)
-
+	var wg sync.WaitGroup
 	for _, item := range buff {
-		// 从当前条目获取域名
-		cdx := item.Get("cdx-api").String()
-		if strings.Contains(cdx, "2023") {
-			gologger.Infof("当前是commoncrawl 查询2023年 数据\n")
-		}
-		if strings.Contains(cdx, "2022") {
-			gologger.Infof("当前是commoncrawl 查询2022年 数据\n")
-		}
-		if strings.Contains(cdx, "2021") {
-			gologger.Infof("当前是commoncrawl 查询2021年 数据\n")
-		}
-		if strings.Contains(cdx, "2020") {
-			gologger.Infof("当前是commoncrawl 查询2020年 数据\n")
-		}
-
-		if strings.Contains(cdx, "2019") {
-			break
-		}
-		url := fmt.Sprintf("%s?url=*.%s", cdx, domain)
-		clientR.URL = url
-		var respa *resty.Response
-		time.Sleep(2 * time.Second)
-		respa, _ = clientR.Send()
-		if respa.StatusCode() == 503 {
-			continue
-		}
-
-		if respa.StatusCode() == 404 {
-			break
-		}
-		lines := strings.Split(string(respa.Body()), "\n")
-
-		// 遍历每一行
-		for _, line := range lines {
-			// 按空格分割键值对
-			parts := strings.SplitN(line, "{", 2)
-			if len(parts) != 2 {
-				continue // 如果不是键值对格式，跳过
+		wg.Add(1)
+		go func() {
+			// 从当前条目获取域名
+			cdx := item.Get("cdx-api").String()
+			url := fmt.Sprintf("%s?url=*.%s", cdx, domain)
+			clientR.URL = url
+			var respa *resty.Response
+			time.Sleep(1 * time.Second)
+			respa, _ = clientR.Send()
+			if respa.StatusCode() == 503 {
+				wg.Done()
+				return
 			}
-			parts[1] = "{" + parts[1]
-			urlstr := gjson.Get(parts[1], "url").String()
-			httpps := strings.ReplaceAll(urlstr, "https://", "")
-			httpp := strings.ReplaceAll(httpps, "http://", "")
-			hostname := `(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}`
-			// 编译正则表达式
-			re := regexp.MustCompile(hostname)
 
-			// 查找匹配的内容
-			matches := re.FindAllStringSubmatch(strings.TrimSpace(httpp), -1)
-			for _, bu := range matches {
-				if !addedURLs[bu[0]] {
-					// 如果不存在重复则将 URL 添加到 Infos["Urls"] 中，并在 map 中标记为已添加
-					result = append(result, bu[0])
-					addedURLs[bu[0]] = true
+			if respa.StatusCode() == 404 {
+				wg.Done()
+				return
+			}
+			lines := strings.Split(string(respa.Body()), "\n")
+
+			// 遍历每一行
+			for _, line := range lines {
+				// 按空格分割键值对
+				parts := strings.SplitN(line, "{", 2)
+				if len(parts) != 2 {
+					continue // 如果不是键值对格式，跳过
 				}
-				break
-			}
+				parts[1] = "{" + parts[1]
+				urlstr := gjson.Get(parts[1], "url").String()
+				httpps := strings.ReplaceAll(urlstr, "https://", "")
+				httpp := strings.ReplaceAll(httpps, "http://", "")
+				hostname := `(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}`
+				// 编译正则表达式
+				re := regexp.MustCompile(hostname)
 
-		}
+				// 查找匹配的内容
+				matches := re.FindAllStringSubmatch(strings.TrimSpace(httpp), -1)
+				for _, bu := range matches {
+					if !addedURLs[bu[0]] {
+						// 如果不存在重复则将 URL 添加到 Infos["Urls"] 中，并在 map 中标记为已添加
+						result = append(result, bu[0])
+						addedURLs[bu[0]] = true
+					}
+					break
+				}
+
+			}
+			wg.Done()
+
+		}()
+
 	}
+	wg.Wait()
 	passive_dns := "{\"passive_dns\":["
 	var add int
 	for add = 0; add < len(result); add++ {

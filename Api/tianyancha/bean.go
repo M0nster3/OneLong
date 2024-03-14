@@ -285,7 +285,7 @@ func GetReq(url string, data string, options *Utils.ENOptions) string {
 			UpCookie(string(resp.Body()), options)
 
 		}
-		time.Sleep(2 * time.Second)
+		time.Sleep(1 * time.Second)
 		return GetReq(url, data, options)
 	}
 	if resp.StatusCode() == 200 {

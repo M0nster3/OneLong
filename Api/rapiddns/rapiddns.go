@@ -66,7 +66,7 @@ func Rapiddns(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Dom
 	for {
 		if response.RawResponse == nil {
 			response, _ = clientR.Send()
-			time.Sleep(2 * time.Second)
+			time.Sleep(1 * time.Second)
 		} else if response.Body() != nil {
 			break
 		}

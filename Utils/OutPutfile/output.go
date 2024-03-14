@@ -23,7 +23,7 @@ type DomainsIP struct {
 	DomainA     []string
 	IP          []string
 	TitleBUff   []string
-	Hostnameip  []string
+	Size        []string
 	Status_code []string
 	Zhiwen      []string
 }

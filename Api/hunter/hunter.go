@@ -81,7 +81,7 @@ func Hunter(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 	for {
 		if resp.RawResponse == nil {
 			resp, _ = clientR.Send()
-			time.Sleep(2 * time.Second)
+			time.Sleep(1 * time.Second)
 		} else if resp.Body() != nil {
 			break
 		}

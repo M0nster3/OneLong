@@ -94,7 +94,7 @@ func httprequest(url1 []string, proxy string) (*resps, error) {
 		}
 	}
 	client := &http.Client{
-		Timeout:   10 * time.Second,
+		Timeout:   120 * time.Second,
 		Transport: transport,
 	}
 	req, err := http.NewRequest("GET", url1[0], nil)
