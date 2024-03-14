@@ -58,6 +58,7 @@ func Status(domaina string, options *Utils.ENOptions, DomainsIP *outputfile.Doma
 		}
 	}
 	wg.Wait()
+	DomainsIP.IPA = Utils.SetStr(DomainsIP.IPA)
 	DomainsIP.Domains = Utils.SetStr(DomainsIP.Domains)
 	gologger.Infof("检测域名存活\n")
 	client := resty.New()
@@ -71,17 +72,17 @@ func Status(domaina string, options *Utils.ENOptions, DomainsIP *outputfile.Doma
 
 	result := "["
 	var add int
-	if len(DomainsIP.DomainA) < len(DomainsIP.IP) {
+	if len(DomainsIP.DomainA) < len(DomainsIP.IPA) {
 		for add = 0; add < len(DomainsIP.DomainA); add++ {
-			result += "{\"hostname\"" + ":" + "\"" + DomainsIP.DomainA[add] + "\"" + "," + "\"address\"" + ":" + "\"" + DomainsIP.IP[add] + "\"" + "," + "\"Size\"" + ":" + "\"" + DomainsIP.Size[add] + "\"" + "," + "\"status_code\"" + ":" + "\"" + DomainsIP.Status_code[add] + "\"" + "," + "\"title\"" + ":" + "\"" + DomainsIP.TitleBUff[add] + "\"" + "," + "\"Zhiwen\"" + ":" + "\"" + DomainsIP.Zhiwen[add] + "\"" + "},"
+			result += "{\"hostname\"" + ":" + "\"" + DomainsIP.DomainA[add] + "\"" + "," + "\"address\"" + ":" + "\"" + DomainsIP.IPA[add] + "\"" + "," + "\"Size\"" + ":" + "\"" + DomainsIP.Size[add] + "\"" + "," + "\"status_code\"" + ":" + "\"" + DomainsIP.Status_code[add] + "\"" + "," + "\"title\"" + ":" + "\"" + DomainsIP.TitleBUff[add] + "\"" + "," + "\"Zhiwen\"" + ":" + "\"" + DomainsIP.Zhiwen[add] + "\"" + "},"
 		}
-		for ii := add; ii < len(DomainsIP.IP); ii++ {
-			result += "{\"address\"" + ":" + "\"" + DomainsIP.IP[ii] + "\"" + "},"
+		for ii := add; ii < len(DomainsIP.IPA); ii++ {
+			result += "{\"address\"" + ":" + "\"" + DomainsIP.IPA[ii] + "\"" + "},"
 		}
 
 	} else {
-		for add = 0; add < len(DomainsIP.IP); add++ {
-			result += "{\"hostname\"" + ":" + "\"" + DomainsIP.DomainA[add] + "\"" + "," + "\"address\"" + ":" + "\"" + DomainsIP.IP[add] + "\"" + "," + "\"Size\"" + ":" + "\"" + DomainsIP.Size[add] + "\"" + "," + "\"status_code\"" + ":" + "\"" + DomainsIP.Status_code[add] + "\"" + "," + "\"title\"" + ":" + "\"" + DomainsIP.TitleBUff[add] + "\"" + "," + "\"Zhiwen\"" + ":" + "\"" + DomainsIP.Zhiwen[add] + "\"" + "},"
+		for add = 0; add < len(DomainsIP.IPA); add++ {
+			result += "{\"hostname\"" + ":" + "\"" + DomainsIP.DomainA[add] + "\"" + "," + "\"address\"" + ":" + "\"" + DomainsIP.IPA[add] + "\"" + "," + "\"Size\"" + ":" + "\"" + DomainsIP.Size[add] + "\"" + "," + "\"status_code\"" + ":" + "\"" + DomainsIP.Status_code[add] + "\"" + "," + "\"title\"" + ":" + "\"" + DomainsIP.TitleBUff[add] + "\"" + "," + "\"Zhiwen\"" + ":" + "\"" + DomainsIP.Zhiwen[add] + "\"" + "},"
 
 		}
 		for ii := add; ii < len(DomainsIP.DomainA); ii++ {

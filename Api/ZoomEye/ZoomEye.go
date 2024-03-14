@@ -40,7 +40,8 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 		var ipStrs []string
 		for _, ip := range ips {
 			ipStrs = append(ipStrs, fmt.Sprintf("\"%s\"", ip.String()))
-			DomainsIP.Domains = append(DomainsIP.Domains, ip.String())
+			ipaaa := strings.Trim(ip.String(), `"`)
+			DomainsIP.IP = append(DomainsIP.IP, ipaaa)
 		}
 		// 将 IP 地址数组转换为一个字符串，以逗号分隔
 		ipStr := strings.Join(ipStrs, ",")

@@ -153,6 +153,6 @@ func Dnsrepo(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Doma
 	result = result + "]}"
 	res, ensOutMap := GetEnInfo(result, DomainsIP)
 
-	outputfile.MergeOutPut(res, ensOutMap, "Dnsdumpster Dns查询", options)
+	outputfile.MergeOutPut(res, ensOutMap, "Dnsrepo API 域名查询", options)
 	return "Success"
 }

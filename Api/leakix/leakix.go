@@ -87,7 +87,7 @@ func Leakix(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 		}
 	}
 	if strings.Contains(string(resp.Body()), "is currently undergoing applicative DDoS") {
-		gologger.Labelf("Leakix 威胁平台需要输入验证码\n")
+		gologger.Labelf("Leakix 威胁平台 https://leakix.net/ 需要输入验证码\n")
 		return ""
 	}
 	res, ensOutMap := GetEnInfo(string(resp.Body()), DomainsIP)

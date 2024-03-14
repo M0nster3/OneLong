@@ -87,12 +87,19 @@ func Waybackarchive(domain string, options *Utils.ENOptions, DomainsIP *outputfi
 	clientR := client.R()
 
 	clientR.URL = urls
-	resp, _ := clientR.Send()
-	for {
-		if resp.RawResponse == nil {
-			resp, _ = clientR.Send()
-			time.Sleep(1 * time.Second)
-		} else if resp.Body() != nil {
+	resp, err := clientR.Get(urls)
+	for attempt := 0; attempt < 4; attempt++ {
+		if attempt == 2 { // 在第三次尝试时切换到HTTPS
+			break
+		}
+		resp, err = client.R().Get(urls)
+		if err != nil || resp == nil || resp.RawResponse == nil {
+			time.Sleep(1 * time.Second) // 在重试前等待
+			continue
+		}
+		// 如果得到有效响应，处理响应
+		if resp.Body() != nil {
+			// 处理响应的逻辑
 			break
 		}
 	}

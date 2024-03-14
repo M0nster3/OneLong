@@ -127,6 +127,8 @@ func PostBuffer(domain string, options *Utils.ENOptions, token string, client *r
 	result = "{\"passive_dns\":["
 	for i := 0; i < len(Hostname) && i < len(Address); i++ {
 		result += "{\"address\"" + ":" + "\"" + Hostname[i] + "\"" + "," + "\"hostname\"" + ":" + "\"" + Address[i] + "\"" + "},"
+		Address[i] = strings.TrimRight(Address[i], ".")
+		DomainsIP.IP = append(DomainsIP.IP, Hostname[i])
 		DomainsIP.Domains = append(DomainsIP.Domains, Address[i])
 	}
 	result = result + "]}"

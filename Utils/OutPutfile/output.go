@@ -22,6 +22,7 @@ type DomainsIP struct {
 	Domains     []string
 	DomainA     []string
 	IP          []string
+	IPA         []string
 	TitleBUff   []string
 	Size        []string
 	Status_code []string

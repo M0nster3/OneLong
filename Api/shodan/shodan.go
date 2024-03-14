@@ -48,17 +48,21 @@ func GetEnInfo(response string, domain string, DomainsIP *outputfile.DomainsIP) 
 			continue
 		}
 		// 为了构建 JSON 字符串，我们先创建 IP 地址的字符串数组
-		var ipStrs []string
-
-		ipStrs = append(ipStrs, fmt.Sprintf("\"%s\"", ips))
+		var ipStrs string
 
 		// 将 IP 地址数组转换为一个字符串，以逗号分隔
-		ipStr := strings.Join(ipStrs, ",")
+		for _, bb := range matches {
+			ipStrs = ipStrs + bb[0] + " , "
+		}
 
 		// 构建包含 hostname 和所有 IP 地址的 JSON 字符串
-		responseJia := fmt.Sprintf("{\"hostname\": \"%s\", \"address\": [%s]}", responsdomain, ipStr)
+		responseJia := fmt.Sprintf("{\"hostname\": \"%s\", \"address\":\"%s\"}", responsdomain, ipStrs)
 		DomainsIP.Domains = append(DomainsIP.Domains, responsdomain)
-		DomainsIP.IP = append(DomainsIP.IP, ipStr)
+
+		for _, aa := range matches {
+			DomainsIP.IP = append(DomainsIP.IP, aa[0])
+		}
+
 		// 将构建的 JSON 字符串解析为 gjson.Result 并追加到 ensInfos.Infos["Urls"]
 		ensInfos.Infos["Urls"] = append(ensInfos.Infos["Urls"], gjson.Parse(responseJia))
 	}
