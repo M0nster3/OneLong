@@ -35,28 +35,37 @@ func IpWhois(domain string, ip string, options *Utils.ENOptions, DomainsIP *outp
 	clientR := client.R()
 
 	clientR.URL = urls
-	resp, _ := clientR.Send()
+	resp, _ := clientR.Get(urls)
 	for {
 		if resp.RawResponse == nil {
-			resp, _ = clientR.Send()
+			resp, _ = clientR.Get(urls)
 			time.Sleep(1 * time.Second)
 		} else if resp.Body() != nil {
 			break
 		}
 	}
 	Domains := gjson.Parse(string(resp.Body())).Array()
+	if len(Domains) == 0 {
+		return
+	}
 	var add int
+	var resdoaminc string
 	for _, appdomain := range Domains {
 		resdoamin := gjson.Get(appdomain.String(), "domain").String()
-		if strings.Contains(resdoamin, domain) {
+		resdoaminb := strings.Split(resdoamin, ".")
+		if len(resdoaminb) > 2 {
+			resdoaminc = resdoaminb[len(resdoaminb)-2] + "." + resdoaminb[len(resdoaminb)-1]
+		} else {
+			resdoaminc = resdoamin
+		}
+		if strings.Contains(domain, resdoaminc) {
 			DomainsIP.IPA = append(DomainsIP.IPA, ip)
 			DomainsIP.Domains = append(DomainsIP.Domains, resdoamin)
 
+		} else if add == 5 {
+			return
 		} else {
 			add += 1
-		}
-		if add == 5 {
-			return
 		}
 
 	}

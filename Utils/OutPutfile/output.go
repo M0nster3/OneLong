@@ -20,9 +20,9 @@ type ENSMap struct {
 }
 type DomainsIP struct {
 	Domains     []string
-	DomainA     []string
+	DomainA     []string //DomainA 指纹识别里面需要的
 	IP          []string
-	IPA         []string
+	IPA         []string //ipa 指纹识别里面需要的
 	TitleBUff   []string
 	Size        []string
 	Status_code []string
@@ -109,6 +109,12 @@ func MergeOutPut(ensInfos *Utils.EnInfos, ensMap map[string]*ENSMap, info string
 		for k, s := range ensInfos.Infos {
 			ENSMapList[k] = ensMap[k]
 			var data [][]interface{}
+			if k == "icp" {
+				for _, aa := range s {
+					domain := gjson.Get(aa.String(), "domain").String()
+					options.ICP = append(options.ICP, domain)
+				}
+			}
 			for _, y := range s {
 				results := gjson.GetMany(y.Raw, ensMap[k].Field...)
 				var str []interface{}

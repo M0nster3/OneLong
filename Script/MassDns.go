@@ -31,10 +31,10 @@ func checkWildcardDNS(domain string) bool {
 
 func Massdns(domain string, ENOptions *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
 	if checkWildcardDNS(domain) {
-		gologger.Infof("[存在泛解析不进行爆破]\n")
+		gologger.Infof("[%s存在泛解析不进行爆破]\n", domain)
 		return
 	} else {
-		gologger.Infof("[不是泛解析將爆破域名]\n")
+		gologger.Infof("[%s不是泛解析將爆破域名]\n", domain)
 	}
 	tempOutputFile := Utils.GetTempPathFileName()
 	defer os.Remove(tempOutputFile)

@@ -6,7 +6,6 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
-	"strings"
 )
 
 func ConfigParse(options *ENOptions) {
@@ -47,20 +46,23 @@ func ConfigParse(options *ENOptions) {
 	options.IsShow = false
 	options.IsMergeOut = true
 	options.Deep = 1
-	if options.KeyWord == "" {
-		options.ScanType = "aqc"
-	}
-	//数据源判断 默认为爱企查
-	if options.ScanType == "" && len(options.GetType) == 0 {
-		options.ScanType = "aqc"
-	}
-	//如果是指定全部数据
-	if options.ScanType == "all" {
-		options.GetType = []string{"aqc", "tyc"}
-		options.IsMergeOut = true
-	} else if options.ScanType != "" {
-		options.GetType = strings.Split(options.ScanType, ",")
-	}
+	//if options.KeyWord == "" {
+	//	options.ScanType = "aqc"
+	//}
+	////数据源判断 默认为爱企查
+	//if options.ScanType == "" && len(options.GetType) == 0 {
+	//	options.ScanType = "aqc"
+	//}
+	////如果是指定全部数据
+	//if options.ScanType == "all" {
+	//	options.GetType = []string{"aqc", "tyc"}
+	//	options.IsMergeOut = true
+	//} else if options.ScanType != "" {
+	options.GetType = []string{"aqc", "tyc", "aldzs", "qimai"}
+	//options.GetType = []string{"aqc"}
+	//options.ScanType = "aqc,tyc,aldzs,qimai"
+	//options.GetType = strings.Split(options.ScanType, ",")
+	//}
 	options.GetType = SetStr(options.GetType)
 	var tmp []string
 	for _, v := range options.GetType {

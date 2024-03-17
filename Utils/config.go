@@ -12,9 +12,8 @@ type ENOptions struct {
 	GroupID   string // Company ID
 	InputFile string // Scan Input File
 	Output    string
-	//CookieInfo     string
-	ScanType string
-	Proxy    string
+	ScanType  string
+	Proxy     string
 	//ISKeyPid       bool
 	IsGroup        bool
 	IsGetBranch    bool
@@ -40,8 +39,8 @@ type ENOptions struct {
 	//IsApiMode      bool
 	IsMergeOut bool //合并导出
 	IsMerge    bool //聚合
-	//ClientMode     string //客户端模式
-	ENConfig *ENConfig
+	ICP        []string
+	ENConfig   *ENConfig
 }
 
 func (h *ENOptions) GetDelayRTime() int64 {
@@ -58,8 +57,7 @@ func (h *ENOptions) GetDelayRTime() int64 {
 type ENConfig struct {
 	//Version float64 `yaml:"version"`
 	Utils struct {
-		Output string   `yaml:"output"`
-		Field  []string `yaml:"field"`
+		Output string `yaml:"output"`
 	}
 	Biu struct {
 		Api      string   `yaml:"api"`
@@ -74,29 +72,34 @@ type ENConfig struct {
 	//	Redis   string `yaml:"redis"`
 	//}
 	Cookies struct {
-		Aldzs        string `yaml:"aldzs"`
-		Xlb          string `yaml:"xlb"`
-		Aiqicha      string `yaml:"aiqicha"`
-		Binaryedge   string `yaml:"binaryedge"`
-		Tianyancha   string `yaml:"tianyancha"`
-		Tycid        string `yaml:"tycid"`
-		Qcc          string `yaml:"qcc"`
-		QiMai        string `yaml:"qimai"`
-		ChinaZ       string `yaml:"chinaz"`
-		Veryvp       string `yaml:"veryvp"`
-		Fullhunt     string `yaml:"fullhunt"`
-		Hunter       string `yaml:"hunter"`
-		Bevigil      string `yaml:"bevigil"`
-		CensysToken  string `yaml:"CensysToken"`
-		CensysSecret string `yaml:"CensysSecret"`
-		Zoomeye      string `yaml:"zoomeye"`
-		Whoisxmlapi  string `yaml:"whoisxmlapi"`
-		Virustotal   string `yaml:"virustotal"`
-		Shodan       string `yaml:"shodan"`
-		Chaos        string `yaml:"chaos"`
-		Leakix       string `yaml:"leakix"`
-		Netlas       string `yaml:"netlas"`
-		Quake        string `yaml:"quake"`
+		Aldzs          string `yaml:"aldzs"`
+		Xlb            string `yaml:"xlb"`
+		Aiqicha        string `yaml:"aiqicha"`
+		Binaryedge     string `yaml:"binaryedge"`
+		Tianyancha     string `yaml:"tianyancha"`
+		Tycid          string `yaml:"tycid"`
+		Qcc            string `yaml:"qcc"`
+		QiMai          string `yaml:"qimai"`
+		Fullhunt       string `yaml:"fullhunt"`
+		Hunter         string `yaml:"hunter"`
+		Bevigil        string `yaml:"bevigil"`
+		CensysToken    string `yaml:"CensysToken"`
+		CensysSecret   string `yaml:"CensysSecret"`
+		Zoomeye        string `yaml:"zoomeye"`
+		Whoisxmlapi    string `yaml:"whoisxmlapi"`
+		Virustotal     string `yaml:"virustotal"`
+		Shodan         string `yaml:"shodan"`
+		Chaos          string `yaml:"chaos"`
+		Leakix         string `yaml:"leakix"`
+		Netlas         string `yaml:"netlas"`
+		Quake          string `yaml:"quake"`
+		Securitytrails string `yaml:"securitytrails"`
+		GoogleID       string `yaml:"googleid"`
+		GoogleApi      string `yaml:"googleapi"`
+		FofaKey        string `yaml:"fofaKey"`
+		FofaEmail      string `yaml:"fofaEmail"`
+		Github         string `yaml:"githubtoken"`
+		Racent         string `yaml:"racent"`
 	}
 	Massdns struct {
 		Resolvers   string `yaml:"resolvers"`
@@ -186,21 +189,18 @@ var cfgYName = GetPathDir() + "/config.yaml"
 var configYaml = `
 Utils:
   output: ""            # 导出文件位置
-  field: [ ]			# 查询字段 如["website"]
 cookies:
   aiqicha: ''           # 爱企查   Cookie
   tianyancha: ''        # 天眼查   Cookie
   tycid: ''        		# 天眼查   CApi ID(capi.tianyancha.com)
   aldzs: ''             # 阿拉丁   TOKEN(see README)
   qimai: ''             # 七麦数据  Cookie
-  chinaz: ''			# 站长之家  Cookie
-  veryvp: '' 			# veryvp  Cookie
   binaryedge: ''		# binaryedge  Cookie 免费查询250次
   fullhunt: ''			# Fullhunt Cookie 威胁平台 每月免费100次
   hunter: ''			# Hunter Cookie 威胁平台 每日免费500个数据
   bevigil: ''           # Bevigil Cookie 威胁平台 每月免费50次
-  CensysToken: ''        # Censys Token 威胁平台 每月免费250次
-  CensysSecret: ''        # Censys Secret 威胁平台 每月免费250次
+  CensysToken: ''       # Censys Token 威胁平台 每月免费250次
+  CensysSecret: ''      # Censys Secret 威胁平台 每月免费250次
   zoomeye: ''			# ZooEye Cookie 每月1000条
   whoisxmlapi: ''		# whoisxmlapi Cookie 免费500次
   virustotal: ''        # virustotal Cookie 每分钟4次 每天500次
@@ -209,6 +209,13 @@ cookies:
   leakix: ''			# leakix Key
   netlas: ''			# Netlas key
   quake: ''				# Quake key
+  securitytrails: ''	# securitytrails 需要企业邮箱，每个月50次
+  googleid: ''			# google id 免费的API只能查询前100条结果,每天免费提供 100 次搜索查询
+  googleapi: ''			# google Api 免费的API只能查询前100条结果,每天免费提供 100 次搜索查询
+  fofaKey: ''			# Fofa key
+  fofaEmail: ''			# Fofa Email
+  githubtoken: ''		# Github Token 
+  racent: ''			# racent Token
 massdns:
   resolvers: ''			# resolvers 文件名称
   wordlist: ''			# 子域名爆破文件名称

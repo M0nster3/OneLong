@@ -48,19 +48,19 @@ func Status(domaina string, options *Utils.ENOptions, DomainsIP *outputfile.Doma
 
 	gologger.Infof("IP反差域名 \n")
 	for _, ip := range DomainsIP.IP {
-		if !CDN.CheckIP(ip) {
-			wg.Add(1)
-			go func() {
+		wg.Add(1)
+		ip := ip
+		go func() {
+			if !CDN.CheckIP(ip) {
 				IP.IpWhois(domaina, ip, options, DomainsIP)
-				wg.Done()
-			}()
-
-		}
+			}
+			wg.Done()
+		}()
 	}
 	wg.Wait()
 	DomainsIP.IPA = Utils.SetStr(DomainsIP.IPA)
 	DomainsIP.Domains = Utils.SetStr(DomainsIP.Domains)
-	gologger.Infof("检测域名存活\n")
+	gologger.Infof("检测指纹以及域名存活\n")
 	client := resty.New()
 	client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
 	client.SetTimeout(time.Duration(options.TimeOut) * time.Minute)

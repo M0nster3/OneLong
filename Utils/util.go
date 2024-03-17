@@ -66,6 +66,7 @@ func SetStr(target []string) []string {
 	setMap := make(map[string]int)
 	var result []string
 	for _, v := range target {
+		v = strings.Trim(v, ".")
 		if v != "" {
 			if _, ok := setMap[v]; !ok {
 				setMap[v] = 0

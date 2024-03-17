@@ -1,16 +1,23 @@
 package Gogogo
 
 import (
-	"OneLong/Api/Aiqicha"
-	"OneLong/Api/tianyancha"
+	"OneLong/Api/App/aldzs"
+	"OneLong/Api/App/qimai"
+	"OneLong/Api/Company/Aiqicha"
+	"OneLong/Api/Company/tianyancha"
+	"OneLong/Api/Domains"
 	"OneLong/Utils"
 	outputfile "OneLong/Utils/OutPutfile"
 	"OneLong/Utils/gologger"
+	"OneLong/Web/HttpZhiwen"
+	"fmt"
+	"strings"
 	"sync"
 )
 
 // RunJob 运行项目 添加新参数记得去Config添加
 func RunJob(options *Utils.ENOptions) {
+	var Domainip outputfile.DomainsIP
 	if options.Proxy != "" {
 		gologger.Infof("代理地址: %s\n", options.Proxy)
 	}
@@ -22,12 +29,6 @@ func RunJob(options *Utils.ENOptions) {
 		if options.CompanyID == "" || (options.CompanyID != "" && Utils.CheckPid(options.CompanyID) == "aqc") {
 			wg.Add(1)
 			go func() {
-				//defer func() {
-				//	if x := recover(); x != nil {
-				//		gologger.Errorf("[QCC] ERROR: %v", x)
-				//		wg.Done()
-				//	}
-				//}()
 				//查询企业信息
 				res, ensOutMap := Aiqicha.GetEnInfoByPid(options)
 				if options.IsMergeOut {
@@ -53,7 +54,7 @@ func RunJob(options *Utils.ENOptions) {
 			go func() {
 				defer func() {
 					if x := recover(); x != nil {
-						gologger.Errorf("[TYC] ERROR: %v", x)
+						gologger.Errorf("[TYC] ERROR: %v\n", x)
 						wg.Done()
 					}
 				}()
@@ -69,27 +70,42 @@ func RunJob(options *Utils.ENOptions) {
 		}
 	}
 
+	// 微信小程序查询
+	if Utils.IsInList("aldzs", options.GetType) {
+		wg.Add(1)
+		res, ensOutMap := aldzs.GetInfoByKeyword(options)
+		if options.IsMergeOut {
+			outputfile.MergeOutPut(res, ensOutMap, "阿拉丁指数", options)
+		} else {
+			outputfile.OutPutExcelByEnInfo(res, ensOutMap, options)
+		}
+		wg.Done()
+	}
+	// 七麦数据
+	if Utils.IsInList("qimai", options.GetType) {
+		wg.Add(1)
+		go func() {
+			res, ensOutMap := qimai.GetInfoByKeyword(options)
+			outputfile.MergeOutPut(res, ensOutMap, "七麦数据", options)
+			//outputfile.OutPutExcelByEnInfo(res, ensOutMap, options)
+			wg.Done()
+		}()
+	}
 	wg.Wait()
-	//gologger.Infof("alienvault %s 域名，Address查询\n", options.KeyWord)
-	//var OtherApiUrl []string
-	//for k, s := range outputfile.EnsInfosList {
-	//	if k == "icp" {
-	//		for _, url := range s {
-	//			OtherApiUrl = append(OtherApiUrl, url[2].(string))
-	//		}
-	//	} else {
-	//		continue
-	//	}
-	//}
-	//OtherApiUrl = Utils.SetStr(OtherApiUrl)
-	//for _, url := range OtherApiUrl {
-	//	res := alienvault.Alienvault(url, options)
-	//	if res != "" {
-	//		fmt.Printf(alienvault.AlienvaultResult[0][0] + "\n")
-	//		fmt.Printf(alienvault.AlienvaultResult[1][0] + "\n")
-	//	}
-	//}
 
+	options.ICP = Utils.SetStr(options.ICP)
+	for add, domain := range options.ICP {
+		Domains.Domains(domain, options, &Domainip)
+		fmt.Print(add)
+	}
+
+	var domain string
+	for aa, _ := range options.ICP {
+		sp := strings.Split(options.ICP[aa], ".")
+		domain = domain + sp[len(sp)-2] + "." + sp[len(sp)-1] + " "
+	}
+
+	HttpZhiwen.Status(domain, options, &Domainip)
 	// 如果不是API模式，而且不是批量文件形式查询 不是API 就合并导出到表格里面
 	if options.IsMergeOut && options.InputFile == "" {
 		outputfile.OutPutExcelByMergeEnInfo(options)

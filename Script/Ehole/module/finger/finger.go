@@ -64,12 +64,12 @@ func (s *FinScan) StartScan(DomainsIP *outputfile.DomainsIP) {
 		}()
 	}
 	s.Wg.Wait()
-	color.RGBStyleFromString("244,211,49").Println("\n重点资产：")
-	for _, aas := range s.FocusResult {
-		fmt.Printf(fmt.Sprintf("[ %s | ", aas.Url))
-		color.RGBStyleFromString("237,64,35").Printf(fmt.Sprintf("%s", aas.Cms))
-		fmt.Printf(fmt.Sprintf(" | %s | %d | %d | %s ]\n", aas.Server, aas.Statuscode, aas.Length, aas.Title))
-	}
+	//color.RGBStyleFromString("244,211,49").Println("\n重点资产：")
+	//for _, aas := range s.FocusResult {
+	//	fmt.Printf(fmt.Sprintf("[ %s | ", aas.Url))
+	//	color.RGBStyleFromString("237,64,35").Printf(fmt.Sprintf("%s", aas.Cms))
+	//	fmt.Printf(fmt.Sprintf(" | %s | %d | %d | %s ]\n", aas.Server, aas.Statuscode, aas.Length, aas.Title))
+	//}
 
 }
 
