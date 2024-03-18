@@ -3,6 +3,7 @@ package Google
 import (
 	"OneLong/Utils"
 	outputfile "OneLong/Utils/OutPutfile"
+	"OneLong/Utils/gologger"
 	"crypto/tls"
 	"github.com/go-resty/resty/v2"
 	"github.com/tidwall/gjson"
@@ -36,7 +37,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 	//you := strings.ReplaceAll(zuo, "]", "")
 
 	//ensInfos.Infos["hostname"] = append(ensInfos.Infos["hostname"], gjson.Parse(Result[1].String()))
-	//getCompanyInfoById(pid, 1, true, "", options.GetField, ensInfos, options)
+	//getCompanyInfoById(pid, 1, true, "", options.Getfield, ensInfos, options)
 	return ensInfos, ensOutMap
 
 }
@@ -70,11 +71,9 @@ func Google(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 
 	//加入随机延迟
 	time.Sleep(time.Duration(options.GetDelayRTime()) * time.Second)
-	start := 1
-	startB := 1
-	var response *resty.Response
+
 	var buff []string
-	for {
+	for start := 1; start < 120; start += 10 {
 		queryParams := map[string]string{
 			"key":    options.ENConfig.Cookies.GoogleApi,
 			"cx":     options.ENConfig.Cookies.GoogleID,
@@ -87,9 +86,20 @@ func Google(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 		for key, value := range queryParams {
 			clientR = clientR.SetQueryParam(key, value)
 		}
-		response, _ = clientR.Get(urls)
+		response, err := clientR.Get(urls)
+		for attempt := 0; attempt < 4; attempt++ {
+			if response.RawResponse == nil {
+				response, _ = clientR.Get(urls)
+				time.Sleep(1 * time.Second)
+			} else if response.Body() != nil {
+				break
+			}
+		}
+		if err != nil {
+			gologger.Errorf("Github 链接无法访问尝试切换代理 \n")
+			return ""
+		}
 		time.Sleep(1 * time.Second)
-		start += 10
 		llink := gjson.Get(string(response.Body()), "items.#.link").Array()
 		hostname := `(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}`
 		// 编译正则表达式
@@ -111,7 +121,7 @@ func Google(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 					statement = statement + "-site:" + char + " "
 				}
 			}
-			for {
+			for startB := 1; startB < 120; startB += 10 {
 				queryParams := map[string]string{
 					"key":    options.ENConfig.Cookies.GoogleApi,
 					"cx":     options.ENConfig.Cookies.GoogleID,

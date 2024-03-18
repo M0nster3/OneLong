@@ -10,6 +10,7 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/tidwall/gjson"
 	"net/http"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -49,7 +50,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 	//you := strings.ReplaceAll(zuo, "]", "")
 
 	//ensInfos.Infos["hostname"] = append(ensInfos.Infos["hostname"], gjson.Parse(Result[1].String()))
-	//getCompanyInfoById(pid, 1, true, "", options.GetField, ensInfos, options)
+	//getCompanyInfoById(pid, 1, true, "", options.Getfield, ensInfos, options)
 	return ensInfos, ensOutMap
 
 }
@@ -75,25 +76,44 @@ func Sitedossier(domain string, options *Utils.ENOptions, DomainsIP *outputfile.
 	//加入随机延迟
 	time.Sleep(time.Duration(options.GetDelayRTime()) * time.Second)
 	clientR := client.R()
-	add := 0
 	result := "["
-	for {
-		clientR.URL = urls
-		//强制延时1s
-		time.Sleep(3 * time.Second)
-		resp, _ := clientR.Get(urls)
-		for {
-			if resp.RawResponse == nil {
-				resp, _ = clientR.Get(urls)
-				time.Sleep(1 * time.Second)
-			} else if resp.Body() != nil {
-				break
-			}
+	clientR.URL = urls
+	//强制延时1s
+	time.Sleep(1 * time.Second)
+	resp, err := clientR.Get(urls)
+	for adda := 1; adda < 4; adda += 1 {
+		if resp.RawResponse == nil {
+			resp, _ = clientR.Get(urls)
+			time.Sleep(1 * time.Second)
+		} else if resp.Body() != nil {
+			break
 		}
-		if strings.Contains(string(resp.Body()), "No data currently available") {
-			gologger.Labelf("Sitedossier Api 未发现域名 %s\n", domain)
-			return ""
-		}
+	}
+	if err != nil {
+		gologger.Errorf("Sitedossier API 链接访问失败尝试切换代理\n")
+		return ""
+	}
+	if strings.Contains(string(resp.Body()), "No data currently available") {
+		gologger.Labelf("Sitedossier Api 未发现域名 %s\n", domain)
+		return ""
+	} else if strings.Contains(string(resp.Body()), "only; case does not matter") {
+		gologger.Labelf("如果想查询更多域名进入 www.sitedossier.com 输入验证码\n")
+		return ""
+	}
+	// 定义匹配数字的正则表达式
+	re := regexp.MustCompile(`out of a total of (\d{1,3}(,\d{3})*(\.\d+)?)`)
+
+	// 使用正则表达式查找匹配的内容
+	matches := re.FindStringSubmatch(string(resp.Body()))
+
+	// 如果找到了匹配项
+	// 提取匹配到的数字，并去除逗号
+	totalItemsStr := strings.ReplaceAll(matches[1], ",", "")
+	// 将字符串转换为整数
+	totalItems, _ := strconv.Atoi(totalItemsStr)
+
+	for add := 0; add < totalItems; add += 100 {
+
 		if strings.Contains(string(resp.Body()), "Show next") || strings.Contains(string(resp.Body()), "Show remaining") {
 			doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(resp.Body())))
 			if err != nil {
@@ -112,7 +132,6 @@ func Sitedossier(domain string, options *Utils.ENOptions, DomainsIP *outputfile.
 			})
 
 			urls = UrlsB + "/" + strconv.Itoa(add)
-			add = add + 100
 
 		} else if strings.Contains(string(resp.Body()), "No data currently available.") {
 			return ""

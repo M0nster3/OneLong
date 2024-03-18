@@ -16,7 +16,7 @@ func getENMap() map[string]*EnsGo {
 		},
 	}
 	for k, _ := range ensInfoMap {
-		ensInfoMap[k].keyWord = append(ensInfoMap[k].keyWord, "数据关联  ")
+		ensInfoMap[k].keyWord = append(ensInfoMap[k].keyWord, "数据关联")
 		ensInfoMap[k].field = append(ensInfoMap[k].field, "inFrom")
 	}
 	return ensInfoMap

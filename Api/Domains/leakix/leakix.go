@@ -48,7 +48,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 	//you := strings.ReplaceAll(zuo, "]", "")
 
 	//ensInfos.Infos["hostname"] = append(ensInfos.Infos["hostname"], gjson.Parse(Result[1].String()))
-	//getCompanyInfoById(pid, 1, true, "", options.GetField, ensInfos, options)
+	//getCompanyInfoById(pid, 1, true, "", options.Getfield, ensInfos, options)
 	return ensInfos, ensOutMap
 
 }
@@ -71,20 +71,24 @@ func Leakix(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 	client.Header.Del("Cookie")
 
 	//强制延时1s
-	time.Sleep(3 * time.Second)
+	time.Sleep(1 * time.Second)
 	//加入随机延迟
 	time.Sleep(time.Duration(options.GetDelayRTime()) * time.Second)
 	clientR := client.R()
 
 	clientR.URL = urls
-	resp, _ := clientR.Get(urls)
-	for {
+	resp, err := clientR.Get(urls)
+	for add := 1; add < 4; add += 1 {
 		if resp.RawResponse == nil {
-			resp, _ = clientR.Send()
+			resp, _ = clientR.Get(urls)
 			time.Sleep(1 * time.Second)
 		} else if resp.Body() != nil {
 			break
 		}
+	}
+	if err != nil {
+		gologger.Errorf("Leakix 威胁平台链接访问失败尝试切换代理\n")
+		return ""
 	}
 	if strings.Contains(string(resp.Body()), "is currently undergoing applicative DDoS") {
 		gologger.Labelf("Leakix 威胁平台 https://leakix.net/ 需要输入验证码\n")

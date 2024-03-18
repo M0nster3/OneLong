@@ -12,6 +12,40 @@ import (
 	"strings"
 )
 
+var UserAgents = []string{
+	"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+	"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ",
+	"(KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36",
+	"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 ",
+	"(KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36",
+	"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 ",
+	"(KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36",
+	"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:54.0) Gecko/20100101 Firefox/68.0",
+	"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:61.0) ",
+	"Gecko/20100101 Firefox/68.0",
+	"Mozilla/5.0 (X11; Linux i586; rv:31.0) Gecko/20100101 Firefox/68.0",
+	"Mozilla/5.0 (Macintosh) AppleWebKit/Linux x86_64 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36",
+	"Mozilla/5.0 (Android) AppleWebKit/Android (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+	"Mozilla/5.0 (Linux) AppleWebKit/Win64; x64 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36",
+	"Mozilla/5.0 (Macintosh) AppleWebKit/Macintosh Intel Mac OS X 10_15_7 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+	"Mozilla/5.0 (Android) AppleWebKit/iPad (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+	"Mozilla/5.0 (iPhone) AppleWebKit/iPhone (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36",
+	"Mozilla/5.0 (iPad) AppleWebKit/iPhone (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36",
+	"Mozilla/5.0 (iPhone) AppleWebKit/Android (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+	"Mozilla/5.0 (iPhone) AppleWebKit/Win64; x64 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36",
+	"Mozilla/5.0 (Windows NT 10.0) AppleWebKit/Android (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36",
+	"Mozilla/5.0 (Windows NT 10.0) AppleWebKit/iPhone (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36",
+	"Mozilla/5.0 (Windows NT 10.0) AppleWebKit/Linux x86_64 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36",
+	"Mozilla/5.0 (iPhone) AppleWebKit/iPhone (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36",
+	"Mozilla/5.0 (iPad) AppleWebKit/Macintosh Intel Mac OS X 10_15_7 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36",
+	"Mozilla/5.0 (iPad) AppleWebKit/Android (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36",
+	"Mozilla/5.0 (Linux) AppleWebKit/Win64; x64 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+	"Mozilla/5.0 (Linux) AppleWebKit/iPhone (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36",
+	"Mozilla/5.0 (Windows NT 10.0) AppleWebKit/Linux x86_64 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36",
+	"Mozilla/5.0 (Android) AppleWebKit/Macintosh Intel Mac OS X 10_15_7 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36",
+	"Mozilla/5.0 (Macintosh) AppleWebKit/iPhone (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36",
+}
+
 // RangeRand 生成区间[-m, n]的安全随机数
 func RangeRand(min, max int64) int64 {
 	if min > max {
@@ -28,6 +62,16 @@ func RangeRand(min, max int64) int64 {
 		result, _ := rand.Int(rand.Reader, big.NewInt(max-min+1))
 		return min + result.Int64()
 	}
+}
+
+func RandUA() string {
+	// 生成一个随机数作为索引
+	randomIndex, err := rand.Int(rand.Reader, big.NewInt(int64(len(UserAgents))))
+	if err != nil {
+		panic(err)
+	}
+	randomUserAgent := UserAgents[randomIndex.Int64()]
+	return randomUserAgent
 }
 
 // GetRandomString2 生成指定长度的随机字符串

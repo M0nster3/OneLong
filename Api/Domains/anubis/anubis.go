@@ -46,7 +46,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 	//you := strings.ReplaceAll(zuo, "]", "")
 
 	//ensInfos.Infos["hostname"] = append(ensInfos.Infos["hostname"], gjson.Parse(Result[1].String()))
-	//getCompanyInfoById(pid, 1, true, "", options.GetField, ensInfos, options)
+	//getCompanyInfoById(pid, 1, true, "", options.Getfield, ensInfos, options)
 	return ensInfos, ensOutMap
 
 }
@@ -74,7 +74,21 @@ func Anubis(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 	clientR := client.R()
 
 	clientR.URL = urls
-	resp, _ := clientR.Get(urls)
+	resp, err := clientR.Get(urls)
+
+	for add := 1; add < 4; add += 1 {
+		if resp.RawResponse == nil {
+			resp, _ = clientR.Get(urls)
+			time.Sleep(1 * time.Second)
+		} else if resp.Body() != nil {
+			break
+		}
+	}
+
+	if err != nil {
+		gologger.Errorf("Anubis API 链接访问失败尝试切换代理\n")
+		return ""
+	}
 	if resp.Size() == 2 {
 		gologger.Labelf("Anubis Api 未发现域名 %s\n", domain)
 		return ""

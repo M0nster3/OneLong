@@ -4,6 +4,7 @@ package commoncrawl
 import (
 	"OneLong/Utils"
 	outputfile "OneLong/Utils/OutPutfile"
+	"OneLong/Utils/gologger"
 	"crypto/tls"
 	"fmt"
 	"github.com/go-resty/resty/v2"
@@ -11,7 +12,6 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
-	"sync"
 	"time"
 )
 
@@ -40,7 +40,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 	//you := strings.ReplaceAll(zuo, "]", "")
 
 	//ensInfos.Infos["hostname"] = append(ensInfos.Infos["hostname"], gjson.Parse(Result[1].String()))
-	//getCompanyInfoById(pid, 1, true, "", options.GetField, ensInfos, options)
+	//getCompanyInfoById(pid, 1, true, "", options.Getfield, ensInfos, options)
 	return ensInfos, ensOutMap
 
 }
@@ -57,7 +57,7 @@ func Commoncrawl(domain string, options *Utils.ENOptions, DomainsIP *outputfile.
 		//client.SetProxy("192.168.203.111:1111")
 	}
 	client.Header = http.Header{
-		"User-Agent": {"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"},
+		"User-Agent": {Utils.RandUA()},
 		"Accept":     {"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"},
 		//"X-Key":      {options.ENConfig.Cookies.Binaryedge},
 	}
@@ -72,73 +72,84 @@ func Commoncrawl(domain string, options *Utils.ENOptions, DomainsIP *outputfile.
 	clientR := client.R()
 
 	clientR.URL = urls
-	resp, _ := clientR.Get(urls)
-	for {
+	resp, err := clientR.Get(urls)
+	for add := 1; add < 4; add += 1 {
 		if resp.RawResponse == nil {
-			resp, _ = clientR.Send()
+			resp, _ = clientR.Get(urls)
 			time.Sleep(1 * time.Second)
 		} else if resp.Body() != nil {
 			break
 		}
 	}
+	if err != nil {
+		gologger.Errorf("Commoncrawl API 链接访问失败尝试切换代理\n")
+		return ""
+	}
 	buff := gjson.Parse(string(resp.Body())).Array()
 	var result []string
 	addedURLs := make(map[string]bool)
-	var wg sync.WaitGroup
-	for _, item := range buff {
-		wg.Add(1)
-		go func() {
-			// 从当前条目获取域名
-			cdx := item.Get("cdx-api").String()
-			url := fmt.Sprintf("%s?url=*.%s", cdx, domain)
-			clientR.URL = url
-			var respa *resty.Response
-			time.Sleep(1 * time.Second)
-			respa, _ = clientR.Send()
-			if respa.StatusCode() == 503 {
-				wg.Done()
-				return
-			}
 
-			if respa.StatusCode() == 404 {
-				wg.Done()
-				return
-			}
-			lines := strings.Split(string(respa.Body()), "\n")
+	for aa, item := range buff {
+		if aa == 10 {
+			break
+		}
+		// 从当前条目获取域名
+		cdx := item.Get("cdx-api").String()
+		url := fmt.Sprintf("%s?url=*.%s", cdx, domain)
+		clientss := resty.New()
+		clienta := clientss.R()
+		clienta.Header = http.Header{
+			"User-Agent": {Utils.RandUA()},
+			"Accept":     {"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"},
+			//"X-Key":      {options.ENConfig.Cookies.Binaryedge},
+		}
 
-			// 遍历每一行
-			for _, line := range lines {
-				// 按空格分割键值对
-				parts := strings.SplitN(line, "{", 2)
-				if len(parts) != 2 {
-					continue // 如果不是键值对格式，跳过
-				}
-				parts[1] = "{" + parts[1]
-				urlstr := gjson.Get(parts[1], "url").String()
-				httpps := strings.ReplaceAll(urlstr, "https://", "")
-				httpp := strings.ReplaceAll(httpps, "http://", "")
-				hostname := `(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}`
-				// 编译正则表达式
-				re := regexp.MustCompile(hostname)
-
-				// 查找匹配的内容
-				matches := re.FindAllStringSubmatch(strings.TrimSpace(httpp), -1)
-				for _, bu := range matches {
-					if !addedURLs[bu[0]] {
-						// 如果不存在重复则将 URL 添加到 Infos["Urls"] 中，并在 map 中标记为已添加
-						result = append(result, bu[0])
-						addedURLs[bu[0]] = true
-					}
-					break
+		clienta.Header.Set("Content-Type", "application/json")
+		clienta.Header.Del("Cookie")
+		clienta.URL = url
+		time.Sleep(1 * time.Second)
+		respa, err := clienta.Get(url)
+		for add := 1; add < 20; add += 1 {
+			if err != nil || respa.StatusCode() == 503 {
+				clients := resty.New()
+				clientaa := clients.R()
+				clientaa.Header = http.Header{
+					"User-Agent": {Utils.RandUA()},
+					"Accept":     {"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"},
+					//"X-Key":      {options.ENConfig.Cookies.Binaryedge},
 				}
 
+				clientaa.Header.Set("Content-Type", "application/json")
+				respa, _ = clientaa.Get(url)
+				time.Sleep(3 * time.Second)
+			} else if resp.Body() != nil {
+				break
 			}
-			wg.Done()
+		}
+		if respa.StatusCode() == 503 {
+			fmt.Printf("503")
+			return ""
+		}
+		if respa.StatusCode() == 404 {
+			return ""
+		}
 
-		}()
+		hostname := `(?:[a-z0-9](?:[a-z0-9\-]{0,61}[a-z0-9])?\.)+` + regexp.QuoteMeta(domain)
+		// 编译正则表达式
+		re := regexp.MustCompile(hostname)
+
+		// 查找匹配的内容
+		matches := re.FindAllStringSubmatch(strings.TrimSpace(string(respa.Body())), -1)
+		for _, bu := range matches {
+			if !addedURLs[bu[0]] {
+				// 如果不存在重复则将 URL 添加到 Infos["Urls"] 中，并在 map 中标记为已添加
+				result = append(result, bu[0])
+				addedURLs[bu[0]] = true
+			}
+		}
 
 	}
-	wg.Wait()
+
 	passive_dns := "{\"passive_dns\":["
 	var add int
 	for add = 0; add < len(result); add++ {
@@ -146,6 +157,11 @@ func Commoncrawl(domain string, options *Utils.ENOptions, DomainsIP *outputfile.
 		DomainsIP.Domains = append(DomainsIP.Domains, result[add])
 	}
 	passive_dns = passive_dns + "]}"
+	if len(DomainsIP.Domains) == 0 {
+
+		gologger.Labelf("Commoncrawl API 未查询到域名 %s\n", domain)
+		return ""
+	}
 	res, ensOutMap := GetEnInfo(passive_dns, DomainsIP)
 
 	outputfile.MergeOutPut(res, ensOutMap, "Commoncrawl Api", options)

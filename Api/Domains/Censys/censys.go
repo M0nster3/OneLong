@@ -48,7 +48,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 	//you := strings.ReplaceAll(zuo, "]", "")
 
 	//ensInfos.Infos["hostname"] = append(ensInfos.Infos["hostname"], gjson.Parse(Result[1].String()))
-	//getCompanyInfoById(pid, 1, true, "", options.GetField, ensInfos, options)
+	//getCompanyInfoById(pid, 1, true, "", options.Getfield, ensInfos, options)
 	return ensInfos, ensOutMap
 
 }
@@ -68,8 +68,8 @@ func Censys(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 	}
 	var cursor string
 	result := "["
-	add := 0
-	for {
+
+	for add := 1; add < 10; add += 1 {
 		requestBody := map[string]interface{}{
 			"q":        domain,
 			"per_page": 100,
@@ -86,10 +86,10 @@ func Censys(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 		clientR := client.R()
 
 		clientR.URL = urls
-		resp, _ := clientR.
+		resp, err := clientR.
 			SetBody(requestBody).
 			Post(urls)
-		for {
+		for aa := 1; aa < 4; aa += 1 {
 			if resp.RawResponse == nil {
 				resp, _ = clientR.
 					SetBody(requestBody).
@@ -99,6 +99,11 @@ func Censys(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 				break
 			}
 		}
+
+		if err != nil {
+			gologger.Errorf("Censys 空间探测访问失败尝试切换代理\n")
+			return ""
+		}
 		if resp.StatusCode() == 401 {
 			gologger.Labelf("Censys 空间探测 Token 错误\n")
 			return ""
@@ -107,6 +112,9 @@ func Censys(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 			return ""
 		} else if gjson.Get(string(resp.Body()), "result.total").Int() == 0 {
 			gologger.Labelf("Censys 空间探测未发现域名 %s\n", domain)
+			return ""
+		} else if resp.StatusCode() == 403 {
+			gologger.Labelf("Censys 空间探测Cookie失效\n")
 			return ""
 		}
 		hostname := gjson.Get(string(resp.Body()), "result.hits.#.names").Array()
@@ -125,7 +133,7 @@ func Censys(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 
 		}
 		next := gjson.Get(string(resp.Body()), "result.links.next").String()
-		if next == "" || add > 10 {
+		if next == "" {
 			break
 		}
 		add += 1

@@ -4,8 +4,6 @@ import (
 	"OneLong/Utils"
 	outputfile "OneLong/Utils/OutPutfile"
 	"OneLong/Utils/gologger"
-	"encoding/base64"
-	"fmt"
 
 	"crypto/tls"
 	"github.com/go-resty/resty/v2"
@@ -54,9 +52,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 
 func Fullhunt(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
 	//gologger.Infof("Fullhunt 威胁平台查询\n")
-	qbase64 := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("domain=\"%s\"", domain)))
-	urls := fmt.Sprintf("https://fofa.info/api/v1/search/all?full=true&fields=host&page=1&size=10000&email=%s&key=%s&qbase64=%s", options.ENConfig.Cookies.FofaEmail, options.ENConfig.Cookies.FofaKey, qbase64)
-
+	urls := "https://fullhunt.io/api/v1/domain/" + domain + "/subdomains"
 	client := resty.New()
 	client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
 	client.SetTimeout(time.Duration(options.TimeOut) * time.Minute)
@@ -78,17 +74,24 @@ func Fullhunt(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Dom
 	clientR := client.R()
 
 	clientR.URL = urls
-	resp, _ := clientR.Get(urls)
-	for {
+	resp, err := clientR.Get(urls)
+	for add := 1; add < 4; add += 1 {
 		if resp.RawResponse == nil {
-			resp, _ = clientR.Send()
+			resp, _ = clientR.Get(urls)
 			time.Sleep(1 * time.Second)
 		} else if resp.Body() != nil {
 			break
 		}
 	}
+	if err != nil {
+		gologger.Errorf("Fullhunt 威胁平台链接访问失败尝试切换代理\n")
+		return ""
+	}
 	if gjson.Get(string(resp.Body()), "status").Int() == 404 {
-		gologger.Labelf("Fullhunt 威胁平台未发现域名 %s\n", domain)
+		gologger.Labelf("Fullhunt 威胁平台未发现域名\n")
+		return ""
+	} else if gjson.Get(string(resp.Body()), "status").Int() == 400 {
+		gologger.Errorf("Fullhunt 威胁平台次数用完\n")
 		return ""
 	}
 	res, ensOutMap := GetEnInfo(string(resp.Body()), DomainsIP)

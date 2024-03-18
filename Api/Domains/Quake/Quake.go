@@ -34,7 +34,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 	//you := strings.ReplaceAll(zuo, "]", "")
 
 	//ensInfos.Infos["hostname"] = append(ensInfos.Infos["hostname"], gjson.Parse(Result[1].String()))
-	//getCompanyInfoById(pid, 1, true, "", options.GetField, ensInfos, options)
+	//getCompanyInfoById(pid, 1, true, "", options.Getfield, ensInfos, options)
 	return ensInfos, ensOutMap
 
 }
@@ -62,8 +62,19 @@ func Quake(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domain
 	time.Sleep(time.Duration(options.GetDelayRTime()) * time.Second)
 	clientR := client.R()
 	requestBody := fmt.Sprintf(`{"query":"domain: %s", "include":["service.http.host"], "latest": true, "start":0, "size":500}`, domain)
-	response, _ := clientR.SetBody(requestBody).Post(urls)
-
+	response, err := clientR.SetBody(requestBody).Post(urls)
+	for add := 1; add < 4; add += 1 {
+		if response.RawResponse == nil {
+			response, err = clientR.SetBody(requestBody).Post(urls)
+			time.Sleep(1 * time.Second)
+		} else if response.Body() != nil {
+			break
+		}
+	}
+	if err != nil {
+		gologger.Errorf("Quake 空间探测访问失败尝试切换代理\n")
+		return ""
+	}
 	if len(gjson.Get(string(response.Body()), "data").Array()) == 0 {
 		gologger.Labelf("Quake 空间探测未发现域名 %s\n", domain)
 		return ""

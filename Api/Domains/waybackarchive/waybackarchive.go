@@ -58,7 +58,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 	//you := strings.ReplaceAll(zuo, "]", "")
 
 	//ensInfos.Infos["hostname"] = append(ensInfos.Infos["hostname"], gjson.Parse(Result[1].String()))
-	//getCompanyInfoById(pid, 1, true, "", options.GetField, ensInfos, options)
+	//getCompanyInfoById(pid, 1, true, "", options.Getfield, ensInfos, options)
 	return ensInfos, ensOutMap
 
 }
@@ -102,6 +102,10 @@ func Waybackarchive(domain string, options *Utils.ENOptions, DomainsIP *outputfi
 			// 处理响应的逻辑
 			break
 		}
+	}
+	if err != nil {
+		gologger.Errorf("waybackarchive 历史快照链接访问失败尝试切换代理\n")
+		return ""
 	}
 	if resp.Body() == nil {
 		gologger.Labelf("waybackarchive 历史快照未发现域名 %s\n", domain)

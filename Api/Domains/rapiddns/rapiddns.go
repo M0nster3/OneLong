@@ -36,7 +36,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 	//you := strings.ReplaceAll(zuo, "]", "")
 
 	//ensInfos.Infos["hostname"] = append(ensInfos.Infos["hostname"], gjson.Parse(Result[1].String()))
-	//getCompanyInfoById(pid, 1, true, "", options.GetField, ensInfos, options)
+	//getCompanyInfoById(pid, 1, true, "", options.Getfield, ensInfos, options)
 	return ensInfos, ensOutMap
 
 }
@@ -62,14 +62,19 @@ func Rapiddns(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Dom
 	time.Sleep(time.Duration(options.GetDelayRTime()) * time.Second)
 	clientR := client.R()
 	clientR.URL = urls
-	response, _ := clientR.Send()
-	for {
+	response, err := clientR.Get(urls)
+
+	for add := 1; add < 4; add += 1 {
 		if response.RawResponse == nil {
-			response, _ = clientR.Send()
+			response, _ = clientR.Get(urls)
 			time.Sleep(1 * time.Second)
 		} else if response.Body() != nil {
 			break
 		}
+	}
+	if err != nil {
+		gologger.Errorf("Rapiddns API 链接访问失败尝试切换代理\n")
+		return ""
 	}
 	//Total: <span style="color: #39cfca; ">0
 	if strings.Contains(string(response.Body()), "Total: <span style=\"color: #39cfca; \">0") {

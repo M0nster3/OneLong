@@ -48,7 +48,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 	//you := strings.ReplaceAll(zuo, "]", "")
 
 	//ensInfos.Infos["hostname"] = append(ensInfos.Infos["hostname"], gjson.Parse(Result[1].String()))
-	//getCompanyInfoById(pid, 1, true, "", options.GetField, ensInfos, options)
+	//getCompanyInfoById(pid, 1, true, "", options.Getfield, ensInfos, options)
 	return ensInfos, ensOutMap
 
 }
@@ -85,14 +85,14 @@ func Github(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 
 		for attempt := 0; attempt < 4; attempt++ {
 			if resp.RawResponse == nil {
-				resp, _ = clientR.Send()
+				resp, _ = clientR.Get(urls)
 				time.Sleep(1 * time.Second)
 			} else if resp.Body() != nil {
 				break
 			}
 		}
 		if resp.RawResponse != nil || err != nil {
-			gologger.Errorf("Github 无法访问尝试切换代理 \n")
+			gologger.Errorf("Github 链接无法访问尝试切换代理 \n")
 			return ""
 		}
 		if gjson.Get(string(resp.Body()), "total_count").Int() == 0 {
