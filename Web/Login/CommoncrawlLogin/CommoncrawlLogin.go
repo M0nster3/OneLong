@@ -1,5 +1,5 @@
 // Package commoncrawl logic
-package commoncrawl
+package CommoncrawlLogin
 
 import (
 	"OneLong/Utils"
@@ -12,15 +12,14 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
+	"sync"
 	"time"
 )
 
+var wg sync.WaitGroup
+
 func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
 
-	//respons := gjson.Get(response, "events").Array()
-	//zuo := strings.ReplaceAll(response, "[", "")
-	//you := strings.ReplaceAll(zuo, "[", "")
-	//respons := gjson.Parse(response).Array()
 	respons := gjson.Get(response, "passive_dns").Array()
 	ensInfos := &Utils.EnInfos{}
 	ensInfos.Infos = make(map[string][]gjson.Result)
@@ -29,23 +28,16 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 	for k, v := range getENMap() {
 		ensOutMap[k] = &outputfile.ENSMap{Name: v.name, Field: v.field, KeyWord: v.keyWord}
 	}
-	//Result := gjson.GetMany(response, "passive_dns.#.address", "passive_dns.#.hostname")
-	//ensInfos.Infoss = make(map[string][]map[string]string)
-	//获取公司信息
-	//ensInfos.Infos["passive_dns"] = append(ensInfos.Infos["passive_dns"], gjson.Parse(Result[0].String()))
+
 	for aa, _ := range respons {
 		ensInfos.Infos["Urls"] = append(ensInfos.Infos["Urls"], gjson.Parse(respons[aa].String()))
 	}
-	//zuo := strings.ReplaceAll(response, "[", "")
-	//you := strings.ReplaceAll(zuo, "]", "")
 
-	//ensInfos.Infos["hostname"] = append(ensInfos.Infos["hostname"], gjson.Parse(Result[1].String()))
-	//getCompanyInfoById(pid, 1, true, "", options.Getfield, ensInfos, options)
 	return ensInfos, ensOutMap
 
 }
 
-func Commoncrawl(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
+func CommoncrawlLogin(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
 	//gologger.Infof("Commoncrawl  API 查询 \n")
 	//gologger.Labelf("只实现普通Api 如果是企业修改Api接口 免费的每月250次\n")
 	urls := "https://index.commoncrawl.org/collinfo.json"
@@ -95,7 +87,7 @@ func Commoncrawl(domain string, options *Utils.ENOptions, DomainsIP *outputfile.
 		}
 		// 从当前条目获取域名
 		cdx := item.Get("cdx-api").String()
-		url := fmt.Sprintf("%s?url=*.%s", cdx, domain)
+		url := fmt.Sprintf("%s?url=*.%s/*&output=json&fl=url&page=0", cdx, domain)
 		clientss := resty.New()
 		clienta := clientss.R()
 		clienta.Header = http.Header{
@@ -138,6 +130,23 @@ func Commoncrawl(domain string, options *Utils.ENOptions, DomainsIP *outputfile.
 		// 编译正则表达式
 		re := regexp.MustCompile(hostname)
 
+		loginurls := strings.Split(string(respa.Body()), "\n")
+		keywords := []string{"admin", "login", "system", "upload"}
+		for _, loginurl := range loginurls {
+			wg.Add(1)
+			loginurl := loginurl
+			go func() {
+				addurl := gjson.Get(loginurl, "url").String()
+				for _, keyword := range keywords {
+					if strings.Contains(addurl, keyword) {
+						fmt.Printf("'%s' is present in the string.\n", keyword)
+					}
+				}
+				wg.Done()
+			}()
+
+		}
+
 		// 查找匹配的内容
 		matches := re.FindAllStringSubmatch(strings.TrimSpace(string(respa.Body())), -1)
 		for _, bu := range matches {
@@ -145,6 +154,7 @@ func Commoncrawl(domain string, options *Utils.ENOptions, DomainsIP *outputfile.
 				// 如果不存在重复则将 URL 添加到 Infos["Urls"] 中，并在 map 中标记为已添加
 				result = append(result, bu[0])
 				addedURLs[bu[0]] = true
+
 			}
 		}
 

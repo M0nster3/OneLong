@@ -17,6 +17,7 @@ import (
 	"OneLong/Api/Domains/binaryedge"
 	"OneLong/Api/Domains/certspotter"
 	"OneLong/Api/Domains/chaos"
+	"OneLong/Api/Domains/commoncrawl"
 	"OneLong/Api/Domains/digitorus"
 	"OneLong/Api/Domains/dnsdumpster"
 	"OneLong/Api/Domains/dnsrepo"
@@ -34,6 +35,7 @@ import (
 	"OneLong/Api/Domains/whoisxmlapi"
 	"OneLong/Utils"
 	outputfile "OneLong/Utils/OutPutfile"
+	"OneLong/Web/HttpZhiwen"
 	"sync"
 )
 
@@ -313,11 +315,12 @@ func Domains(domain string, enOptions *Utils.ENOptions, Domainip *outputfile.Dom
 			wg.Done()
 		}()
 	}
-	//commoncrawl.Commoncrawl(domain, enOptions, Domainip)
+	commoncrawl.Commoncrawl(domain, enOptions, Domainip)
 	sitedossier.Sitedossier(domain, enOptions, Domainip)
 	leakix.Leakix(domain, enOptions, Domainip)
 	Robtex.Robtex(domain, enOptions, Domainip)
 	wg.Wait()
-	//HttpZhiwen.Status(domain, enOptions, Domainip) //这里的domain只起到比对
 	//Script.Massdns(domain, enOptions, Domainip)
+	HttpZhiwen.Status(domain, enOptions, Domainip) //这里的domain只起到比对
+
 }
