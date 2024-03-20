@@ -3,7 +3,7 @@ package main
 import (
 	"OneLong/Utils"
 	outputfile "OneLong/Utils/OutPutfile"
-	"OneLong/Web/Login/CommoncrawlLogin"
+	"OneLong/Web/Login/alienvaultLogin"
 )
 
 func main() {
@@ -13,8 +13,9 @@ func main() {
 	var Domainip outputfile.DomainsIP
 	//Gogogo.RunJob(&enOptions)
 	//Domains.Domains("cjcu.edu.tw", &enOptions, &Domainip)
-	CommoncrawlLogin.CommoncrawlLogin("cjcu.edu.tw", &enOptions, &Domainip)
-	CommoncrawlLogin.ParseLoginurl(&enOptions, &Domainip)
+	//CommoncrawlLogin.CommoncrawlLogin("cjcu.edu.tw", &enOptions, &Domainip)
+	alienvaultLogin.AlienvaultLogin("cjcu.edu.tw", &enOptions, &Domainip)
+	//CommoncrawlLogin.ParseLoginurl(&enOptions, &Domainip)
 	//IP138.IP138("qianxin.com", &enOptions, &Domainip)
 	//NetCraft.NetCraft("qianxin.com", &enOptions, &Domainip)
 	//DomainsResult.DomainsResult(domain, &enOptions)

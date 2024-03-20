@@ -43,7 +43,7 @@ func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) 
 	}
 
 	for aa, _ := range respons {
-		ensInfos.Infos["Urls"] = append(ensInfos.Infos["Urls"], gjson.Parse(respons[aa].String()))
+		ensInfos.Infos["Login"] = append(ensInfos.Infos["Login"], gjson.Parse(respons[aa].String()))
 	}
 
 	return ensInfos, ensOutMap
@@ -184,26 +184,9 @@ func CommoncrawlLogin(domain string, options *Utils.ENOptions, DomainsIP *output
 
 		}
 		wg.Wait()
-		//查找匹配的内容
-		//matches := re.FindAllStringSubmatch(strings.TrimSpace(string(respa.Body())), -1)
-		//for _, bu := range matches {
-		//	if !addedURLs[bu[0]] {
-		//		// 如果不存在重复则将 URL 添加到 Infos["Urls"] 中，并在 map 中标记为已添加
-		//		result = append(result, bu[0])
-		//		addedURLs[bu[0]] = true
-		//
-		//	}
-		//}
 
 	}
 
-	//outputfile.OutPutExcelByMergeEnInfo(options)
-	//
-	//Result := gjson.GetMany(string(resp.Body()), "passive_dns.#.address", "passive_dns.#.hostname")
-	//AlienvaultResult[0] = append(AlienvaultResult[0], Result[0].String())
-	//AlienvaultResult[1] = append(AlienvaultResult[1], Result[1].String())
-	//
-	//fmt.Printf(Result[0].String())
 	return "Success"
 }
 
@@ -243,12 +226,12 @@ func ParseLoginurl(options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
 	passive_dns := "{\"passive_dns\":["
 	var add int
 	for add = 0; add < len(DomainsIP.LoginUrlA); add++ {
-		passive_dns += "{\"hostname\"" + ":" + "\"" + DomainsIP.LoginUrlA[add] + "\"" + "\"title\"" + ":" + "\"" + DomainsIP.LoginTitle[add] + "\"" + "},"
+		passive_dns += "{\"hostname\"" + ":" + "\"" + DomainsIP.LoginUrlA[add] + "\"" + "," + "\"title\"" + ":" + "\"" + DomainsIP.LoginTitle[add] + "\"" + "},"
 
 	}
 	passive_dns = passive_dns + "]}"
 
 	res, ensOutMap := GetEnInfo(passive_dns)
 
-	outputfile.MergeOutPut(res, ensOutMap, "Commoncrawl 获取域名", options)
+	outputfile.MergeOutPut(res, ensOutMap, "Commoncrawl", options)
 }

@@ -1,4 +1,4 @@
-package CommoncrawlLogin
+package alienvaultLogin
 
 type EnsGo struct {
 	name    string
