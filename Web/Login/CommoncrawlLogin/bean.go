@@ -9,10 +9,10 @@ type EnsGo struct {
 func getENMap() map[string]*EnsGo {
 	ensInfoMap := make(map[string]*EnsGo)
 	ensInfoMap = map[string]*EnsGo{
-		"Urls": {
-			name:    "备案查询子域",
-			field:   []string{"address", "hostname"},
-			keyWord: []string{"IP", "域名"},
+		"Login": {
+			name:    "后台地址",
+			field:   []string{"hostname", "title"},
+			keyWord: []string{"域名", "title"},
 		},
 	}
 	for k, _ := range ensInfoMap {

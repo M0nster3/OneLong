@@ -220,6 +220,5 @@ massdns:
   resolvers: ''			# resolvers 文件名称
   wordlist: ''			# 子域名爆破文件名称
   massdnsPath: ''		# Massdns工具名称
-
   
 `

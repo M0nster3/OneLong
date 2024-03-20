@@ -12,7 +12,9 @@ func main() {
 	Utils.ConfigParse(&enOptions)
 	var Domainip outputfile.DomainsIP
 	//Gogogo.RunJob(&enOptions)
-	//Domains.Domains("baidu.com", &enOptions, &Domainip)
+	//Domains.Domains("cjcu.edu.tw", &enOptions, &Domainip)
+	CommoncrawlLogin.CommoncrawlLogin("cjcu.edu.tw", &enOptions, &Domainip)
+	CommoncrawlLogin.ParseLoginurl(&enOptions, &Domainip)
 	//IP138.IP138("qianxin.com", &enOptions, &Domainip)
 	//NetCraft.NetCraft("qianxin.com", &enOptions, &Domainip)
 	//DomainsResult.DomainsResult(domain, &enOptions)
@@ -22,7 +24,7 @@ func main() {
 	//Fofa.Fofa("baidu.com", &enOptions, &Domainip)
 	//Github.Github("freebuf.com", &enOptions, &Domainip)
 	//Gogogo.RunJob(&enOptions)
-	CommoncrawlLogin.CommoncrawlLogin("freebuf.com", &enOptions, &Domainip)
+	//CommoncrawlLogin.CommoncrawlLogin("freebuf.com", &enOptions, &Domainip)
 	outputfile.OutPutExcelByMergeEnInfo(&enOptions)
 
 	//Ehole.Ehole("http://i.3311csci.com", &enOptions, &Domainip)

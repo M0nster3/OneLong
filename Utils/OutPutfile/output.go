@@ -27,6 +27,9 @@ type DomainsIP struct {
 	Size        []string
 	Status_code []string
 	Zhiwen      []string
+	LoginUrl    []string
+	LoginUrlA   []string
+	LoginTitle  []string
 }
 
 var EnsInfosList = make(map[string][][]interface{})
