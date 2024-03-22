@@ -1,9 +1,11 @@
 package main
 
 import (
+	"OneLong/Api/Domains"
 	"OneLong/Utils"
 	outputfile "OneLong/Utils/OutPutfile"
-	"OneLong/Web/Login/UrlScan"
+	"OneLong/Web/HttpZhiwen"
+	"OneLong/Web/Login"
 )
 
 func main() {
@@ -12,8 +14,11 @@ func main() {
 	Utils.ConfigParse(&enOptions)
 	var Domainip outputfile.DomainsIP
 	//Gogogo.RunJob(&enOptions)
+	Domains.Domains("cch.org.tw", &enOptions, &Domainip)
+	HttpZhiwen.Status("cch.org.tw", &enOptions, &Domainip)
+	Login.Login(Domainip.LoginUrlA, &enOptions, &Domainip)
 	//Domains.Domains("au.edu.tw", &enOptions, &Domainip)
-	UrlScan.Urlscan("freebuf.com", &enOptions, &Domainip)
+	//UrlScan.Urlscan("freebuf.com", &enOptions, &Domainip)
 	//CommoncrawlLogin.CommoncrawlLogin("cjcu.edu.tw", &enOptions, &Domainip)
 	//alienvaultLogin.AlienvaultLogin("cjcu.edu.tw", &enOptions, &Domainip)
 	//CommoncrawlLogin.ParseLoginurl(&enOptions, &Domainip)

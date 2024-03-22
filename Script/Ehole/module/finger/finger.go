@@ -4,10 +4,13 @@ import (
 	"OneLong/Script/Ehole/module/queue"
 	"OneLong/Utils"
 	outputfile "OneLong/Utils/OutPutfile"
+	"OneLong/Web/CDN"
 	"encoding/json"
 	"fmt"
 	"github.com/gookit/color"
+	"net"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -159,14 +162,38 @@ func (s *FinScan) fingerScan(DomainsIP *outputfile.DomainsIP) {
 			cmss := strings.Join(cms, ",")
 			out := Outrestul{data.url, cmss, data.server, data.statuscode, data.length, data.title}
 			s.AllResult = append(s.AllResult, out)
+			var ip string
 			if len(out.Cms) != 0 {
 				outstr := fmt.Sprintf("[ %s | %s | %s | %d | %d | %s ]", out.Url, out.Cms, out.Server, out.Statuscode, out.Length, out.Title)
 				color.RGBStyleFromString("237,64,35").Println(outstr)
 				s.FocusResult = append(s.FocusResult, out)
 				zhiwen := out.Cms + " , " + out.Server + "[可能存在漏洞]"
+				reurl := strings.ReplaceAll(out.Url, "https://", "")
+				reurl1 := strings.ReplaceAll(reurl, "http://", "")
+				// 编译正则表达式
+				hostname := `(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}`
+				re := regexp.MustCompile(hostname)
 
+				matches := re.FindAllStringSubmatch(strings.TrimSpace(reurl1), -1)
+				ips, _ := net.LookupIP(matches[0][0])
+
+				for _, aa := range ips {
+					boolcdn, _, _ := CDN.CheckCName(aa.String())
+					if boolcdn {
+						ip = "CDN"
+						break
+					}
+
+					if len(ips) == 1 {
+						ip = aa.String()
+					} else {
+						ip = ip + aa.String() + " , "
+					}
+
+				}
 				if out.Statuscode != 502 {
 					DomainsIP.Zhiwen = append(DomainsIP.Zhiwen, zhiwen)
+					DomainsIP.A = append(DomainsIP.A, ip)
 					DomainsIP.DomainA = append(DomainsIP.DomainA, out.Url)
 					DomainsIP.Status_code = append(DomainsIP.Status_code, strconv.Itoa(out.Statuscode))
 					DomainsIP.TitleBUff = append(DomainsIP.TitleBUff, out.Title)
@@ -182,8 +209,32 @@ func (s *FinScan) fingerScan(DomainsIP *outputfile.DomainsIP) {
 				} else {
 					zhiwen = out.Server
 				}
+				reurl := strings.ReplaceAll(out.Url, "https://", "")
+				reurl1 := strings.ReplaceAll(reurl, "http://", "")
+				hostname := `(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}`
+				// 编译正则表达式
+				re := regexp.MustCompile(hostname)
+
+				matches := re.FindAllStringSubmatch(strings.TrimSpace(reurl1), -1)
+				ips, _ := net.LookupIP(matches[0][0])
+
+				for _, aa := range ips {
+					boolcdn, _, _ := CDN.CheckCName(aa.String())
+					if boolcdn {
+						ip = "CDN"
+						break
+					}
+
+					if len(ips) == 1 {
+						ip = aa.String()
+					} else {
+						ip = ip + aa.String() + " , "
+					}
+
+				}
 
 				if out.Statuscode != 502 {
+					DomainsIP.A = append(DomainsIP.A, ip)
 					DomainsIP.Zhiwen = append(DomainsIP.Zhiwen, zhiwen)
 					DomainsIP.DomainA = append(DomainsIP.DomainA, out.Url)
 					DomainsIP.Status_code = append(DomainsIP.Status_code, strconv.Itoa(out.Statuscode))

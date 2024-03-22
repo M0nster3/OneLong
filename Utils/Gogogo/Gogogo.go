@@ -10,6 +10,7 @@ import (
 	outputfile "OneLong/Utils/OutPutfile"
 	"OneLong/Utils/gologger"
 	"OneLong/Web/HttpZhiwen"
+	"OneLong/Web/Login"
 	"fmt"
 	"strings"
 	"sync"
@@ -94,6 +95,7 @@ func RunJob(options *Utils.ENOptions) {
 	wg.Wait()
 
 	options.ICP = Utils.SetStr(options.ICP)
+	gologger.Infof("整合域名IP\n")
 	for add, domain := range options.ICP {
 		Domains.Domains(domain, options, &Domainip)
 		fmt.Print(add)
@@ -104,8 +106,11 @@ func RunJob(options *Utils.ENOptions) {
 		sp := strings.Split(options.ICP[aa], ".")
 		domain = domain + sp[len(sp)-2] + "." + sp[len(sp)-1] + " "
 	}
+	//Domains.Domains(domain, options, &Domainip)
 
 	HttpZhiwen.Status(domain, options, &Domainip)
+	gologger.Infof("探测网站后台\n")
+	Login.Login(Domainip.LoginUrlA, options, &Domainip)
 	// 如果不是API模式，而且不是批量文件形式查询 不是API 就合并导出到表格里面
 	if options.IsMergeOut && options.InputFile == "" {
 		outputfile.OutPutExcelByMergeEnInfo(options)

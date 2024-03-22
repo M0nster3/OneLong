@@ -1,4 +1,4 @@
-package alienvaultLogin
+package Login
 
 type EnsGo struct {
 	name    string

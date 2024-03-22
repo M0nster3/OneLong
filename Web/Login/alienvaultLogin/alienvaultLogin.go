@@ -12,7 +12,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 	"sync"
 
@@ -22,56 +21,6 @@ import (
 )
 
 var wg sync.WaitGroup
-
-func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
-	respons := gjson.Get(response, "passive_dns").Array()
-	ensInfos := &Utils.EnInfos{}
-	ensInfos.Infos = make(map[string][]gjson.Result)
-	ensInfos.SType = "alienvault"
-	ensOutMap := make(map[string]*outputfile.ENSMap)
-	for k, v := range getENMap() {
-		ensOutMap[k] = &outputfile.ENSMap{Name: v.name, Field: v.field, KeyWord: v.keyWord}
-	}
-	//Result := gjson.GetMany(response, "passive_dns.#.address", "passive_dns.#.hostname")
-	//ensInfos.Infoss = make(map[string][]map[string]string)
-	//获取公司信息
-	//ensInfos.Infos["passive_dns"] = append(ensInfos.Infos["passive_dns"], gjson.Parse(Result[0].String()))
-	addedURLs := make(map[string]bool)
-	for aa, _ := range respons {
-		if strings.Contains(respons[aa].String(), "address") {
-			re := regexp.MustCompile(`(?:\d{1,3}\.){3}\d{1,3}`)
-			ip := gjson.Get(respons[aa].String(), "address").String()
-			matches := re.FindAllStringSubmatch(strings.TrimSpace(ip), -1)
-			for _, bu := range matches {
-				if !addedURLs[bu[0]] {
-					// 如果不存在重复则将 URL 添加到 Infos["Urls"] 中，并在 map 中标记为已添加
-					DomainsIP.IP = append(DomainsIP.IP, bu[0])
-					addedURLs[bu[0]] = true
-				}
-				break
-			}
-
-		}
-		if strings.Contains(respons[aa].String(), "hostname") {
-			hostname := gjson.Get(respons[aa].String(), "hostname").String()
-			if !addedURLs[hostname] {
-				// 如果不存在重复则将 URL 添加到 Infos["Urls"] 中，并在 map 中标记为已添加
-				DomainsIP.Domains = append(DomainsIP.Domains, hostname)
-				addedURLs[hostname] = true
-			}
-
-		}
-		ensInfos.Infos["Urls"] = append(ensInfos.Infos["Urls"], gjson.Parse(respons[aa].String()))
-	}
-
-	//zuo := strings.ReplaceAll(response, "[", "")
-	//you := strings.ReplaceAll(zuo, "]", "")
-
-	//ensInfos.Infos["hostname"] = append(ensInfos.Infos["hostname"], gjson.Parse(Result[1].String()))
-	//getCompanyInfoById(pid, 1, true, "", options.Getfield, ensInfos, options)
-	return ensInfos, ensOutMap
-
-}
 
 func AlienvaultLogin(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
 	//gologger.Infof("Alienvault\n")

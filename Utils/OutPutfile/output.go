@@ -30,6 +30,7 @@ type DomainsIP struct {
 	LoginUrl    []string
 	LoginUrlA   []string
 	LoginTitle  []string
+	A           []string
 }
 
 var EnsInfosList = make(map[string][][]interface{})
