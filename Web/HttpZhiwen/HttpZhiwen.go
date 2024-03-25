@@ -46,7 +46,7 @@ func Status(domaina string, options *Utils.ENOptions, DomainsIP *outputfile.Doma
 	DomainsIP.IP = Utils.SetStr(DomainsIP.IP)
 	//Ip反差域名
 
-	gologger.Infof("IP反差域名 \n")
+	//gologger.Infof("IP反差域名 \n")
 	for _, ip := range DomainsIP.IP {
 		wg.Add(1)
 		ip := ip
@@ -85,7 +85,8 @@ func Status(domaina string, options *Utils.ENOptions, DomainsIP *outputfile.Doma
 			result += "{\"hostname\"" + ":" + "\"" + DomainsIP.DomainA[add] + "\"" + "," + "\"address\"" + ":" + "\"" + DomainsIP.IPA[add] + "\"" + "," + "\"A\"" + ":" + "\"" + DomainsIP.A[add] + "\"" + "," + "\"Size\"" + ":" + "\"" + DomainsIP.Size[add] + "\"" + "," + "\"status_code\"" + ":" + "\"" + DomainsIP.Status_code[add] + "\"" + "," + "\"title\"" + ":" + "\"" + DomainsIP.TitleBUff[add] + "\"" + "," + "\"Zhiwen\"" + ":" + "\"" + DomainsIP.Zhiwen[add] + "\"" + "},"
 
 		}
-		for ii := add; ii < len(DomainsIP.DomainA); ii++ {
+
+		for ii := add; ii < len(DomainsIP.DomainA) && ii < len(DomainsIP.A) && ii < len(DomainsIP.Size) && ii < len(DomainsIP.Status_code) && ii < len(DomainsIP.TitleBUff) && ii < len(DomainsIP.Zhiwen); ii++ {
 			result += "{\"hostname\"" + ":" + "\"" + DomainsIP.DomainA[ii] + "\"" + "," + "\"A\"" + ":" + "\"" + DomainsIP.A[add] + "\"" + "," + "\"Size\"" + ":" + "\"" + DomainsIP.Size[ii] + "\"" + "," + "\"status_code\"" + ":" + "\"" + DomainsIP.Status_code[ii] + "\"" + "," + "\"title\"" + ":" + "\"" + DomainsIP.TitleBUff[ii] + "\"" + "," + "\"Zhiwen\"" + ":" + "\"" + DomainsIP.Zhiwen[ii] + "\"" + "},"
 		}
 	}

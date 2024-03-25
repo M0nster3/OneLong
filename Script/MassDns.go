@@ -47,7 +47,7 @@ func Massdns(domain string, ENOptions *Utils.ENOptions, DomainsIP *outputfile.Do
 		Domain:             domain,
 		SubdomainsList:     "",
 		ResolversFile:      filepath.Join(Utils.GetPathDir(), "Script/MsassDns/", ENOptions.ENConfig.Massdns.Resolvers),
-		Wordlist:           filepath.Join(Utils.GetPathDir(), "Script/MsassDns/", ENOptions.ENConfig.Massdns.Wordlist),
+		Wordlist:           filepath.Join(Utils.GetPathDir(), "Script/Dict/", ENOptions.ENConfig.Massdns.Wordlist),
 		MassdnsPath:        filepath.Join(Utils.GetPathDir(), "Script/MsassDns/", ENOptions.ENConfig.Massdns.MassdnsPath),
 		Output:             tempOutputFile,
 		Json:               false,

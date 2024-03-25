@@ -4,7 +4,6 @@ import (
 	"OneLong/Script/Ehole/module/queue"
 	"OneLong/Utils"
 	outputfile "OneLong/Utils/OutPutfile"
-	"OneLong/Web/CDN"
 	"encoding/json"
 	"fmt"
 	"github.com/gookit/color"
@@ -162,7 +161,6 @@ func (s *FinScan) fingerScan(DomainsIP *outputfile.DomainsIP) {
 			cmss := strings.Join(cms, ",")
 			out := Outrestul{data.url, cmss, data.server, data.statuscode, data.length, data.title}
 			s.AllResult = append(s.AllResult, out)
-			var ip string
 			if len(out.Cms) != 0 {
 				outstr := fmt.Sprintf("[ %s | %s | %s | %d | %d | %s ]", out.Url, out.Cms, out.Server, out.Statuscode, out.Length, out.Title)
 				color.RGBStyleFromString("237,64,35").Println(outstr)
@@ -177,23 +175,9 @@ func (s *FinScan) fingerScan(DomainsIP *outputfile.DomainsIP) {
 				matches := re.FindAllStringSubmatch(strings.TrimSpace(reurl1), -1)
 				ips, _ := net.LookupIP(matches[0][0])
 
-				for _, aa := range ips {
-					boolcdn, _, _ := CDN.CheckCName(aa.String())
-					if boolcdn {
-						ip = "CDN"
-						break
-					}
-
-					if len(ips) == 1 {
-						ip = aa.String()
-					} else {
-						ip = ip + aa.String() + " , "
-					}
-
-				}
-				if out.Statuscode != 502 {
+				if out.Statuscode != 502 && out.Length != 0 {
 					DomainsIP.Zhiwen = append(DomainsIP.Zhiwen, zhiwen)
-					DomainsIP.A = append(DomainsIP.A, ip)
+					DomainsIP.A = append(DomainsIP.A, ips[0].String())
 					DomainsIP.DomainA = append(DomainsIP.DomainA, out.Url)
 					DomainsIP.Status_code = append(DomainsIP.Status_code, strconv.Itoa(out.Statuscode))
 					DomainsIP.TitleBUff = append(DomainsIP.TitleBUff, out.Title)
@@ -218,23 +202,8 @@ func (s *FinScan) fingerScan(DomainsIP *outputfile.DomainsIP) {
 				matches := re.FindAllStringSubmatch(strings.TrimSpace(reurl1), -1)
 				ips, _ := net.LookupIP(matches[0][0])
 
-				for _, aa := range ips {
-					boolcdn, _, _ := CDN.CheckCName(aa.String())
-					if boolcdn {
-						ip = "CDN"
-						break
-					}
-
-					if len(ips) == 1 {
-						ip = aa.String()
-					} else {
-						ip = ip + aa.String() + " , "
-					}
-
-				}
-
-				if out.Statuscode != 502 {
-					DomainsIP.A = append(DomainsIP.A, ip)
+				if out.Statuscode != 502 && out.Length != 0 {
+					DomainsIP.A = append(DomainsIP.A, ips[0].String())
 					DomainsIP.Zhiwen = append(DomainsIP.Zhiwen, zhiwen)
 					DomainsIP.DomainA = append(DomainsIP.DomainA, out.Url)
 					DomainsIP.Status_code = append(DomainsIP.Status_code, strconv.Itoa(out.Statuscode))

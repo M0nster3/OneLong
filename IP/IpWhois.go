@@ -36,7 +36,7 @@ func IpWhois(domain string, ip string, options *Utils.ENOptions, DomainsIP *outp
 
 	clientR.URL = urls
 	resp, _ := clientR.Get(urls)
-	for {
+	for i := 0; i < 4; i++ {
 		if resp.RawResponse == nil {
 			resp, _ = clientR.Get(urls)
 			time.Sleep(1 * time.Second)

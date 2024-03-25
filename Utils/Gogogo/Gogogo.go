@@ -17,7 +17,7 @@ import (
 )
 
 // RunJob 运行项目 添加新参数记得去Config添加
-func RunJob(options *Utils.ENOptions) {
+func CompanyRunJob(options *Utils.ENOptions) {
 	var Domainip outputfile.DomainsIP
 	if options.Proxy != "" {
 		gologger.Infof("代理地址: %s\n", options.Proxy)
@@ -95,7 +95,7 @@ func RunJob(options *Utils.ENOptions) {
 	wg.Wait()
 
 	options.ICP = Utils.SetStr(options.ICP)
-	gologger.Infof("整合域名IP\n")
+	gologger.Infof("查询子域名\n")
 	for add, domain := range options.ICP {
 		Domains.Domains(domain, options, &Domainip)
 		fmt.Print(add)
@@ -107,13 +107,25 @@ func RunJob(options *Utils.ENOptions) {
 		domain = domain + sp[len(sp)-2] + "." + sp[len(sp)-1] + " "
 	}
 	//Domains.Domains(domain, options, &Domainip)
-
+	gologger.Infof("整合域名、IP、指纹\n")
 	HttpZhiwen.Status(domain, options, &Domainip)
 	gologger.Infof("探测网站后台\n")
-	Login.Login(Domainip.LoginUrlA, options, &Domainip)
+	Login.Login(Domainip.DomainA, options, &Domainip)
 	// 如果不是API模式，而且不是批量文件形式查询 不是API 就合并导出到表格里面
 	if options.IsMergeOut && options.InputFile == "" {
 		outputfile.OutPutExcelByMergeEnInfo(options)
 	}
 
+}
+func DomainRunJob(options *Utils.ENOptions) {
+	var Domainip outputfile.DomainsIP
+	gologger.Infof("查询子域名\n")
+	Domains.Domains(options.Domain, options, &Domainip)
+	HttpZhiwen.Status(options.Domain, options, &Domainip)
+	gologger.Infof("探测网站后台\n")
+	Login.Login(Domainip.DomainA, options, &Domainip)
+	// 如果不是API模式，而且不是批量文件形式查询 不是API 就合并导出到表格里面
+	if options.IsMergeOut && options.InputFile == "" {
+		outputfile.OutPutExcelByMergeEnInfo(options)
+	}
 }

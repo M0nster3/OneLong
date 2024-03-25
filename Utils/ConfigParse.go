@@ -39,13 +39,13 @@ func ConfigParse(options *ENOptions) {
 		options.Output = "outs"
 	}
 
-	if options.KeyWord == "" {
+	if options.KeyWord == "" && options.Domain == "" {
 		gologger.Errorf("参数输入错误")
 		os.Exit(0)
 	}
 	options.IsShow = false
 	options.IsMergeOut = true
-	options.Deep = 1
+	options.Deep = 5
 	//if options.KeyWord == "" {
 	//	options.ScanType = "aqc"
 	//}

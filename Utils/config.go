@@ -7,6 +7,7 @@ import (
 )
 
 type ENOptions struct {
+	Domain    string
 	KeyWord   string // Keyword of Search
 	CompanyID string // Company ID
 	GroupID   string // Company ID
@@ -15,7 +16,7 @@ type ENOptions struct {
 	ScanType  string
 	Proxy     string
 	//ISKeyPid       bool
-	IsGroup        bool
+	//IsGroup        bool
 	IsGetBranch    bool
 	IsSearchBranch bool
 	//IsInvestRd     bool

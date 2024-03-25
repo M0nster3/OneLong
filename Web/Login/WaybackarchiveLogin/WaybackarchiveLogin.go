@@ -1,4 +1,4 @@
-package alienvaultLogin
+package WaybackarchiveLogin
 
 import (
 	"OneLong/Utils"
@@ -8,7 +8,6 @@ import (
 	"crypto/tls"
 	"fmt"
 	"github.com/go-resty/resty/v2"
-	"github.com/tidwall/gjson"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -20,17 +19,14 @@ import (
 	"time"
 )
 
-var wg sync.WaitGroup
-
-func AlienvaultLogin(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
-	//gologger.Infof("Alienvault\n")
-	//urls := "https://otx.alienvault.com/api/v1/indicators/domain/" + domain + "/url_list?limit=100&page=11"
-	//addedURLs := make(map[string]bool)
+func WaybackarchiveLogin(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
+	//gologger.Infof("waybackarchive 历史快照查询\n")
+	var wg sync.WaitGroup
 	dir := filepath.Join(Utils.GetPathDir(), "Script/Dict/Login.txt")
 	file, err := os.Open(dir)
 	if err != nil {
 		gologger.Errorf("无法打开文件后台目录文件%s\n", dir)
-		return
+		return ""
 	}
 	defer file.Close()
 
@@ -45,7 +41,8 @@ func AlienvaultLogin(domain string, options *Utils.ENOptions, DomainsIP *outputf
 		line := scanner.Text()
 		contentSet[line] = true
 	}
-	urls := fmt.Sprintf("https://otx.alienvault.com/api/v1/indicators/domain/%s/url_list?limit=100&page=1", domain)
+
+	urls := fmt.Sprintf("http://web.archive.org/cdx/search/cdx?url=*.%s/*&output=txt&fl=original&collapse=urlkey", domain)
 	client := resty.New()
 	client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
 	client.SetTimeout(time.Duration(options.TimeOut) * time.Minute)
@@ -57,7 +54,6 @@ func AlienvaultLogin(domain string, options *Utils.ENOptions, DomainsIP *outputf
 		"Accept":     {"text/html,application/json,application/xhtml+xml, image/jxr, */*"},
 	}
 
-	client.Header.Set("Content-Type", "application/json")
 	client.Header.Del("Cookie")
 
 	//强制延时1s
@@ -68,54 +64,50 @@ func AlienvaultLogin(domain string, options *Utils.ENOptions, DomainsIP *outputf
 
 	clientR.URL = urls
 	resp, err := clientR.Get(urls)
-
-	for add := 1; add < 4; add += 1 {
-		if resp.RawResponse == nil {
-			resp, _ = clientR.Get(urls)
-			time.Sleep(1 * time.Second)
-		} else if resp.Body() != nil {
+	for attempt := 0; attempt < 4; attempt++ {
+		time.Sleep(5 * time.Second) // 在重试前等待
+		resp, err = client.R().Get(urls)
+		if err != nil || resp == nil || resp.RawResponse == nil {
+			time.Sleep(5 * time.Second) // 在重试前等待
+			continue
+		}
+		// 如果得到有效响应，处理响应
+		if resp.Body() != nil {
+			// 处理响应的逻辑
 			break
 		}
 	}
-
 	if err != nil {
-		gologger.Errorf("Alienvault API 链接访问失败尝试切换代理\n")
-		return
+		gologger.Errorf("waybackarchive 历史快照链接访问失败尝试切换代理\n")
+		return ""
+	}
+	if resp.Body() == nil {
+		gologger.Labelf("waybackarchive 历史快照未发现域名 %s\n", domain)
+		return ""
 	}
 
-	count := gjson.GetBytes(resp.Body(), "full_size").Int()
-	if count == 0 {
-		//gologger.Labelf("Alienvault 未发现后台域名 %s\n", domain)
-		return
-	}
-	intcount := int(count)
-	for add := 1; add <= intcount/100+1; add += 1 {
-		urls = fmt.Sprintf("https://otx.alienvault.com/api/v1/indicators/domain/%s/url_list?limit=100&page=%d", domain, add)
-		resp, err = clientR.Get(urls)
-		loginurls := gjson.GetBytes(resp.Body(), "url_list.#.url").Array()
-
-		for _, loginurl := range loginurls {
-			wg.Add(1)
-			loginurl := loginurl
-			go func() {
-				for content := range contentSet {
-					if strings.Contains(loginurl.String(), content) {
-						gologger.Infof("AlienvaultLogin 匹配到链接:%s\n", loginurl.String())
+	loginurls := strings.Split(string(resp.Body()), "\n")
+	last := "svg,css,eot,ttf,woff,jpg,png,jpeg,js,woff2,htm,gif"
+	for _, loginurl := range loginurls {
+		wg.Add(1)
+		loginurl := loginurl
+		go func() {
+			for content := range contentSet {
+				if strings.Contains(loginurl, content) {
+					lastThree := strings.Split(loginurl, ".")
+					if !strings.Contains(last, lastThree[len(lastThree)-1]) {
+						gologger.Infof("waybackarchive 匹配到链接:%s\n", loginurl)
 						//fmt.Println("AlienvaultLogin 匹配到链接:", loginurl.String())
-						DomainsIP.LoginUrl = append(DomainsIP.LoginUrl, loginurl.String())
+						DomainsIP.LoginUrl = append(DomainsIP.LoginUrl, loginurl)
 					}
-				}
-				wg.Done()
-			}()
 
-		}
-		wg.Wait()
+				}
+			}
+			wg.Done()
+		}()
 
 	}
-
-	//res, ensOutMap := GetEnInfo(string(resp.Body()), DomainsIP)
-
-	//outputfile.MergeOutPut(res, ensOutMap, "alienvault", options)
+	wg.Wait()
 	//outputfile.OutPutExcelByMergeEnInfo(options)
 	//
 	//Result := gjson.GetMany(string(resp.Body()), "passive_dns.#.address", "passive_dns.#.hostname")
@@ -123,4 +115,5 @@ func AlienvaultLogin(domain string, options *Utils.ENOptions, DomainsIP *outputf
 	//AlienvaultResult[1] = append(AlienvaultResult[1], Result[1].String())
 	//
 	//fmt.Printf(Result[0].String())
+	return "Success"
 }

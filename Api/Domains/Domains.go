@@ -2,6 +2,7 @@ package Domains
 
 import (
 	"OneLong/Api/Domains/alienvault"
+	"OneLong/Script"
 	"OneLong/Utils"
 	outputfile "OneLong/Utils/OutPutfile"
 	"sync"
@@ -288,7 +289,7 @@ func Domains(domain string, enOptions *Utils.ENOptions, Domainip *outputfile.Dom
 	//leakix.Leakix(domain, enOptions, Domainip)
 	//Robtex.Robtex(domain, enOptions, Domainip)
 	wg.Wait()
-	//Script.Massdns(domain, enOptions, Domainip)
+	Script.Massdns(domain, enOptions, Domainip)
 	//HttpZhiwen.Status(domain, enOptions, Domainip) //这里的domain只起到比对
 
 }

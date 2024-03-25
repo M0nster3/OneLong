@@ -3,8 +3,7 @@ package Login
 import (
 	"OneLong/Utils"
 	outputfile "OneLong/Utils/OutPutfile"
-	"OneLong/Web/Login/CommoncrawlLogin"
-	"OneLong/Web/Login/alienvaultLogin"
+	"OneLong/Web/Login/WaybackarchiveLogin"
 	"crypto/tls"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/go-resty/resty/v2"
@@ -44,17 +43,22 @@ func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) 
 }
 func Login(domains []string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
 	for _, domain := range domains {
-		CommoncrawlLogin.CommoncrawlLogin(domain, options, DomainsIP)
-		alienvaultLogin.AlienvaultLogin(domain, options, DomainsIP)
-		ParseLoginurl(options, DomainsIP)
-	}
 
+		domain = strings.ReplaceAll(domain, "https://", "")
+		domain = strings.ReplaceAll(domain, "http://", "")
+		if !strings.Contains(domain, "\\") {
+			//CommoncrawlLogin.CommoncrawlLogin(domain, options, DomainsIP)
+			//alienvaultLogin.AlienvaultLogin(domain, options, DomainsIP)
+			WaybackarchiveLogin.WaybackarchiveLogin(domain, options, DomainsIP)
+		}
+	}
+	ParseLoginurl(options, DomainsIP)
 }
 
 func ParseLoginurl(options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
 	DomainsIP.LoginUrl = Utils.SetStr(DomainsIP.LoginUrl)
-	for _, aa := range DomainsIP.LoginUrl {
-		urls := aa
+	for _, domain := range DomainsIP.LoginUrl {
+		urls := domain
 		client := resty.New()
 		client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
 		client.SetTimeout(time.Duration(options.TimeOut) * time.Minute)
@@ -78,7 +82,7 @@ func ParseLoginurl(options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
 		clientR.URL = urls
 		resp, err := clientR.Get(urls)
 		if err != nil {
-			break
+			continue
 		}
 		title := gettitle(string(resp.Body()))
 		DomainsIP.LoginTitle = append(DomainsIP.LoginTitle, title)

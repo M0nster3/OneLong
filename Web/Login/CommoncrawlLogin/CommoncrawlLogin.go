@@ -49,7 +49,7 @@ func CommoncrawlLogin(domain string, options *Utils.ENOptions, DomainsIP *output
 	clientR.URL = urls
 	resp, err := clientR.Get(urls)
 	for add := 1; add < 4; add += 1 {
-		if resp.RawResponse == nil {
+		if resp.RawResponse == nil || resp.StatusCode() == 503 {
 			resp, _ = clientR.Get(urls)
 			time.Sleep(1 * time.Second)
 		} else if resp.Body() != nil {
@@ -104,8 +104,9 @@ func CommoncrawlLogin(domain string, options *Utils.ENOptions, DomainsIP *output
 		respa, err := clienta.Get(url)
 		if strings.Contains(string(respa.Body()), "No Captures found ") {
 
-			gologger.Labelf("Commoncrawl 后台查询未查询到域名 %s\n", domain)
+			//gologger.Labelf("Commoncrawl 后台查询未查询到域名 %s\n", domain)
 			return ""
+
 		}
 		for add := 1; add < 20; add += 1 {
 			if err != nil || respa.StatusCode() == 503 {
@@ -119,7 +120,7 @@ func CommoncrawlLogin(domain string, options *Utils.ENOptions, DomainsIP *output
 
 				clientaa.Header.Set("Content-Type", "application/json")
 				respa, _ = clientaa.Get(url)
-				time.Sleep(3 * time.Second)
+				time.Sleep(10 * time.Second)
 			} else if resp.Body() != nil {
 				break
 			}
@@ -145,7 +146,8 @@ func CommoncrawlLogin(domain string, options *Utils.ENOptions, DomainsIP *output
 				addurl := gjson.Get(loginurl, "url").String()
 				for content := range contentSet {
 					if strings.Contains(addurl, content) {
-						fmt.Println("匹配到链接:", addurl)
+						gologger.Infof("CommoncrawlLogin 匹配到后台链接:%s\n", addurl)
+						//fmt.Println("CommoncrawlLogin 匹配到后台链接:", addurl)
 						DomainsIP.LoginUrl = append(DomainsIP.LoginUrl, addurl)
 					}
 				}

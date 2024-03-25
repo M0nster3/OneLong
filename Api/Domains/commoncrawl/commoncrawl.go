@@ -74,14 +74,14 @@ func Commoncrawl(domain string, options *Utils.ENOptions, DomainsIP *outputfile.
 	clientR.URL = urls
 	resp, err := clientR.Get(urls)
 	for add := 1; add < 4; add += 1 {
-		if resp.RawResponse == nil {
+		if resp.RawResponse == nil || resp.StatusCode() == 503 {
 			resp, _ = clientR.Get(urls)
-			time.Sleep(1 * time.Second)
+			time.Sleep(4 * time.Second)
 		} else if resp.Body() != nil {
 			break
 		}
 	}
-	if err != nil {
+	if err != nil || resp.StatusCode() == 503 {
 		gologger.Errorf("Commoncrawl API 链接访问失败尝试切换代理\n")
 		return ""
 	}

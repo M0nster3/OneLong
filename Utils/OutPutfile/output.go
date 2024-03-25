@@ -5,7 +5,6 @@ import (
 	"OneLong/Utils/gologger"
 	"github.com/tidwall/gjson"
 	"github.com/xuri/excelize/v2"
-	"io"
 	"os"
 	"strconv"
 	"time"
@@ -140,57 +139,6 @@ func MergeOutPut(ensInfos *Utils.EnInfos, ensMap map[string]*ENSMap, info string
 
 }
 
-// OutPutExcelByMergeJson 合并导出从数据库提取的信息 流输出
-// out 为输入的数据
-func OutPutExcelByMergeJson(out map[string][]map[string]interface{}, w io.Writer) error {
-
-	f := excelize.NewFile()
-	gologger.Infof("JSON 导出中\n")
-	for k, s := range out {
-		if _, ok := ENSMapLN[k]; ok {
-			gologger.Infof("正在导出%s\n", ENSMapLN[k].Name)
-			headers := ENSMapLN[k].KeyWord
-			headers = append(headers, "信息来源")
-			headers = append(headers, "关联信息")
-			headers = append(headers, "入库时间")
-			var data [][]interface{}
-			ENSMapLN[k].JField = append(ENSMapLN[k].JField, "source", "relate", "intime")
-			if len(headers) != len(ENSMapLN[k].JField) {
-				gologger.Errorf("len not ok %s", headers)
-			}
-			for _, ss := range s {
-				var str []interface{}
-				for _, sss := range ENSMapLN[k].JField {
-					str = append(str, ss[sss])
-				}
-				data = append(data, str)
-			}
-
-			var err error
-			f, err = Utils.ExportExcel(ENSMapLN[k].Name, headers, data, f)
-			if err != nil {
-				gologger.Errorf(err.Error())
-				return err
-			}
-		} else {
-			gologger.Errorf("导出错误信息 %s\n", k)
-		}
-	}
-	f.DeleteSheet("Sheet1")
-
-	EnJsonList = make(map[string][]map[string]interface{})
-	EnsInfosList = make(map[string][][]interface{})
-	ENSMapList = make(map[string]*ENSMap)
-
-	_, err := f.WriteTo(w)
-	if err != nil {
-		gologger.Errorf("导出错误信息 %s\n", err.Error())
-		return err
-	}
-	return nil
-
-}
-
 // OutPutExcelByMergeEnInfo 根据合并信息导出表格
 func OutPutExcelByMergeEnInfo(options *Utils.ENOptions) {
 	if options.Output != "!" {
@@ -207,14 +155,20 @@ func OutPutExcelByMergeEnInfo(options *Utils.ENOptions) {
 		fileName := ""
 		if len([]rune(options.CompanyName)) > 20 {
 			fileName = options.KeyWord
-		} else {
+		} else if options.KeyWord != "" {
 			fileName = options.CompanyName
+		} else {
+			fileName = options.Domain
 		}
-		savaPath := tmp + "/【合并】" + fileName + "--" + time.Now().Format("2006-01-02") + "--" + strconv.FormatInt(time.Now().Unix(), 10)
+		savaPath := tmp + "/" + fileName + "--" + time.Now().Format("2006-01-02") + "--" + strconv.FormatInt(time.Now().Unix(), 10)
 
 		savaPath += ".xlsx"
 		f := excelize.NewFile()
-		gologger.Infof("【%s】导出中\n", options.CompanyName)
+		if options.Domain == "" {
+			gologger.Infof("【%s】导出中\n", options.CompanyName)
+		} else {
+			gologger.Infof("【%s】导出中\n", options.Domain)
+		}
 
 		for k, s := range EnsInfosList {
 			if _, ok := ENSMapList[k]; ok {

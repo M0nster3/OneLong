@@ -25,6 +25,7 @@ func Banner() {
 func Flag(Info *ENOptions) {
 	Banner()
 	flag.StringVar(&Info.KeyWord, "n", "", "关键词 eg 小米")
+	flag.StringVar(&Info.Domain, "d", "", "域名")
 	//flag.StringVar(&Info.CompanyID, "i", "", "公司PID")
 	flag.StringVar(&Info.InputFile, "f", "", "批量查询，文本按行分隔")
 	flag.StringVar(&Info.ScanType, "type", "aqc", "API类型 eg qcc")
@@ -34,7 +35,7 @@ func Flag(Info *ENOptions) {
 	//查询参数指定
 	flag.Float64Var(&Info.InvestNum, "invest", 0, "投资比例 eg 100")
 	//flag.StringVar(&Info.GetFlags, "field", "", "获取字段信息 eg icp")
-	flag.IntVar(&Info.Deep, "deep", 1, "递归搜索n层公司")
+	flag.IntVar(&Info.Deep, "deep", 5, "递归搜索n层公司")
 	flag.BoolVar(&Info.IsHold, "hold", false, "是否查询控股公司")
 	flag.BoolVar(&Info.IsSupplier, "supplier", false, "是否查询供应商信息")
 	flag.BoolVar(&Info.IsGetBranch, "branch", false, "查询分支机构（分公司）信息")
@@ -46,7 +47,7 @@ func Flag(Info *ENOptions) {
 	//flag.BoolVar(&Info.IsShow, "is-show", true, "是否展示信息输出")
 	//其他设定
 	//flag.BoolVar(&Info.IsInvestRd, "uncertain-invest", false, "包括未公示投资公司（无法确定占股比例）")
-	flag.BoolVar(&Info.IsGroup, "is-group", false, "查询关键词为集团")
+	//flag.BoolVar(&Info.IsGroup, "is-group", false, "查询关键词为集团")
 	//flag.BoolVar(&Info.ISKeyPid, "is-pid", false, "批量查询文件是否为公司PID")
 	flag.IntVar(&Info.DelayTime, "delay", 0, "填写最大延迟时间（秒）将会在1-n间随机延迟")
 	flag.StringVar(&Info.Proxy, "proxy", "", "设置代理")

@@ -1,22 +1,24 @@
 package main
 
 import (
-	"OneLong/Api/Domains"
 	"OneLong/Utils"
-	outputfile "OneLong/Utils/OutPutfile"
-	"OneLong/Web/HttpZhiwen"
-	"OneLong/Web/Login"
+	"OneLong/Utils/Gogogo"
 )
 
 func main() {
 	var enOptions Utils.ENOptions
 	Utils.Flag(&enOptions)
 	Utils.ConfigParse(&enOptions)
-	var Domainip outputfile.DomainsIP
-	//Gogogo.RunJob(&enOptions)
-	Domains.Domains("cch.org.tw", &enOptions, &Domainip)
-	HttpZhiwen.Status("cch.org.tw", &enOptions, &Domainip)
-	Login.Login(Domainip.LoginUrlA, &enOptions, &Domainip)
+	//var Domainip outputfile.DomainsIP
+	if enOptions.KeyWord != "" {
+		Gogogo.CompanyRunJob(&enOptions)
+	} else {
+		Gogogo.DomainRunJob(&enOptions)
+	}
+
+	//Domains.Domains("rc.cch.org.tw", &enOptions, &Domainip)
+	//HttpZhiwen.Status("rc.cch.org.tw", &enOptions, &Domainip)
+	//Login.Login(Domainip.DomainA, &enOptions, &Domainip)
 	//Domains.Domains("au.edu.tw", &enOptions, &Domainip)
 	//UrlScan.Urlscan("freebuf.com", &enOptions, &Domainip)
 	//CommoncrawlLogin.CommoncrawlLogin("cjcu.edu.tw", &enOptions, &Domainip)
@@ -32,7 +34,7 @@ func main() {
 	//Github.Github("freebuf.com", &enOptions, &Domainip)
 	//Gogogo.RunJob(&enOptions)
 	//CommoncrawlLogin.CommoncrawlLogin("freebuf.com", &enOptions, &Domainip)
-	outputfile.OutPutExcelByMergeEnInfo(&enOptions)
+	//outputfile.OutPutExcelByMergeEnInfo(&enOptions)
 
 	//Ehole.Ehole("http://i.3311csci.com", &enOptions, &Domainip)
 
