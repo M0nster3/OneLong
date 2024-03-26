@@ -94,11 +94,23 @@ func WaybackarchiveLogin(domain string, options *Utils.ENOptions, DomainsIP *out
 		go func() {
 			for content := range contentSet {
 				if strings.Contains(loginurl, content) {
-					lastThree := strings.Split(loginurl, ".")
-					if !strings.Contains(last, lastThree[len(lastThree)-1]) {
-						gologger.Infof("waybackarchive 匹配到链接:%s\n", loginurl)
-						//fmt.Println("AlienvaultLogin 匹配到链接:", loginurl.String())
-						DomainsIP.LoginUrl = append(DomainsIP.LoginUrl, loginurl)
+					wen := strings.Split(loginurl, "?")
+					if len(wen) > 1 {
+						lastThree := strings.Split(loginurl, ".")
+						lastWen := strings.Split(lastThree[len(lastThree)-1], "?")
+						if !strings.Contains(last, lastThree[len(lastThree)-1]) && !strings.Contains(last, lastWen[0]) {
+							gologger.Infof("waybackarchive 匹配到链接:%s\n", loginurl)
+							//fmt.Println("AlienvaultLogin 匹配到链接:", loginurl.String())
+							DomainsIP.LoginUrl = append(DomainsIP.LoginUrl, wen[0])
+						}
+					} else {
+						lastThree := strings.Split(loginurl, ".")
+						lastWen := strings.Split(lastThree[len(lastThree)-1], "?")
+						if !strings.Contains(last, lastThree[len(lastThree)-1]) && !strings.Contains(last, lastWen[0]) {
+							gologger.Infof("waybackarchive 匹配到链接:%s\n", loginurl)
+							//fmt.Println("AlienvaultLogin 匹配到链接:", loginurl.String())
+							DomainsIP.LoginUrl = append(DomainsIP.LoginUrl, loginurl)
+						}
 					}
 
 				}
