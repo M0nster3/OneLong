@@ -17,6 +17,7 @@ func IpWhois(domain string, ip string, options *Utils.ENOptions, DomainsIP *outp
 	client := resty.New()
 	client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
 	client.SetTimeout(time.Duration(options.TimeOut) * time.Minute)
+
 	if options.Proxy != "" {
 		client.SetProxy(options.Proxy)
 	}
@@ -30,8 +31,7 @@ func IpWhois(domain string, ip string, options *Utils.ENOptions, DomainsIP *outp
 
 	//强制延时1s
 	time.Sleep(1 * time.Second)
-	//加入随机延迟
-	time.Sleep(time.Duration(options.GetDelayRTime()) * time.Second)
+
 	clientR := client.R()
 
 	clientR.URL = urls
@@ -45,12 +45,18 @@ func IpWhois(domain string, ip string, options *Utils.ENOptions, DomainsIP *outp
 		}
 	}
 	Domains := gjson.Parse(string(resp.Body())).Array()
-	if len(Domains) == 0 {
-		return
-	}
+	//if len(Domains) == 0 {
+	//	return
+	//}
 	var add int
 	var resdoaminc string
+	//if ip == "208.113.222.142" {
+	//	print(111)
+	//}
 	for _, appdomain := range Domains {
+		if len(Domains) == 0 {
+			break
+		}
 		resdoamin := gjson.Get(appdomain.String(), "domain").String()
 		resdoaminb := strings.Split(resdoamin, ".")
 		if len(resdoaminb) > 2 {
@@ -62,8 +68,8 @@ func IpWhois(domain string, ip string, options *Utils.ENOptions, DomainsIP *outp
 			DomainsIP.IPA = append(DomainsIP.IPA, ip)
 			DomainsIP.Domains = append(DomainsIP.Domains, resdoamin)
 
-		} else if add == 5 {
-			return
+		} else if add == 15 {
+			break
 		} else {
 			add += 1
 		}

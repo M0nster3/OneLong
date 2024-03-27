@@ -42,6 +42,7 @@ func Massdns(domain string, ENOptions *Utils.ENOptions, DomainsIP *outputfile.Do
 	if err != nil {
 		gologger.Errorf("%s", err)
 	}
+	defer os.Remove(tempDir)
 	options := &runner.Options{
 		Directory:          tempDir,
 		Domain:             domain,

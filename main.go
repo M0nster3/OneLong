@@ -1,12 +1,15 @@
 package main
 
 import (
-	"OneLong/IP/Port"
+	"OneLong/Email/duckduckgo"
+	"OneLong/Utils"
+	outputfile "OneLong/Utils/OutPutfile"
 )
 
 func main() {
-	//var enOptions Utils.ENOptions
-	//Utils.Flag(&enOptions)
+	var enOptions Utils.ENOptions
+	Utils.Flag(&enOptions)
+	var Domainip outputfile.DomainsIP
 	//Utils.ConfigParse(&enOptions)
 	////var Domainip outputfile.DomainsIP
 	//if enOptions.KeyWord != "" {
@@ -14,6 +17,8 @@ func main() {
 	//} else {
 	//	Gogogo.DomainRunJob(&enOptions)
 	//}
-	Port.Port()
+	//yahoo.Yahoo("qianxin.com", &enOptions, &Domainip)
+	duckduckgo.Duckduckgo("nthu.edu.tw", &enOptions, &Domainip)
+	//Port.Port()
 
 }

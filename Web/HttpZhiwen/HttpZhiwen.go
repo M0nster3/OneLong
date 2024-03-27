@@ -5,10 +5,10 @@ import (
 	"OneLong/Script/Ehole"
 	"OneLong/Utils"
 	outputfile "OneLong/Utils/OutPutfile"
-	"OneLong/Utils/gologger"
 	"OneLong/Web/CDN"
 	"crypto/tls"
 	"github.com/go-resty/resty/v2"
+	"github.com/gookit/color"
 	"github.com/tidwall/gjson"
 	"sync"
 	"time"
@@ -60,7 +60,7 @@ func Status(domaina string, options *Utils.ENOptions, DomainsIP *outputfile.Doma
 	wg.Wait()
 	DomainsIP.IPA = Utils.SetStr(DomainsIP.IPA)
 	DomainsIP.Domains = Utils.SetStr(DomainsIP.Domains)
-	gologger.Infof("检测指纹以及域名存活\n")
+	color.RGBStyleFromString("244,211,49").Println("\n--------------------检测指纹以及域名存活--------------------")
 	client := resty.New()
 	client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
 	client.SetTimeout(time.Duration(options.TimeOut) * time.Minute)

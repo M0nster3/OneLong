@@ -12,6 +12,7 @@ import (
 	"OneLong/Web/HttpZhiwen"
 	"OneLong/Web/Login"
 	"fmt"
+	"github.com/gookit/color"
 	"strings"
 	"sync"
 )
@@ -115,14 +116,14 @@ func CompanyRunJob(options *Utils.ENOptions) {
 	if options.IsMergeOut && options.InputFile == "" {
 		outputfile.OutPutExcelByMergeEnInfo(options)
 	}
-
 }
 func DomainRunJob(options *Utils.ENOptions) {
 	var Domainip outputfile.DomainsIP
-	gologger.Infof("查询子域名\n")
+	//color.RGBStyleFromString("237,64,35").Println("查询子域名\n")
+	color.RGBStyleFromString("244,211,49").Println("\n--------------------查询子域名--------------------")
 	Domains.Domains(options.Domain, options, &Domainip)
 	HttpZhiwen.Status(options.Domain, options, &Domainip)
-	gologger.Infof("探测网站后台\n")
+	color.RGBStyleFromString("244,211,49").Println("\n--------------------探测网站后台--------------------")
 	Login.Login(Domainip.DomainA, options, &Domainip)
 	// 如果不是API模式，而且不是批量文件形式查询 不是API 就合并导出到表格里面
 	if options.IsMergeOut && options.InputFile == "" {
