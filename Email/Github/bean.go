@@ -1,4 +1,4 @@
-package baidu
+package Github
 
 type EnsGo struct {
 	name    string

@@ -107,6 +107,12 @@ type ENConfig struct {
 		Wordlist    string `yaml:"wordlist"`
 		MassdnsPath string `yaml:"massdnsPath"`
 	}
+	Email struct {
+		Emailhunter string `yaml:"emailhunter"`
+		EmailIntelx string `yaml:"intelxEmail"`
+		TombaKey    string `yaml:"tombaKey"`
+		TombaSecret string `yaml:"tombaSecret"`
+	}
 }
 
 type EnInfos struct {
@@ -217,9 +223,15 @@ cookies:
   fofaEmail: ''			# Fofa Email
   githubtoken: ''		# Github Token 
   racent: ''			# racent Token
+  emailhunter: ''		# Email hunter Token
+  intelxEmail: ''		# Email Intelx Token
 massdns:
   resolvers: ''			# resolvers 文件名称
   wordlist: ''			# 子域名爆破文件名称
   massdnsPath: ''		# Massdns工具名称
-  
+email:
+  emailhunter: ''		# Email hunter Token
+  intelxEmail: ''		# Email Intelx Token
+  tombaKey: ''			# Email tombaKey
+  tombaSecret: ''		# Email tombaSecret
 `

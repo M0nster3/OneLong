@@ -5,6 +5,7 @@ import (
 	outputfile "OneLong/Utils/OutPutfile"
 	"OneLong/Utils/gologger"
 	"OneLong/Web/Login/WaybackarchiveLogin"
+	"OneLong/Web/Login/alienvaultLogin"
 	"crypto/tls"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/go-resty/resty/v2"
@@ -49,9 +50,9 @@ func Login(domains []string, options *Utils.ENOptions, DomainsIP *outputfile.Dom
 		gologger.Infof("当前扫描第%d个  %s\n", domainint+1, domain)
 		domain = strings.ReplaceAll(domain, "https://", "")
 		domain = strings.ReplaceAll(domain, "http://", "")
-		if !strings.Contains(domain, "\\") {
+		if !strings.Contains(domain, "\\") && strings.Contains(domain, options.Domain) {
 			//CommoncrawlLogin.CommoncrawlLogin(domain, options, DomainsIP)
-			//alienvaultLogin.AlienvaultLogin(domain, options, DomainsIP)
+			alienvaultLogin.AlienvaultLogin(domain, options, DomainsIP)
 			WaybackarchiveLogin.WaybackarchiveLogin(domain, options, DomainsIP)
 		}
 	}

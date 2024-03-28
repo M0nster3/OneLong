@@ -19,10 +19,10 @@ import (
 )
 
 func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
-	respons := gjson.Get(response, "passive_dns").Array()
+	respons := gjson.Get(response, "Email").Array()
 	ensInfos := &Utils.EnInfos{}
 	ensInfos.Infos = make(map[string][]gjson.Result)
-	ensInfos.SType = "alienvault"
+	ensInfos.SType = "Brave"
 	ensOutMap := make(map[string]*outputfile.ENSMap)
 	for k, v := range getENMap() {
 		ensOutMap[k] = &outputfile.ENSMap{Name: v.name, Field: v.field, KeyWord: v.keyWord}
@@ -33,30 +33,13 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 	//ensInfos.Infos["passive_dns"] = append(ensInfos.Infos["passive_dns"], gjson.Parse(Result[0].String()))
 	addedURLs := make(map[string]bool)
 	for aa, _ := range respons {
-		if strings.Contains(respons[aa].String(), "address") {
-			re := regexp.MustCompile(`(?:\d{1,3}\.){3}\d{1,3}`)
-			ip := gjson.Get(respons[aa].String(), "address").String()
-			matches := re.FindAllStringSubmatch(strings.TrimSpace(ip), -1)
-			for _, bu := range matches {
-				if !addedURLs[bu[0]] {
-					// 如果不存在重复则将 URL 添加到 Infos["Urls"] 中，并在 map 中标记为已添加
-					DomainsIP.IP = append(DomainsIP.IP, bu[0])
-					addedURLs[bu[0]] = true
-				}
-				break
-			}
-
+		hostname := gjson.Get(respons[aa].String(), "Email").String()
+		if !addedURLs[hostname] {
+			// 如果不存在重复则将 URL 添加到 Infos["Urls"] 中，并在 map 中标记为已添加
+			ensInfos.Infos["Email"] = append(ensInfos.Infos["Email"], gjson.Parse(respons[aa].String()))
+			addedURLs[hostname] = true
 		}
-		if strings.Contains(respons[aa].String(), "hostname") {
-			hostname := gjson.Get(respons[aa].String(), "hostname").String()
-			if !addedURLs[hostname] {
-				// 如果不存在重复则将 URL 添加到 Infos["Urls"] 中，并在 map 中标记为已添加
-				DomainsIP.Domains = append(DomainsIP.Domains, hostname)
-				addedURLs[hostname] = true
-			}
 
-		}
-		ensInfos.Infos["Urls"] = append(ensInfos.Infos["Urls"], gjson.Parse(respons[aa].String()))
 	}
 
 	//zuo := strings.ReplaceAll(response, "[", "")
@@ -133,6 +116,7 @@ func Brave(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domain
 				}
 			}
 			if strings.Contains(string(resp.Body()), "ot many great matches came back for your search") || strings.Contains(string(resp.Body()), "Prove") && strings.Contains(string(resp.Body()), "robot") || strings.Contains(string(resp.Body()), "Robot") {
+				wg.Done()
 				return
 			}
 			if err != nil {
@@ -150,14 +134,21 @@ func Brave(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domain
 
 	re := regexp.MustCompile(Email)
 
-	matches := re.FindAllStringSubmatch(strings.TrimSpace(respnsehe), -1)
-	for _, aa := range matches {
-		fmt.Print("111111\n")
-		fmt.Print(aa)
+	Emails := re.FindAllStringSubmatch(strings.TrimSpace(respnsehe), -1)
+
+	result1 := "{\"Email\":["
+	for add := 0; add < len(Emails); add++ {
+		result1 += "{" + "\"Email\"" + ":" + "\"" + Emails[add][0] + "\"" + "}" + ","
+
 	}
-	//res, ensOutMap := GetEnInfo(string(resp.Body()), DomainsIP)
-	//
-	//outputfile.MergeOutPut(res, ensOutMap, "alienvault", options)
+	result1 = result1 + "]}"
+
+	//for _, aa := range matches {
+	//	fmt.Print("111111\n")
+	//	fmt.Print(aa)
+	//}
+	res, ensOutMap := GetEnInfo(result1, DomainsIP)
+	outputfile.MergeOutPut(res, ensOutMap, "Brave", options)
 	//
 
 }

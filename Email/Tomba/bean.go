@@ -1,4 +1,4 @@
-package baidu
+package Tomba
 
 type EnsGo struct {
 	name    string

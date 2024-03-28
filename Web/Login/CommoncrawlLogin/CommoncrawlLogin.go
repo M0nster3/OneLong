@@ -51,12 +51,12 @@ func CommoncrawlLogin(domain string, options *Utils.ENOptions, DomainsIP *output
 	for add := 1; add < 4; add += 1 {
 		if resp.RawResponse == nil || resp.StatusCode() == 503 {
 			resp, _ = clientR.Get(urls)
-			time.Sleep(1 * time.Second)
+			time.Sleep(5 * time.Second)
 		} else if resp.Body() != nil {
 			break
 		}
 	}
-	if err != nil {
+	if err != nil || resp.StatusCode() == 503 {
 		gologger.Errorf("Commoncrawl API 链接访问失败尝试切换代理\n")
 		return ""
 	}
@@ -100,7 +100,7 @@ func CommoncrawlLogin(domain string, options *Utils.ENOptions, DomainsIP *output
 		clienta.Header.Set("Content-Type", "application/json")
 		clienta.Header.Del("Cookie")
 		clienta.URL = url
-		time.Sleep(1 * time.Second)
+		time.Sleep(5 * time.Second)
 		respa, err := clienta.Get(url)
 		if strings.Contains(string(respa.Body()), "No Captures found ") {
 
@@ -120,7 +120,7 @@ func CommoncrawlLogin(domain string, options *Utils.ENOptions, DomainsIP *output
 
 				clientaa.Header.Set("Content-Type", "application/json")
 				respa, _ = clientaa.Get(url)
-				time.Sleep(10 * time.Second)
+				time.Sleep(5 * time.Second)
 			} else if resp.Body() != nil {
 				break
 			}

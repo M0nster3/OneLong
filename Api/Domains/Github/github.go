@@ -22,7 +22,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 
 	ensInfos := &Utils.EnInfos{}
 	ensInfos.Infos = make(map[string][]gjson.Result)
-	ensInfos.SType = "Fullhunt"
+	ensInfos.SType = "Github"
 	ensOutMap := make(map[string]*outputfile.ENSMap)
 	for k, v := range getENMap() {
 		ensOutMap[k] = &outputfile.ENSMap{Name: v.name, Field: v.field, KeyWord: v.keyWord}
@@ -84,14 +84,14 @@ func Github(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 		resp, err := clientR.Get(urls)
 
 		for attempt := 0; attempt < 4; attempt++ {
-			if resp.RawResponse == nil {
+			if resp.RawResponse == nil || strings.Contains(string(resp.Body()), "API rate limit exceeded for") {
 				resp, _ = clientR.Get(urls)
-				time.Sleep(1 * time.Second)
+				time.Sleep(20 * time.Second)
 			} else if resp.Body() != nil {
 				break
 			}
 		}
-		if resp.RawResponse != nil || err != nil {
+		if resp.RawResponse == nil || err != nil {
 			gologger.Errorf("Github 链接无法访问尝试切换代理 \n")
 			return ""
 		}
@@ -119,7 +119,7 @@ func Github(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 	}
 	res, ensOutMap := GetEnInfo(result, DomainsIP)
 
-	outputfile.MergeOutPut(res, ensOutMap, "Fullhunt", options)
+	outputfile.MergeOutPut(res, ensOutMap, "Github", options)
 	//outputfile.OutPutExcelByMergeEnInfo(options)
 	//
 	//Result := gjson.GetMany(string(resp.Body()), "passive_dns.#.address", "passive_dns.#.hostname")

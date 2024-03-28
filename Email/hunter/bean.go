@@ -1,4 +1,4 @@
-package baidu
+package hunter
 
 type EnsGo struct {
 	name    string

@@ -1,4 +1,4 @@
-package baidu
+package Intelx
 
 type EnsGo struct {
 	name    string

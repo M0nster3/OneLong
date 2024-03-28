@@ -11,7 +11,7 @@ func getENMap() map[string]*EnsGo {
 	ensInfoMap = map[string]*EnsGo{
 		"Email": {
 			name:    "Email",
-			field:   []string{"email"},
+			field:   []string{"Email"},
 			keyWord: []string{"Email"},
 		},
 	}

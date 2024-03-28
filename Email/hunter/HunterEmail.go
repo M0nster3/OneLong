@@ -1,4 +1,4 @@
-package yahoo
+package hunter
 
 import (
 	"OneLong/Utils"
@@ -11,7 +11,6 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
-	"sync"
 
 	//"strconv"
 	//"strings"
@@ -51,18 +50,6 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 
 }
 
-func ParseUrl(domain string) []string {
-
-	var urls []string
-	for num := 0; num < 1000; num += 10 {
-		url := "https://search.yahoo.com/search?p=%40" + domain + "&b=xx&pz=10"
-		url = strings.ReplaceAll(url, "xx", fmt.Sprintf("%d", num))
-		urls = append(urls, url)
-	}
-	return urls
-
-}
-
 func clearresponse(results string) string {
 
 	replacements := []string{
@@ -86,61 +73,54 @@ func clearresponse(results string) string {
 	return results
 
 }
+func HunterEmail(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
 
-func YahooEmail(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
-	//gologger.Infof("Alienvault\n")
-	var wg sync.WaitGroup
-	urlss := ParseUrl(domain)
 	var respnsehe string
-	for _, urls := range urlss {
-		wg.Add(1)
-		urls := urls
-		go func() {
-			client := resty.New()
-			client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
-			client.SetTimeout(time.Duration(options.TimeOut) * time.Minute)
-			if options.Proxy != "" {
-				client.SetProxy(options.Proxy)
-			}
-			client.Header = http.Header{
-				"User-Agent": {"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"},
-				"Accept":     {"text/html,application/json,application/xhtml+xml, image/jxr, */*"},
-			}
 
-			client.Header.Set("Content-Type", "application/json")
-			client.Header.Del("Cookie")
+	urls := fmt.Sprintf("https://api.hunter.io/v2/domain-search?domain=%s&api_key=%s&limit=10", domain, options.ENConfig.Email.Emailhunter)
 
-			//强制延时1s
-			time.Sleep(1 * time.Second)
-			//加入随机延迟
-			time.Sleep(time.Duration(options.GetDelayRTime()) * time.Second)
-			clientR := client.R()
-
-			clientR.URL = urls
-			resp, err := clientR.Get(urls)
-
-			for add := 1; add < 4; add += 1 {
-				if resp.RawResponse == nil {
-					resp, _ = clientR.Get(urls)
-					time.Sleep(1 * time.Second)
-				} else if resp.Body() != nil {
-					break
-				}
-			}
-
-			if err != nil {
-				gologger.Errorf("Yahoo 链接访问失败尝试切换代理\n")
-
-			}
-			respnsehe += string(resp.Body())
-			wg.Done()
-		}()
-
+	client := resty.New()
+	client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
+	client.SetTimeout(time.Duration(options.TimeOut) * time.Minute)
+	if options.Proxy != "" {
+		client.SetProxy(options.Proxy)
 	}
-	wg.Wait()
-	respnsehe = clearresponse(respnsehe)
-	Email := `[a-zA-Z0-9.\-_+#~!$&',;=:]+@` + `[a-zA-Z0-9.-]*` + strings.ReplaceAll(domain, "www.", "")
+	client.Header = http.Header{
+		"User-Agent": {"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"},
+		"Accept":     {"application/vnd.github.v3.text-match+json"},
+	}
 
+	client.Header.Del("Cookie")
+
+	//强制延时1s
+	time.Sleep(1 * time.Second)
+	//加入随机延迟
+	time.Sleep(time.Duration(options.GetDelayRTime()) * time.Second)
+	clientR := client.R()
+
+	clientR.URL = urls
+	resp, err := clientR.Get(urls)
+
+	for attempt := 0; attempt < 4; attempt++ {
+		if resp.RawResponse == nil {
+			resp, _ = clientR.Get(urls)
+			time.Sleep(1 * time.Second)
+		} else if resp.Body() != nil {
+			break
+		}
+	}
+	if resp.RawResponse == nil || err != nil {
+		gologger.Errorf("Github 链接无法访问尝试切换代理 \n")
+		return ""
+	}
+	//if gjson.Get(string(resp.Body()), "total_count").Int() == 0 {
+	//	gologger.Labelf("github 未发现域名 %s\n", domain)
+	//	return ""
+	//} else if len(gjson.Get(string(resp.Body()), "items").Array()) == 0 {
+	//	return ""
+	//}
+	respnsehe = clearresponse(string(resp.Body()))
+	Email := `[a-zA-Z0-9.\-_+#~!$&',;=:]+@` + `[a-zA-Z0-9.-]*` + strings.ReplaceAll(domain, "www.", "")
 	re := regexp.MustCompile(Email)
 
 	Emails := re.FindAllStringSubmatch(strings.TrimSpace(respnsehe), -1)
@@ -158,8 +138,6 @@ func YahooEmail(domain string, options *Utils.ENOptions, DomainsIP *outputfile.D
 	//}
 	res, ensOutMap := GetEnInfo(result1, DomainsIP)
 	//
-	outputfile.MergeOutPut(res, ensOutMap, "Yahoo", options)
-	//outputfile.MergeOutPut(res, ensOutMap, "alienvault", options)
-	//
-
+	outputfile.MergeOutPut(res, ensOutMap, "Hunter", options)
+	return "Success"
 }

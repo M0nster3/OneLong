@@ -6,6 +6,7 @@ import (
 	"OneLong/Api/Company/Aiqicha"
 	"OneLong/Api/Company/tianyancha"
 	"OneLong/Api/Domains"
+	"OneLong/Email"
 	"OneLong/Utils"
 	outputfile "OneLong/Utils/OutPutfile"
 	"OneLong/Utils/gologger"
@@ -96,7 +97,7 @@ func CompanyRunJob(options *Utils.ENOptions) {
 	wg.Wait()
 
 	options.ICP = Utils.SetStr(options.ICP)
-	gologger.Infof("查询子域名\n")
+	color.RGBStyleFromString("244,211,49").Println("\n--------------------查询子域名--------------------")
 	for add, domain := range options.ICP {
 		Domains.Domains(domain, options, &Domainip)
 		fmt.Print(add)
@@ -108,11 +109,13 @@ func CompanyRunJob(options *Utils.ENOptions) {
 		domain = domain + sp[len(sp)-2] + "." + sp[len(sp)-1] + " "
 	}
 	//Domains.Domains(domain, options, &Domainip)
-	gologger.Infof("整合域名、IP、指纹\n")
+	color.RGBStyleFromString("244,211,49").Println("\n--------------------整合域名、IP、指纹--------------------")
 	HttpZhiwen.Status(domain, options, &Domainip)
-	gologger.Infof("探测网站后台\n")
+	color.RGBStyleFromString("244,211,49").Println("\n--------------------探测网站后台--------------------")
 	Login.Login(Domainip.DomainA, options, &Domainip)
 	// 如果不是API模式，而且不是批量文件形式查询 不是API 就合并导出到表格里面
+	color.RGBStyleFromString("244,211,49").Println("\n--------------------探测邮箱--------------------")
+	Email.Email(options.Domain, options, &Domainip)
 	if options.IsMergeOut && options.InputFile == "" {
 		outputfile.OutPutExcelByMergeEnInfo(options)
 	}
@@ -125,7 +128,9 @@ func DomainRunJob(options *Utils.ENOptions) {
 	HttpZhiwen.Status(options.Domain, options, &Domainip)
 	color.RGBStyleFromString("244,211,49").Println("\n--------------------探测网站后台--------------------")
 	Login.Login(Domainip.DomainA, options, &Domainip)
-	// 如果不是API模式，而且不是批量文件形式查询 不是API 就合并导出到表格里面
+	color.RGBStyleFromString("244,211,49").Println("\n--------------------探测邮箱--------------------")
+	Email.Email(options.Domain, options, &Domainip)
+
 	if options.IsMergeOut && options.InputFile == "" {
 		outputfile.OutPutExcelByMergeEnInfo(options)
 	}

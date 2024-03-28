@@ -87,10 +87,13 @@ func WaybackarchiveLogin(domain string, options *Utils.ENOptions, DomainsIP *out
 	}
 
 	loginurls := strings.Split(string(resp.Body()), "\n")
-	last := "svg,css,eot,ttf,woff,jpg,png,jpeg,js,woff2,htm,gif"
+	last := "svg,css,eot,ttf,woff,jpg,png,jpeg,js,woff2,htm,gif,html"
+	var mu sync.Mutex // 用于保护 addedURLs
+	addedURLs := sync.Map{}
 	for _, loginurl := range loginurls {
 		wg.Add(1)
 		loginurl := loginurl
+
 		go func() {
 			for content := range contentSet {
 				if strings.Contains(loginurl, content) {
@@ -99,9 +102,13 @@ func WaybackarchiveLogin(domain string, options *Utils.ENOptions, DomainsIP *out
 						lastThree := strings.Split(loginurl, ".")
 						lastWen := strings.Split(lastThree[len(lastThree)-1], "?")
 						if !strings.Contains(last, lastThree[len(lastThree)-1]) && !strings.Contains(last, lastWen[0]) {
-							gologger.Infof("waybackarchive 匹配到链接:%s\n", loginurl)
-							//fmt.Println("AlienvaultLogin 匹配到链接:", loginurl.String())
-							DomainsIP.LoginUrl = append(DomainsIP.LoginUrl, wen[0])
+							mu.Lock()
+							if _, ok := addedURLs.LoadOrStore(wen[0], true); !ok {
+								gologger.Infof("waybackarchive 匹配到链接:%s\n", loginurl)
+								DomainsIP.LoginUrl = append(DomainsIP.LoginUrl, loginurl)
+							}
+							mu.Unlock()
+
 						}
 					} else {
 						lastThree := strings.Split(loginurl, ".")
@@ -112,7 +119,6 @@ func WaybackarchiveLogin(domain string, options *Utils.ENOptions, DomainsIP *out
 							DomainsIP.LoginUrl = append(DomainsIP.LoginUrl, loginurl)
 						}
 					}
-
 				}
 			}
 			wg.Done()

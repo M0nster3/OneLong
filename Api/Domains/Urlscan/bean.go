@@ -1,4 +1,4 @@
-package baidu
+package Urlscan
 
 type EnsGo struct {
 	name    string
@@ -9,10 +9,10 @@ type EnsGo struct {
 func getENMap() map[string]*EnsGo {
 	ensInfoMap := make(map[string]*EnsGo)
 	ensInfoMap = map[string]*EnsGo{
-		"Email": {
-			name:    "Email",
-			field:   []string{"Email"},
-			keyWord: []string{"Email"},
+		"Urls": {
+			name:    "备案查询子域",
+			field:   []string{"address", "hostname"},
+			keyWord: []string{"IP", "域名"},
 		},
 	}
 	for k, _ := range ensInfoMap {

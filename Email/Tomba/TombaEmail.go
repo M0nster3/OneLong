@@ -1,17 +1,15 @@
-package yahoo
+package Tomba
 
 import (
 	"OneLong/Utils"
 	outputfile "OneLong/Utils/OutPutfile"
 	"OneLong/Utils/gologger"
 	"crypto/tls"
-	"fmt"
 	"github.com/go-resty/resty/v2"
 	"github.com/tidwall/gjson"
 	"net/http"
 	"regexp"
 	"strings"
-	"sync"
 
 	//"strconv"
 	//"strings"
@@ -51,18 +49,6 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 
 }
 
-func ParseUrl(domain string) []string {
-
-	var urls []string
-	for num := 0; num < 1000; num += 10 {
-		url := "https://search.yahoo.com/search?p=%40" + domain + "&b=xx&pz=10"
-		url = strings.ReplaceAll(url, "xx", fmt.Sprintf("%d", num))
-		urls = append(urls, url)
-	}
-	return urls
-
-}
-
 func clearresponse(results string) string {
 
 	replacements := []string{
@@ -86,61 +72,53 @@ func clearresponse(results string) string {
 	return results
 
 }
-
-func YahooEmail(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
-	//gologger.Infof("Alienvault\n")
-	var wg sync.WaitGroup
-	urlss := ParseUrl(domain)
+func TombaEmail(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
 	var respnsehe string
-	for _, urls := range urlss {
-		wg.Add(1)
-		urls := urls
-		go func() {
-			client := resty.New()
-			client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
-			client.SetTimeout(time.Duration(options.TimeOut) * time.Minute)
-			if options.Proxy != "" {
-				client.SetProxy(options.Proxy)
-			}
-			client.Header = http.Header{
-				"User-Agent": {"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"},
-				"Accept":     {"text/html,application/json,application/xhtml+xml, image/jxr, */*"},
-			}
-
-			client.Header.Set("Content-Type", "application/json")
-			client.Header.Del("Cookie")
-
-			//强制延时1s
-			time.Sleep(1 * time.Second)
-			//加入随机延迟
-			time.Sleep(time.Duration(options.GetDelayRTime()) * time.Second)
-			clientR := client.R()
-
-			clientR.URL = urls
-			resp, err := clientR.Get(urls)
-
-			for add := 1; add < 4; add += 1 {
-				if resp.RawResponse == nil {
-					resp, _ = clientR.Get(urls)
-					time.Sleep(1 * time.Second)
-				} else if resp.Body() != nil {
-					break
-				}
-			}
-
-			if err != nil {
-				gologger.Errorf("Yahoo 链接访问失败尝试切换代理\n")
-
-			}
-			respnsehe += string(resp.Body())
-			wg.Done()
-		}()
-
+	//gologger.Infof("Quake 空间探测搜索域名 \n")
+	client := resty.New()
+	client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
+	client.SetTimeout(time.Duration(options.TimeOut) * time.Minute)
+	if options.Proxy != "" {
+		client.SetProxy(options.Proxy)
+		//client.SetProxy("192.168.203.111:1111")
 	}
-	wg.Wait()
-	respnsehe = clearresponse(respnsehe)
-	Email := `[a-zA-Z0-9.\-_+#~!$&',;=:]+@` + `[a-zA-Z0-9.-]*` + strings.ReplaceAll(domain, "www.", "")
+	urls := "https://api.tomba.io/v1/domain-search?domain=" + domain + "&limit=10"
+	client.Header = http.Header{
+		"User-Agent":     {"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"},
+		"Accept":         {"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"},
+		"X-Tomba-Key":    {options.ENConfig.Email.TombaKey},
+		"X-Tomba-Secret": {options.ENConfig.Email.TombaSecret},
+	}
+	client.Header.Set("Content-Type", "application/json")
 
+	//强制延时1s
+	time.Sleep(1 * time.Second)
+	//加入随机延迟
+	time.Sleep(time.Duration(options.GetDelayRTime()) * time.Second)
+	//requestBody := fmt.Sprintf(`{"query":"domain: %s", "include":["service.http.host"], "latest": true, "start":0, "size":500}`, domain)
+	response, err := client.R().Get(urls)
+	for add := 1; add < 4; add += 1 {
+		if response.RawResponse == nil {
+			response, _ = client.R().Get(urls)
+			time.Sleep(1 * time.Second)
+		} else if response.Body() != nil {
+			break
+		}
+	}
+	if err != nil {
+		gologger.Errorf("TombaEmail 访问失败尝试切换代理\n")
+		return ""
+	}
+
+	//if gjson.Get(string(resp.Body()), "total_count").Int() == 0 {
+	//	gologger.Labelf("github 未发现域名 %s\n", domain)
+	//	return ""
+	//} else if len(gjson.Get(string(resp.Body()), "items").Array()) == 0 {
+	//	return ""
+	//}
+
+	respnsehe = clearresponse(string(response.Body()))
+	Email := `[a-zA-Z0-9.\-_+#~!$&',;=:]+@` + `[a-zA-Z0-9.-]*` + strings.ReplaceAll(domain, "www.", "")
 	re := regexp.MustCompile(Email)
 
 	Emails := re.FindAllStringSubmatch(strings.TrimSpace(respnsehe), -1)
@@ -158,8 +136,6 @@ func YahooEmail(domain string, options *Utils.ENOptions, DomainsIP *outputfile.D
 	//}
 	res, ensOutMap := GetEnInfo(result1, DomainsIP)
 	//
-	outputfile.MergeOutPut(res, ensOutMap, "Yahoo", options)
-	//outputfile.MergeOutPut(res, ensOutMap, "alienvault", options)
-	//
-
+	outputfile.MergeOutPut(res, ensOutMap, "Tomba", options)
+	return "Success"
 }

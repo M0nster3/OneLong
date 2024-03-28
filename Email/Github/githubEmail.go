@@ -1,4 +1,4 @@
-package baidu
+package Github
 
 import (
 	"OneLong/Utils"
@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
+
 	//"strconv"
 	//"strings"
 	"time"
@@ -20,7 +21,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 	respons := gjson.Get(response, "Email").Array()
 	ensInfos := &Utils.EnInfos{}
 	ensInfos.Infos = make(map[string][]gjson.Result)
-	ensInfos.SType = "Baidu"
+	ensInfos.SType = "Github"
 	ensOutMap := make(map[string]*outputfile.ENSMap)
 	for k, v := range getENMap() {
 		ensOutMap[k] = &outputfile.ENSMap{Name: v.name, Field: v.field, KeyWord: v.keyWord}
@@ -49,18 +50,6 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 
 }
 
-func ParseUrl(domain string) []string {
-
-	var urls []string
-	for num := 0; num < 500; num += 10 {
-		url := "https://www.baidu.com/s?wd=%40" + domain + "&pn=xx&oq=" + domain
-		url = strings.ReplaceAll(url, "xx", fmt.Sprintf("%d", num))
-		urls = append(urls, url)
-	}
-	return urls
-
-}
-
 func clearresponse(results string) string {
 
 	replacements := []string{
@@ -84,13 +73,11 @@ func clearresponse(results string) string {
 	return results
 
 }
+func GithubEmail(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
 
-func Baidu(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
-	//gologger.Infof("Alienvault\n")
-
-	urlss := ParseUrl(domain)
 	var respnsehe string
-	for _, urls := range urlss {
+	for add := 1; add < 11; add += 1 {
+		urls := fmt.Sprintf("https://api.github.com/search/code?q=%s&per_page=100&page=%d&sort=indexed&&order=asc", domain, add)
 
 		client := resty.New()
 		client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
@@ -98,24 +85,14 @@ func Baidu(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domain
 		if options.Proxy != "" {
 			client.SetProxy(options.Proxy)
 		}
+		Authorization := " token " + options.ENConfig.Cookies.Github
 		client.Header = http.Header{
-			"Accept":          {"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"},
-			"Accept-Encoding": {"gzip, deflate, br, zstd"},
-			"Accept-Language": {"zh-CN,zh;q=0.9"},
-			"Cache-Control":   {"max-age=0"},
-			"Connection":      {"keep-alive"},
-			//"Cookie":                    {"BIDUPSID=E5CBE91A1AFA0DE768B8836161C4B5DD; PSTM=1711609247; BAIDUID=E5CBE91A1AFA0DE7D8785DAA4084CF17:FG=1; BD_UPN=12314753; H_PS_PSSID=40170_40080_40368_40379_40415_40445_40464_40458_40481_40317_39661_40487_40511_40514_40398_60041_60027_60034_60047; BDORZ=B490B5EBF6F3CD402E515D22BCDA1598; kleck=86bf3a1f689c07d154ee2ce3f9366ebc; BA_HECTOR=0l2l818lak2k24a48g2k858hs14dms1j0a7je1t; BAIDUID_BFESS=E5CBE91A1AFA0DE7D8785DAA4084CF17:FG=1; ZFY=sF0pysXgRmUHpErRNjf9aHTIUiPPBAQqlz:BaQbYC8Oc:C; delPer=0; BD_CK_SAM=1; PSINO=7; H_PS_645EC=671doRul3CR5KeWAZpKiD%2FvWfSm12fpyFlBeTAQCileoBXECcVJwChS9tKs"},
-			"Host":                      {"www.baidu.com"},
-			"Sec-Ch-Ua":                 {"\"Chromium\";v=\"122\", \"Not(A:Brand\";v=\"24\", \"Google Chrome\";v=\"122\""},
-			"Sec-Ch-Ua-Mobile":          {"?0"},
-			"Sec-Ch-Ua-Platform":        {"\"Windows\""},
-			"Sec-Fetch-Dest":            {"document"},
-			"Sec-Fetch-Mode":            {"navigate"},
-			"Sec-Fetch-Site":            {"none"},
-			"Sec-Fetch-User":            {"?1"},
-			"Upgrade-Insecure-Requests": {"1"},
-			"User-Agent":                {Utils.RandUA()},
+			"User-Agent":    {"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"},
+			"Accept":        {"application/vnd.github.v3.text-match+json"},
+			"Authorization": {Authorization},
 		}
+
+		client.Header.Del("Cookie")
 
 		//强制延时1s
 		time.Sleep(1 * time.Second)
@@ -126,48 +103,52 @@ func Baidu(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domain
 		clientR.URL = urls
 		resp, err := clientR.Get(urls)
 
-		for add := 1; add < 4; add += 1 {
+		for attempt := 0; attempt < 4; attempt++ {
 			if resp.RawResponse == nil {
 				resp, _ = clientR.Get(urls)
 				time.Sleep(1 * time.Second)
+			} else if strings.Contains(string(resp.Body()), "API rate limit exceeded for") {
+				time.Sleep(5 * time.Second)
 			} else if resp.Body() != nil {
-				break
-			} else if strings.Contains(string(resp.Body()), "网络不给力，请稍后重试") {
 				break
 			}
 		}
-		if err != nil || strings.Contains(string(resp.Body()), "网络不给力，请稍后重试") {
-			gologger.Errorf("Baidu 爬虫失败尝试切换代理\n")
+		if resp.RawResponse == nil || err != nil {
+			gologger.Errorf("Github 链接无法访问尝试切换代理 \n")
+			break
+		}
+		if gjson.Get(string(resp.Body()), "total_count").Int() == 0 && add == 1 {
+			gologger.Labelf("github 未发现域名 %s\n", urls)
+			break
+		} else if gjson.Get(string(resp.Body()), "total_count").Int() == 0 && add != 1 {
+			break
+		} else if len(gjson.Get(string(resp.Body()), "items").Array()) == 0 {
 			break
 		}
 		respnsehe += string(resp.Body())
 
 	}
-
 	respnsehe = clearresponse(respnsehe)
-	if strings.Contains(respnsehe, "title 百度安全验证  title ") {
-		gologger.Errorf("Baidu需要进行验证\n")
-		return
-	}
 	Email := `[a-zA-Z0-9.\-_+#~!$&',;=:]+@` + `[a-zA-Z0-9.-]*` + strings.ReplaceAll(domain, "www.", "")
-
 	re := regexp.MustCompile(Email)
 
 	Emails := re.FindAllStringSubmatch(strings.TrimSpace(respnsehe), -1)
+	if len(Emails) > 0 {
+		result1 := "{\"Email\":["
+		for add := 0; add < len(Emails); add++ {
+			result1 += "{" + "\"Email\"" + ":" + "\"" + Emails[add][0] + "\"" + "}" + ","
 
-	result1 := "{\"Email\":["
-	for add := 0; add < len(Emails); add++ {
-		result1 += "{" + "\"Email\"" + ":" + "\"" + Emails[add][0] + "\"" + "}" + ","
+		}
+		result1 = result1 + "]}"
 
+		//for _, aa := range matches {
+		//	fmt.Print("111111\n")
+		//	fmt.Print(aa)
+		//}
+		res, ensOutMap := GetEnInfo(result1, DomainsIP)
+		//
+		outputfile.MergeOutPut(res, ensOutMap, "Github", options)
 	}
-	result1 = result1 + "]}"
 
-	//for _, aa := range matches {
-	//	fmt.Print("111111\n")
-	//	fmt.Print(aa)
-	//}
-	res, ensOutMap := GetEnInfo(result1, DomainsIP)
-
-	outputfile.MergeOutPut(res, ensOutMap, "Baidu", options)
-
+	return "Success"
 }
