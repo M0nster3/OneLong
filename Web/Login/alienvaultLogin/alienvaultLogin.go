@@ -72,7 +72,7 @@ func AlienvaultLogin(domain string, options *Utils.ENOptions, DomainsIP *outputf
 	for add := 1; add < 4; add += 1 {
 		if resp.RawResponse == nil {
 			resp, _ = clientR.Get(urls)
-			time.Sleep(1 * time.Second)
+			time.Sleep(4 * time.Second)
 		} else if resp.Body() != nil {
 			break
 		}

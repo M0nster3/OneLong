@@ -66,7 +66,7 @@ func GetInfoByCompanyId(companyId int64, options *Utils.ENOptions) (data map[str
 		}
 		tdata = append(tdata, str)
 	}
-	Utils.TableShow(ensMap[searchInfo].keyWord, tdata, options)
+	Utils.TableShow(ensMap[searchInfo].keyWord, tdata)
 	return data
 }
 

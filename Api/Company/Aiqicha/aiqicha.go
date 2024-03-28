@@ -143,7 +143,7 @@ func getCompanyInfoById(pid string, deep int, isEnDetail bool, inFrom string, se
 			{"邮箱", ensInfo.Email},
 			{"统一社会信用代码", ensInfo.RegCode},
 		}
-		Utils.TableShow([]string{}, data, options)
+		Utils.TableShow([]string{}, data)
 	}
 
 	// 判断企业状态，如果是异常情况就可以跳过了
@@ -220,7 +220,7 @@ func getCompanyInfoById(pid string, deep int, isEnDetail bool, inFrom string, se
 					}
 					data = append(data, str)
 				}
-				Utils.TableShow(ensInfoMap[k].keyWord, data, options)
+				Utils.TableShow(ensInfoMap[k].keyWord, data)
 			}
 		}
 	}

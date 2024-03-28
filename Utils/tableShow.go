@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-func TableShow(keys []string, values [][]string, options *ENOptions) {
+func TableShow(keys []string, values [][]string) {
 
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetAlignment(tablewriter.ALIGN_CENTER)

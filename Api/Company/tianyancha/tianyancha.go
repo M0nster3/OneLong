@@ -124,7 +124,7 @@ func getCompanyInfoById(pid string, deep int, isEnDetail bool, inFrom string, se
 				}
 				data = append(data, str)
 			}
-			Utils.TableShow(ensMap[key].keyWord, data, options)
+			Utils.TableShow(ensMap[key].keyWord, data)
 		} else {
 			gologger.Infof("【TYC】%s 数量为空\n", ensMap[key].name)
 		}

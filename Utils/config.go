@@ -7,6 +7,7 @@ import (
 )
 
 type ENOptions struct {
+	NoBao     bool
 	Domain    string
 	KeyWord   string // Keyword of Search
 	CompanyID string // Company ID

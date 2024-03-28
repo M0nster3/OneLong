@@ -190,6 +190,8 @@ func (s *FinScan) fingerScan(DomainsIP *outputfile.DomainsIP) {
 				var zhiwen string
 				if out.Cms != "" {
 					zhiwen = out.Cms + " , " + out.Server
+				} else if out.Cms == "" && out.Server == "" {
+					zhiwen = ""
 				} else {
 					zhiwen = out.Server
 				}
@@ -202,17 +204,26 @@ func (s *FinScan) fingerScan(DomainsIP *outputfile.DomainsIP) {
 				matches := re.FindAllStringSubmatch(strings.TrimSpace(reurl1), -1)
 				if len(matches) > 0 {
 					ips, _ := net.LookupIP(matches[0][0])
-
-					if out.Statuscode != 502 && out.Length != 0 {
-						DomainsIP.A = append(DomainsIP.A, ips[0].String())
-						DomainsIP.Zhiwen = append(DomainsIP.Zhiwen, zhiwen)
-						DomainsIP.DomainA = append(DomainsIP.DomainA, out.Url)
-						DomainsIP.Status_code = append(DomainsIP.Status_code, strconv.Itoa(out.Statuscode))
-						DomainsIP.TitleBUff = append(DomainsIP.TitleBUff, out.Title)
-						DomainsIP.Size = append(DomainsIP.Size, strconv.Itoa(out.Length))
+					if len(ips) > 0 {
+						if out.Statuscode != 502 && out.Length != 0 {
+							DomainsIP.A = append(DomainsIP.A, ips[0].String())
+							DomainsIP.Zhiwen = append(DomainsIP.Zhiwen, zhiwen)
+							DomainsIP.DomainA = append(DomainsIP.DomainA, out.Url)
+							DomainsIP.Status_code = append(DomainsIP.Status_code, strconv.Itoa(out.Statuscode))
+							DomainsIP.TitleBUff = append(DomainsIP.TitleBUff, out.Title)
+							DomainsIP.Size = append(DomainsIP.Size, strconv.Itoa(out.Length))
+						}
+					} else {
+						if out.Statuscode != 502 && out.Length != 0 {
+							DomainsIP.A = append(DomainsIP.A, "")
+							DomainsIP.Zhiwen = append(DomainsIP.Zhiwen, zhiwen)
+							DomainsIP.DomainA = append(DomainsIP.DomainA, out.Url)
+							DomainsIP.Status_code = append(DomainsIP.Status_code, strconv.Itoa(out.Statuscode))
+							DomainsIP.TitleBUff = append(DomainsIP.TitleBUff, out.Title)
+							DomainsIP.Size = append(DomainsIP.Size, strconv.Itoa(out.Length))
+						}
 					}
 				}
-
 			}
 		default:
 			continue

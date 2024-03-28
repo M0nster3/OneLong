@@ -7,13 +7,17 @@ import (
 	"crypto/tls"
 	"fmt"
 	"github.com/go-resty/resty/v2"
+	"github.com/gookit/color"
 	"github.com/tidwall/gjson"
 	"net/http"
+	"sync"
+
 	//"strconv"
 	//"strings"
 	"time"
 )
 
+var mu sync.Mutex // 用于保护 addedURLs
 func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
 	responselist := gjson.Get(response, "result.records.#.domain").Array()
 	ensInfos := &Utils.EnInfos{}
@@ -41,6 +45,32 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 		}
 
 	}
+	mu.Lock()
+	color.RGBStyleFromString("199,21,133").Println("\nwhoisxmlapi 查询子域名")
+	//命令输出展示
+	var data [][]string
+	var keyword []string
+	for _, y := range getENMap() {
+		for _, ss := range y.keyWord {
+			if ss == "数据关联" {
+				continue
+			}
+			keyword = append(keyword, ss)
+		}
+
+		for _, res := range ensInfos.Infos["Urls"] {
+			results := gjson.GetMany(res.Raw, y.field...)
+			var str []string
+			for _, s := range results {
+				str = append(str, s.String())
+			}
+			data = append(data, str)
+		}
+
+	}
+
+	Utils.TableShow(keyword, data)
+	mu.Unlock()
 	//zuo := strings.ReplaceAll(response, "[", "")
 	//you := strings.ReplaceAll(zuo, "]", "")
 

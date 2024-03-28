@@ -10,6 +10,7 @@ import (
 
 func ConfigParse(options *ENOptions) {
 	// 配置文件检查
+
 	if ok, _ := PathExists(cfgYName); !ok {
 		gologger.Infof("未发现配置文件，创建配置文件，请从新执行命令\n")
 		f, errs := os.Create(cfgYName) //创建文件
@@ -46,18 +47,6 @@ func ConfigParse(options *ENOptions) {
 	options.IsShow = false
 	options.IsMergeOut = true
 	options.Deep = 5
-	//if options.KeyWord == "" {
-	//	options.ScanType = "aqc"
-	//}
-	////数据源判断 默认为爱企查
-	//if options.ScanType == "" && len(options.GetType) == 0 {
-	//	options.ScanType = "aqc"
-	//}
-	////如果是指定全部数据
-	//if options.ScanType == "all" {
-	//	options.GetType = []string{"aqc", "tyc"}
-	//	options.IsMergeOut = true
-	//} else if options.ScanType != "" {
 	options.GetType = []string{"aqc", "tyc", "aldzs", "qimai"}
 	//options.GetType = []string{"aqc"}
 	//options.ScanType = "aqc,tyc,aldzs,qimai"

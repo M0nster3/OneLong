@@ -4,7 +4,9 @@ import (
 	"OneLong/Utils"
 	outputfile "OneLong/Utils/OutPutfile"
 	"OneLong/Utils/gologger"
+	"github.com/gookit/color"
 	"strings"
+	"sync"
 
 	"crypto/tls"
 	"github.com/go-resty/resty/v2"
@@ -15,6 +17,7 @@ import (
 	"time"
 )
 
+var mu sync.Mutex // 用于保护 addedURLs
 func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
 	respons := gjson.Parse(response).Array()
 
@@ -44,6 +47,32 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 		}
 
 	}
+	mu.Lock()
+	//命令输出展示
+	color.RGBStyleFromString("199,21,133").Println("\nleakix 查询子域名")
+	var data [][]string
+	var keyword []string
+	for _, y := range getENMap() {
+		for _, ss := range y.keyWord {
+			if ss == "数据关联" {
+				continue
+			}
+			keyword = append(keyword, ss)
+		}
+
+		for _, res := range ensInfos.Infos["Urls"] {
+			results := gjson.GetMany(res.Raw, y.field...)
+			var str []string
+			for _, s := range results {
+				str = append(str, s.String())
+			}
+			data = append(data, str)
+		}
+
+	}
+
+	Utils.TableShow(keyword, data)
+	mu.Unlock()
 	//zuo := strings.ReplaceAll(response, "[", "")
 	//you := strings.ReplaceAll(zuo, "]", "")
 

@@ -12,7 +12,6 @@ import (
 	"OneLong/Utils/gologger"
 	"OneLong/Web/HttpZhiwen"
 	"OneLong/Web/Login"
-	"fmt"
 	"github.com/gookit/color"
 	"strings"
 	"sync"
@@ -20,6 +19,7 @@ import (
 
 // RunJob 运行项目 添加新参数记得去Config添加
 func CompanyRunJob(options *Utils.ENOptions) {
+	color.RGBStyleFromString("244,211,49").Println("\n--------------------查询企业信息--------------------")
 	var Domainip outputfile.DomainsIP
 	if options.Proxy != "" {
 		gologger.Infof("代理地址: %s\n", options.Proxy)
@@ -98,9 +98,8 @@ func CompanyRunJob(options *Utils.ENOptions) {
 
 	options.ICP = Utils.SetStr(options.ICP)
 	color.RGBStyleFromString("244,211,49").Println("\n--------------------查询子域名--------------------")
-	for add, domain := range options.ICP {
+	for _, domain := range options.ICP {
 		Domains.Domains(domain, options, &Domainip)
-		fmt.Print(add)
 	}
 
 	var domain string
@@ -109,7 +108,7 @@ func CompanyRunJob(options *Utils.ENOptions) {
 		domain = domain + sp[len(sp)-2] + "." + sp[len(sp)-1] + " "
 	}
 	//Domains.Domains(domain, options, &Domainip)
-	color.RGBStyleFromString("244,211,49").Println("\n--------------------整合域名、IP、指纹--------------------")
+	//color.RGBStyleFromString("244,211,49").Println("\n--------------------整合域名、IP、指纹--------------------")
 	HttpZhiwen.Status(domain, options, &Domainip)
 	color.RGBStyleFromString("244,211,49").Println("\n--------------------探测网站后台--------------------")
 	Login.Login(Domainip.DomainA, options, &Domainip)
@@ -122,6 +121,10 @@ func CompanyRunJob(options *Utils.ENOptions) {
 }
 func DomainRunJob(options *Utils.ENOptions) {
 	var Domainip outputfile.DomainsIP
+	if options.Proxy != "" {
+		gologger.Infof("代理地址: %s\n", options.Proxy)
+	}
+	gologger.Infof("当前查询的域名 %s", options.Domain)
 	//color.RGBStyleFromString("237,64,35").Println("查询子域名\n")
 	color.RGBStyleFromString("244,211,49").Println("\n--------------------查询子域名--------------------")
 	Domains.Domains(options.Domain, options, &Domainip)

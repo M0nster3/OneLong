@@ -2,7 +2,7 @@ module OneLong
 
 go 1.21
 
-toolchain go1.21.3
+//toolchain go1.21.3
 
 require (
 	github.com/PuerkitoBio/goquery v1.9.0
