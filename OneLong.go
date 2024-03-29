@@ -3,7 +3,6 @@ package main
 import (
 	"OneLong/Utils"
 	"OneLong/Utils/Gogogo"
-	outputfile "OneLong/Utils/OutPutfile"
 )
 
 func main() {
@@ -28,7 +27,7 @@ func main() {
 	//baidu.Baidu("nthu.edu.tw", &enOptions, &Domainip)
 	//Email.Email("nthu.edu.tw", &enOptions, &Domainip) //nthu.edu.tw
 	////HttpZhiwen.Status("nthu.edu.tw", &enOptions, &Domainip)
-	outputfile.OutPutExcelByMergeEnInfo(&enOptions)
+	//outputfile.OutPutExcelByMergeEnInfo(&enOptions)
 	//yahoo.YahooEmail("nthu.edu.tw", &enOptions, &Domainip)
 	//Github.GithubLogin("nthu.edu.tw", &enOptions, &Domainip)
 	//Port.Port()

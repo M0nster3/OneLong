@@ -37,6 +37,7 @@ import (
 	"OneLong/Script"
 	"OneLong/Utils"
 	outputfile "OneLong/Utils/OutPutfile"
+	"github.com/gookit/color"
 	"sync"
 )
 
@@ -331,6 +332,7 @@ func Domains(domain string, enOptions *Utils.ENOptions, Domainip *outputfile.Dom
 	Robtex.Robtex(domain, enOptions, Domainip)
 	wg.Wait()
 	if !enOptions.NoBao {
+		color.RGBStyleFromString("205,155,29").Println("\n--------------------Massdns爆破子域名--------------------")
 		Script.Massdns(domain, enOptions, Domainip)
 	}
 

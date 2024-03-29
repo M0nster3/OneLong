@@ -60,7 +60,8 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 		ensInfos.Infos["Urls"] = append(ensInfos.Infos["Urls"], gjson.Parse(respons[aa].String()))
 	}
 	mu.Lock()
-	color.RGBStyleFromString("199,21,133").Println("\nalienvault 查询子域名")
+	color.RGBStyleFromString("205,155,29")
+	color.RGBStyleFromString("205,155,29").Println("\nalienvault 查询子域名")
 	//命令输出展示
 	var data [][]string
 	var keyword []string

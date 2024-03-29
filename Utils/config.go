@@ -224,8 +224,6 @@ cookies:
   fofaEmail: ''			# Fofa Email
   githubtoken: ''		# Github Token 
   racent: ''			# racent Token
-  emailhunter: ''		# Email hunter Token
-  intelxEmail: ''		# Email Intelx Token
 massdns:
   resolvers: ''			# resolvers 文件名称
   wordlist: ''			# 子域名爆破文件名称

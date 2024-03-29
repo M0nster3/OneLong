@@ -2,6 +2,7 @@ package Utils
 
 import (
 	"OneLong/Utils/gologger"
+	"fmt"
 	yaml "gopkg.in/yaml.v2"
 	"io"
 	"io/ioutil"
@@ -12,6 +13,7 @@ func ConfigParse(options *ENOptions) {
 	// 配置文件检查
 
 	if ok, _ := PathExists(cfgYName); !ok {
+		fmt.Printf("%s", cfgYName)
 		gologger.Infof("未发现配置文件，创建配置文件，请从新执行命令\n")
 		f, errs := os.Create(cfgYName) //创建文件
 		_, errs = io.WriteString(f, configYaml)

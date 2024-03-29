@@ -75,7 +75,8 @@ func GetEnInfo(response string, domain string, DomainsIP *outputfile.DomainsIP) 
 	}
 	mu.Lock()
 	//命令输出展示
-	color.RGBStyleFromString("199,21,133").Println("\nshodan 查询子域名")
+	color.RGBStyleFromString("205,155,29")
+	color.RGBStyleFromString("205,155,29").Println("\nshodan 查询子域名")
 	var data [][]string
 	var keyword []string
 	for _, y := range getENMap() {

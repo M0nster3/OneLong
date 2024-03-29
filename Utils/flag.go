@@ -8,6 +8,7 @@ import (
 
 const banner = `
 
+
  ██████╗ ███╗   ██╗███████╗██╗      ██████╗ ███╗   ██╗ ██████╗ 
 ██╔═══██╗████╗  ██║██╔════╝██║     ██╔═══██╗████╗  ██║██╔════╝ 
 ██║   ██║██╔██╗ ██║█████╗  ██║     ██║   ██║██╔██╗ ██║██║  ███╗
@@ -30,7 +31,7 @@ func Flag(Info *ENOptions) {
 	flag.StringVar(&Info.KeyWord, "n", "", "关键词 eg 小米")
 	flag.StringVar(&Info.Domain, "d", "", "域名")
 	//flag.StringVar(&Info.CompanyID, "i", "", "公司PID")
-	flag.StringVar(&Info.InputFile, "f", "", "批量查询，文本按行分隔")
+	//flag.StringVar(&Info.InputFile, "f", "", "批量查询，文本按行分隔")
 	//flag.StringVar(&Info.ScanType, "type", "aqc", "API类型 eg qcc")
 	flag.StringVar(&Info.Output, "o", "", "结果输出的文件夹位置(可选)")
 	//flag.BoolVar(&Info.IsMergeOut, "is-merge", false, "合并导出")
