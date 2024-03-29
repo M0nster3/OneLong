@@ -6,7 +6,6 @@ import (
 	"OneLong/Utils/gologger"
 	"crypto/tls"
 	"github.com/go-resty/resty/v2"
-	"github.com/gookit/color"
 	"github.com/tidwall/gjson"
 	"net/http"
 	"sync"
@@ -40,8 +39,8 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 		dns_namesArray := gjson.Get(respons[aa].Raw, "dns_names").Array()
 
 		for bb, _ := range dns_namesArray {
-			ResponseJia := "{" + "\"dns_names\"" + ":" + "\"" + dns_namesArray[bb].String() + "\"" + "}"
-			url := gjson.Parse(ResponseJia).Get("dns_names").String()
+			ResponseJia := "{" + "\"hostname\"" + ":" + "\"" + dns_namesArray[bb].String() + "\"" + "}"
+			url := gjson.Parse(ResponseJia).Get("hostname").String()
 
 			// 检查是否已存在相同的 URL
 			if !addedURLs[url] {
@@ -56,8 +55,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 	}
 	mu.Lock()
 	//命令输出展示
-	color.RGBStyleFromString("205,155,29")
-	color.RGBStyleFromString("205,155,29").Println("\ncertspotter 查询子域名")
+
 	var data [][]string
 	var keyword []string
 	for _, y := range getENMap() {
@@ -79,7 +77,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 
 	}
 
-	Utils.TableShow(keyword, data)
+	Utils.DomainTableShow(keyword, data, "certspotter")
 	mu.Unlock()
 	//zuo := strings.ReplaceAll(response, "[", "")
 	//you := strings.ReplaceAll(zuo, "]", "")

@@ -7,7 +7,6 @@ import (
 	"crypto/tls"
 	"fmt"
 	"github.com/go-resty/resty/v2"
-	"github.com/gookit/color"
 	"github.com/tidwall/gjson"
 	"net/http"
 	"regexp"
@@ -75,8 +74,7 @@ func GetEnInfo(response string, domain string, DomainsIP *outputfile.DomainsIP) 
 	}
 	mu.Lock()
 	//命令输出展示
-	color.RGBStyleFromString("205,155,29")
-	color.RGBStyleFromString("205,155,29").Println("\nshodan 查询子域名")
+
 	var data [][]string
 	var keyword []string
 	for _, y := range getENMap() {
@@ -98,7 +96,7 @@ func GetEnInfo(response string, domain string, DomainsIP *outputfile.DomainsIP) 
 
 	}
 
-	Utils.TableShow(keyword, data)
+	Utils.DomainTableShow(keyword, data, "Shodan")
 	mu.Unlock()
 	//zuo := strings.ReplaceAll(response, "[", "")
 	//you := strings.ReplaceAll(zuo, "]", "")

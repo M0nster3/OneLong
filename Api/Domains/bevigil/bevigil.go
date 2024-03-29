@@ -4,7 +4,6 @@ import (
 	"OneLong/Utils"
 	outputfile "OneLong/Utils/OutPutfile"
 	"OneLong/Utils/gologger"
-	"github.com/gookit/color"
 	"strings"
 	"sync"
 
@@ -47,8 +46,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 
 	}
 	mu.Lock()
-	color.RGBStyleFromString("205,155,29")
-	color.RGBStyleFromString("205,155,29").Println("\nbevigil 查询子域名")
+
 	//命令输出展示
 	var data [][]string
 	var keyword []string
@@ -71,7 +69,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 
 	}
 
-	Utils.TableShow(keyword, data)
+	Utils.DomainTableShow(keyword, data, "bevigil")
 	mu.Unlock()
 	//zuo := strings.ReplaceAll(response, "[", "")
 	//you := strings.ReplaceAll(zuo, "]", "")

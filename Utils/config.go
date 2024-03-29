@@ -225,9 +225,9 @@ cookies:
   githubtoken: ''		# Github Token 
   racent: ''			# racent Token
 massdns:
-  resolvers: ''			# resolvers 文件名称
-  wordlist: ''			# 子域名爆破文件名称
-  massdnsPath: ''		# Massdns工具名称
+  resolvers: 'resolvers.txt'			# resolvers 文件名称
+  wordlist: 'names.txt'			# 子域名爆破文件名称
+  massdnsPath: 'massdns.exe'		# Massdns工具名称
 email:
   emailhunter: ''		# Email hunter Token
   intelxEmail: ''		# Email Intelx Token

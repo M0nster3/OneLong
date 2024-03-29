@@ -7,7 +7,6 @@ import (
 	"crypto/tls"
 	"fmt"
 	"github.com/go-resty/resty/v2"
-	"github.com/gookit/color"
 	"github.com/tidwall/gjson"
 	"net/http"
 	"regexp"
@@ -25,7 +24,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 
 	ensInfos := &Utils.EnInfos{}
 	ensInfos.Infos = make(map[string][]gjson.Result)
-	ensInfos.SType = "Robtex	"
+	ensInfos.SType = "Robtex"
 	ensOutMap := make(map[string]*outputfile.ENSMap)
 	for k, v := range getENMap() {
 		ensOutMap[k] = &outputfile.ENSMap{Name: v.name, Field: v.field, KeyWord: v.keyWord}
@@ -40,8 +39,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 	}
 	mu.Lock()
 	//命令输出展示
-	color.RGBStyleFromString("205,155,29")
-	color.RGBStyleFromString("205,155,29").Println("\nRobtex 查询子域名")
+
 	var data [][]string
 	var keyword []string
 	for _, y := range getENMap() {
@@ -63,7 +61,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 
 	}
 
-	Utils.TableShow(keyword, data)
+	Utils.DomainTableShow(keyword, data, "Robtex")
 	mu.Unlock()
 	//zuo := strings.ReplaceAll(response, "[", "")
 	//you := strings.ReplaceAll(zuo, "]", "")

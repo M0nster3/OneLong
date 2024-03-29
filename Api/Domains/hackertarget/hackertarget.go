@@ -6,7 +6,6 @@ import (
 	"OneLong/Utils/gologger"
 	"crypto/tls"
 	"github.com/go-resty/resty/v2"
-	"github.com/gookit/color"
 	"github.com/tidwall/gjson"
 	"net/http"
 	"strings"
@@ -38,8 +37,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 	}
 	mu.Lock()
 	//命令输出展示
-	color.RGBStyleFromString("205,155,29")
-	color.RGBStyleFromString("205,155,29").Println("\nhackertarget 查询子域名")
+
 	var data [][]string
 	var keyword []string
 	for _, y := range getENMap() {
@@ -61,7 +59,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 
 	}
 
-	Utils.TableShow(keyword, data)
+	Utils.DomainTableShow(keyword, data, "Hackertarget")
 	mu.Unlock()
 	//zuo := strings.ReplaceAll(response, "[", "")
 	//you := strings.ReplaceAll(zuo, "]", "")

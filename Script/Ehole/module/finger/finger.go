@@ -45,7 +45,7 @@ func NewScan(urls []string, thread int, proxy string) *FinScan {
 		AllResult:   []Outrestul{},
 		FocusResult: []Outrestul{},
 	}
-	err := LoadWebfingerprint(Utils.GetPathDir() + "/Ehole.json")
+	err := LoadWebfingerprint(Utils.GetPathDir() + "/Script/Ehole/Ehole.json")
 	if err != nil {
 		color.RGBStyleFromString("237,64,35").Println("[error] fingerprint file error!!!")
 		os.Exit(1)

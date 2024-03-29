@@ -7,7 +7,6 @@ import (
 	"crypto/tls"
 	"fmt"
 	"github.com/go-resty/resty/v2"
-	"github.com/gookit/color"
 	"github.com/tidwall/gjson"
 	"net/http"
 	"sync"
@@ -46,7 +45,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 
 	}
 	mu.Lock()
-	color.RGBStyleFromString("205,155,29").Println("\nwhoisxmlapi 查询子域名")
+
 	//命令输出展示
 	var data [][]string
 	var keyword []string
@@ -69,7 +68,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 
 	}
 
-	Utils.TableShow(keyword, data)
+	Utils.DomainTableShow(keyword, data, "Whoisxmlapi")
 	mu.Unlock()
 	//zuo := strings.ReplaceAll(response, "[", "")
 	//you := strings.ReplaceAll(zuo, "]", "")
