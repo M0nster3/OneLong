@@ -13,12 +13,28 @@ import (
 	"OneLong/Web/HttpZhiwen"
 	"OneLong/Web/Login"
 	"github.com/gookit/color"
+	"os"
+	"os/signal"
 	"strings"
 	"sync"
+	"syscall"
 )
 
 // RunJob 运行项目 添加新参数记得去Config添加
 func CompanyRunJob(options *Utils.ENOptions) {
+	// 创建一个信号接收器
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, os.Interrupt, syscall.SIGINT)
+
+	// 在另一个 goroutine 中等待信号
+	go func() {
+		// 等待信号
+		<-sig
+		if options.IsMergeOut && options.InputFile == "" {
+			outputfile.OutPutExcelByMergeEnInfo(options)
+		}
+		os.Exit(0) // 可以执行一些清理工作后退出程序
+	}()
 	color.RGBStyleFromString("244,211,49").Println("\n--------------------查询企业信息--------------------")
 	var Domainip outputfile.DomainsIP
 	if options.Proxy != "" {
@@ -120,6 +136,19 @@ func CompanyRunJob(options *Utils.ENOptions) {
 	}
 }
 func DomainRunJob(options *Utils.ENOptions) {
+	// 创建一个信号接收器
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, os.Interrupt, syscall.SIGINT)
+
+	// 在另一个 goroutine 中等待信号
+	go func() {
+		// 等待信号
+		<-sig
+		if options.IsMergeOut && options.InputFile == "" {
+			outputfile.OutPutExcelByMergeEnInfo(options)
+		}
+		os.Exit(0) // 可以执行一些清理工作后退出程序
+	}()
 	var Domainip outputfile.DomainsIP
 	if options.Proxy != "" {
 		gologger.Infof("代理地址: %s\n", options.Proxy)
