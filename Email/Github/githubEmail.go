@@ -118,7 +118,7 @@ func GithubEmail(domain string, options *Utils.ENOptions, DomainsIP *outputfile.
 			break
 		}
 		if gjson.Get(string(resp.Body()), "total_count").Int() == 0 && add == 1 {
-			gologger.Labelf("github 未发现域名 %s\n", urls)
+			//gologger.Labelf("github 未发现域名 %s\n", urls)
 			break
 		} else if gjson.Get(string(resp.Body()), "total_count").Int() == 0 && add != 1 {
 			break

@@ -115,8 +115,6 @@ func YahooEmail(domain string, options *Utils.ENOptions, DomainsIP *outputfile.D
 			//加入随机延迟
 			time.Sleep(time.Duration(options.GetDelayRTime()) * time.Second)
 			clientR := client.R()
-
-			clientR.URL = urls
 			resp, err := clientR.Get(urls)
 
 			for add := 1; add < 4; add += 1 {

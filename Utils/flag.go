@@ -28,6 +28,7 @@ func Banner() {
 func Flag(Info *ENOptions) {
 	Banner()
 	flag.BoolVar(&Info.NoBao, "nb", false, "不进行爆破子域名")
+	flag.BoolVar(&Info.NoPoc, "np", false, "不进行漏洞扫描")
 	flag.StringVar(&Info.KeyWord, "n", "", "关键词 eg 小米")
 	flag.StringVar(&Info.Domain, "d", "", "域名")
 	//flag.StringVar(&Info.CompanyID, "i", "", "公司PID")

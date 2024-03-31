@@ -7,6 +7,7 @@ import (
 	"github.com/xuri/excelize/v2"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -158,6 +159,9 @@ func OutPutExcelByMergeEnInfo(options *Utils.ENOptions) {
 		} else if options.KeyWord != "" {
 			fileName = options.CompanyName
 		} else {
+			options.Domain = strings.ReplaceAll(options.Domain, "http://", "")
+			options.Domain = strings.ReplaceAll(options.Domain, "https://", "")
+			options.Domain = strings.ReplaceAll(options.Domain, "/", "")
 			fileName = options.Domain
 		}
 		savaPath := tmp + "/" + fileName + "--" + time.Now().Format("2006-01-02") + "--" + strconv.FormatInt(time.Now().Unix(), 10)
@@ -167,6 +171,7 @@ func OutPutExcelByMergeEnInfo(options *Utils.ENOptions) {
 		if options.Domain == "" {
 			gologger.Infof("【%s】导出中\n", options.CompanyName)
 		} else {
+
 			gologger.Infof("【%s】导出中\n", options.Domain)
 		}
 

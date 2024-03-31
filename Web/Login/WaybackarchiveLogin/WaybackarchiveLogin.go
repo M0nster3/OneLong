@@ -82,7 +82,7 @@ func WaybackarchiveLogin(domain string, options *Utils.ENOptions, DomainsIP *out
 		return ""
 	}
 	if resp.Body() == nil {
-		gologger.Labelf("waybackarchive 历史快照未发现域名 %s\n", domain)
+		//gologger.Labelf("waybackarchive 历史快照未发现域名 %s\n", domain)
 		return ""
 	}
 

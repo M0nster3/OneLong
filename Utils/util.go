@@ -92,6 +92,11 @@ func GetTempPathFileName() (pathFileName string) {
 	return filepath.Join(os.TempDir(), fmt.Sprintf("%s.tmp", RangeString(16)))
 }
 
+// GetTempPathFileName 获取一个临时Json文件名
+func GetTempJsonPathFileName() (pathFileName string) {
+	return filepath.Join(os.TempDir(), fmt.Sprintf("%s.json", RangeString(16)))
+}
+
 // PathExists 判断文件/文件夹是否存在
 func PathExists(path string) (bool, error) {
 	_, err := os.Stat(path)

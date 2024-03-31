@@ -8,6 +8,7 @@ import (
 
 type ENOptions struct {
 	NoBao     bool
+	NoPoc     bool
 	Domain    string
 	KeyWord   string // Keyword of Search
 	CompanyID string // Company ID
@@ -233,4 +234,27 @@ email:
   intelxEmail: ''		# Email Intelx Token
   tombaKey: ''			# Email tombaKey
   tombaSecret: ''		# Email tombaSecret
+#Afrog配置
+reverse:
+  alphalog:
+    domain: ""
+    api_url: ""
+  ceye:
+    api-key: ""
+    domain: ""
+  dnslogcn:
+    domain: dnslog.cn
+  eye:
+    host: ""
+    token: ""
+    domain: ""
+  jndi:
+    jndi_address: ""
+    ldap_port: ""
+    api_port: ""
+  xray:
+    x_token: ""
+    domain: ""
+    api_url: http://x.x.x.x:8777
+
 `

@@ -7,6 +7,7 @@ import (
 	"OneLong/Api/Company/tianyancha"
 	"OneLong/Api/Domains"
 	"OneLong/Email"
+	"OneLong/Script/Afrog"
 	"OneLong/Utils"
 	outputfile "OneLong/Utils/OutPutfile"
 	"OneLong/Utils/gologger"
@@ -15,6 +16,7 @@ import (
 	"github.com/gookit/color"
 	"os"
 	"os/signal"
+	"regexp"
 	"strings"
 	"sync"
 	"syscall"
@@ -131,12 +133,19 @@ func CompanyRunJob(options *Utils.ENOptions) {
 	// 如果不是API模式，而且不是批量文件形式查询 不是API 就合并导出到表格里面
 	color.RGBStyleFromString("244,211,49").Println("\n--------------------探测邮箱--------------------")
 	Email.Email(options.Domain, options, &Domainip)
+	if !options.NoPoc {
+		color.RGBStyleFromString("244,211,49").Println("\n--------------------漏洞扫描--------------------")
+		Afrog.Afrog(options, &Domainip)
+	}
+
 	if options.IsMergeOut && options.InputFile == "" {
 		outputfile.OutPutExcelByMergeEnInfo(options)
 	}
 }
 func DomainRunJob(options *Utils.ENOptions) {
 	// 创建一个信号接收器
+	options.Domain = strings.ReplaceAll(options.Domain, "http://", "")
+	options.Domain = strings.ReplaceAll(options.Domain, "https://", "")
 	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, os.Interrupt, syscall.SIGINT)
 
@@ -155,13 +164,29 @@ func DomainRunJob(options *Utils.ENOptions) {
 	}
 	gologger.Infof("当前查询的域名 %s", options.Domain)
 	//color.RGBStyleFromString("237,64,35").Println("查询子域名\n")
-	color.RGBStyleFromString("244,211,49").Println("\n--------------------查询子域名--------------------")
-	Domains.Domains(options.Domain, options, &Domainip)
-	HttpZhiwen.Status(options.Domain, options, &Domainip)
-	color.RGBStyleFromString("244,211,49").Println("\n--------------------探测网站后台--------------------")
-	Login.Login(Domainip.DomainA, options, &Domainip)
-	color.RGBStyleFromString("244,211,49").Println("\n--------------------探测邮箱--------------------")
-	Email.Email(options.Domain, options, &Domainip)
+	re := regexp.MustCompile(`(?:\d{1,3}\.){3}\d{1,3}`)
+	matches := re.FindAllStringSubmatch(options.Domain, -1)
+	if matches == nil {
+		color.RGBStyleFromString("244,211,49").Println("\n--------------------查询子域名--------------------")
+		Domains.Domains(options.Domain, options, &Domainip)
+		HttpZhiwen.Status(options.Domain, options, &Domainip)
+		color.RGBStyleFromString("244,211,49").Println("\n--------------------探测邮箱--------------------")
+		Email.Email(options.Domain, options, &Domainip)
+		color.RGBStyleFromString("244,211,49").Println("\n--------------------探测网站后台--------------------")
+		Login.Login(Domainip.DomainA, options, &Domainip)
+	}
+
+	if !options.NoPoc {
+		if matches == nil {
+			color.RGBStyleFromString("244,211,49").Println("\n--------------------漏洞扫描--------------------")
+			Afrog.Afrog(options, &Domainip)
+		} else {
+			Domainip.DomainA = append(Domainip.DomainA, options.Domain)
+			color.RGBStyleFromString("244,211,49").Println("\n--------------------漏洞扫描--------------------")
+			Afrog.Afrog(options, &Domainip)
+		}
+
+	}
 
 	if options.IsMergeOut && options.InputFile == "" {
 		outputfile.OutPutExcelByMergeEnInfo(options)

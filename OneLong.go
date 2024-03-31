@@ -16,6 +16,9 @@ func main() {
 	} else {
 		Gogogo.DomainRunJob(&enOptions)
 	}
+	//Domainip.DomainA = append(Domainip.DomainA, "http://81.70.45.154:8081/login.html")
+	//Domainip.DomainA = append(Domainip.DomainA, "http://81.70.45.154:8082/")
+	//Afrog.Afrog(&enOptions, &Domainip)
 	//Domains.Domains("nthu.edu.tw", &enOptions, &Domainip)
 	//mobile.pinduoduo.com
 	//mobile.pinduoduo.com
