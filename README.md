@@ -18,21 +18,15 @@
 
 1、根据企业关键字去进行信息搜集，最后填写正确完整的关键字，这部分主要参考了[ENScan_GO](https://github.com/wgpsec/ENScan_GO),相关搜索企业细节以及方法和它是一样
 
-​		OneLong -n 企业名称 -proxy=http://127.0.0.1:7890
-
-
+- OneLong -n 企业名称 -proxy=http://127.0.0.1:7890
 
 2、根据企业域名去进行信息搜集
 
-​		OneLong -d target.com -proxy=http://127.0.0.1:7890
-
-
+- OneLong -d target.com -proxy=http://127.0.0.1:7890
 
 3、如果目标企业存在安全设备，并且IP资源不多的话，可以只进行被动探测
 
-​		OneLong -d target.com/-n 企业名称 -nb -np -proxy=http://127.0.0.1:7890
-
-
+- OneLong -d target.com/-n 企业名称 -nb -np -proxy=http://127.0.0.1:7890
 
 
 
@@ -111,15 +105,18 @@ massdnsPath:将Script/MassDns下的MassDns应用程序名称添加进来，如�
 
 #### Dnslogcn
 
-​	无需配置，但 [dnslog.cn不稳定](http://dnslog.cn/)
+- 无需配置，但 [dnslog.cn不稳定](http://dnslog.cn/)
+
 
 #### Alphalog
 
-​	需要构建服务 [alphalog](https://github.com/AlphabugX/Alphalog)
+- 需要构建服务 [alphalog](https://github.com/AlphabugX/Alphalog)
+
 
 #### Xray
 
-​	需要搭建 [xray服务](https://docs.xray.cool/tools/xray/advanced/reverse)
+- 需要搭建 [xray服务](https://docs.xray.cool/tools/xray/advanced/reverse)
+
 
 ### 相关目录介绍
 
