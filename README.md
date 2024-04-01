@@ -14,19 +14,25 @@
 
 使用方式比较简单，现在主要针对不同需求实现了两种信息收集的方式，一种是根据企业关键字去进行信息搜集，这里需要填写aqc和qcc的API，第二种方式是需要填写公司域名，去进行搜集
 
-注意：在调用API的时候有些需要科学上网，最好在进行使用的时候加上-proxy=http://127.0.0.1:7897进行科学上网。
+注意：在调用API的时候有些需要科学上网，最好在进行使用的时候加上-proxy=http://127.0.0.1:7897 进行科学上网。
 
 1、根据企业关键字去进行信息搜集，最后填写正确完整的关键字，这部分主要参考了[ENScan_GO](https://github.com/wgpsec/ENScan_GO),相关搜索企业细节以及方法和它是一样
 
 ​		OneLong -n 企业名称 -proxy=http://127.0.0.1:7890
 
+
+
 2、根据企业域名去进行信息搜集
 
 ​		OneLong -d target.com -proxy=http://127.0.0.1:7890
 
+
+
 3、如果目标企业存在安全设备，并且IP资源不多的话，可以只进行被动探测
 
 ​		OneLong -d target.com/-n 企业名称 -nb -np -proxy=http://127.0.0.1:7890
+
+
 
 
 
@@ -64,7 +70,9 @@
 想要搜集的信息更加全面，可以添加相应的API，添加的API不含直接收费的，都是一些免费的和一些有免费次数的
 
 [binaryedge](https://app.binaryedge.io/account/api) , [fullhunt](https://fullhunt.io/user/settings/) , [qaxhunter](https://hunter.qianxin.com/home/myInfo) , [bevigil](https://bevigil.com/osint/api-keys) , [CensysToken/CensysSecret](https://search.censys.io/account/api) , [zomeye](https://www.zoomeye.org/profile) , [whoisxmlapi](https://user.whoisxmlapi.com/products)  , [virustotal](https://www.virustotal.com/gui/user/M0nster3/apikey) , [shodan](https://account.shodan.io/) , [chaos](https://chaos.projectdiscovery.io/#/) , [leakix](https://leakix.net/settings/api) , [netlax](https://app.netlas.io/profile/) , [quake](https://quake.360.net/quake/#/personal?tab=message) , [googleid]( https://developers.google.com/custom-search/v1/overview#search_engine_id)  , [googleapi](https://developers.google.com/custom-search/v1/overview#api_key) , [fofakey/fofaEmail](https://fofa.info/userInfo) , [githubtoken](https://github.com/settings/tokens) , 
+
 [securitytrails](https://securitytrails.com/app/auth/login?return=/app/account):这个需要企业邮箱注册，可以去网上找一个免费注册一些比如[网易](https://mailh.qiye.163.com/) , 
+
 [racent](https://www.racent.com/):抓包获取数据包里面的token
 
 [Aiqicha](https://aiqicha.baidu.com/)：Cookie信息请勿直接 `document.cookie`，可能因为http-only 选项无法复制全导致登陆失败
