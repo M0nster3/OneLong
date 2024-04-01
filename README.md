@@ -17,13 +17,16 @@
 注意：在调用API的时候有些需要科学上网，最好在进行使用的时候加上-proxy=http://127.0.0.1:7897进行科学上网。
 
 1、根据企业关键字去进行信息搜集，最后填写正确完整的关键字，这部分主要参考了[ENScan_GO](https://github.com/wgpsec/ENScan_GO),相关搜索企业细节以及方法和它是一样
-		OneLong -n 企业名称 -proxy=http://127.0.0.1:7890
+
+​		OneLong -n 企业名称 -proxy=http://127.0.0.1:7890
 
 2、根据企业域名去进行信息搜集
-		OneLong -d target.com -proxy=http://127.0.0.1:7890
+
+​		OneLong -d target.com -proxy=http://127.0.0.1:7890
 
 3、如果目标企业存在安全设备，并且IP资源不多的话，可以只进行被动探测
-		OneLong -d target.com/-n 企业名称 -nb -np -proxy=http://127.0.0.1:7890
+
+​		OneLong -d target.com/-n 企业名称 -nb -np -proxy=http://127.0.0.1:7890
 
 
 
@@ -54,7 +57,7 @@
 
 
 
-## 0x02、相关配置文件解读
+## 0x03、相关配置文件解读
 
 ### 子域名相关配置文件
 
@@ -187,7 +190,7 @@ reverse:
 
 ```
 
-## 效果图
+## 0x04、效果图
 
 <img src="Images/1711968305378.png" alt="login" />
 
@@ -195,3 +198,16 @@ reverse:
 
 <img src="Images\1711968830642.png" alt="login" />
 
+## 0x05、参考
+
+[ENScan_GO](https://github.com/wgpsec/ENScan_GO)
+
+[nemo_go](https://github.com/hanc00l/nemo_go)
+
+[Oneforall](https://github.com/shmilylty/OneForAll)
+
+[Shuize](https://github.com/0x727/ShuiZe_0x727)
+
+[gau](https://github.com/lc/gau)
+
+[subfinder](https://github.com/projectdiscovery/subfinder)

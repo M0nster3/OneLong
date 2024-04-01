@@ -131,13 +131,12 @@ func CompanyRunJob(options *Utils.ENOptions) {
 	color.RGBStyleFromString("244,211,49").Println("\n--------------------探测网站后台--------------------")
 	Login.Login(Domainip.DomainA, options, &Domainip)
 	// 如果不是API模式，而且不是批量文件形式查询 不是API 就合并导出到表格里面
-
-	color.RGBStyleFromString("244,211,49").Println("\n--------------------探测邮箱--------------------")
-	Email.Email(options.Domain, options, &Domainip)
 	if !options.NoPoc {
 		color.RGBStyleFromString("244,211,49").Println("\n--------------------漏洞扫描--------------------")
 		Afrog.Afrog(options, &Domainip)
 	}
+	color.RGBStyleFromString("244,211,49").Println("\n--------------------探测邮箱--------------------")
+	Email.Email(options.Domain, options, &Domainip)
 
 	if options.IsMergeOut && options.InputFile == "" {
 		outputfile.OutPutExcelByMergeEnInfo(options)
@@ -179,14 +178,13 @@ func DomainRunJob(options *Utils.ENOptions) {
 
 	color.RGBStyleFromString("244,211,49").Println("\n--------------------探测邮箱--------------------")
 	Email.Email(options.Domain, options, &Domainip)
-	color.RGBStyleFromString("244,211,49").Println("\n--------------------探测网站后台--------------------")
-	Login.Login(Domainip.DomainA, options, &Domainip)
-
 	if !options.NoPoc {
 		color.RGBStyleFromString("244,211,49").Println("\n--------------------漏洞扫描--------------------")
 		Afrog.Afrog(options, &Domainip)
 
 	}
+	color.RGBStyleFromString("244,211,49").Println("\n--------------------探测网站后台--------------------")
+	Login.Login(Domainip.DomainA, options, &Domainip)
 
 	if options.IsMergeOut && options.InputFile == "" {
 		outputfile.OutPutExcelByMergeEnInfo(options)
