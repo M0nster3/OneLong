@@ -91,11 +91,13 @@
 
 工具中的爆破主要是引用了MassDns爆破工具，作者称无需特殊配置，MassDNS 就能够使用公开可用的解析器每秒解析超过 350,000 个名称。是一个高效的爆破工具，
 
-resolvers: Releases中有一个Script/MassDns/resolvers.txt文件夹名称添加进去，如果更换了resolvers.txt,必须放在当前文件夹只需要把名称换了即可
-wordlist：爆破的目录文件，项目中的爆破文件都在这个目录下Script\Dict，
-massdnsPath:将Script/MassDns下的MassDns应用程序名称添加进来，如果是Linux的则需要把MassDns.exe改为相应的名称
+- resolvers: Releases中有一个Script/MassDns/resolvers.txt文件夹名称添加进去，如果更换了resolvers.txt,必须放在当前文件夹只需要把名称换了即可
 
-### Afrog
+- wordlist：爆破的目录文件，项目中的爆破文件都在这个目录下Script\Dict，
+
+- massdnsPath:将Script/MassDns下的MassDns应用程序名称添加进来，如果是Linux的则需要把MassDns.exe改为相应的名称
+
+### [Afrog](https://github.com/zan8in/afrog)
 
 #### ceye
 
