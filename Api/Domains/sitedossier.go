@@ -28,10 +28,7 @@ func GetEnInfoSitedossier(response string, DomainsIP *outputfile.DomainsIP) (*Ut
 	for k, v := range GetENMap() {
 		ensOutMap[k] = &outputfile.ENSMap{Name: v.Name, Field: v.Field, KeyWord: v.KeyWord}
 	}
-	//Result := gjson.GetMany(response, "passive_dns.#.address", "passive_dns.#.hostname")
-	//ensInfos.Infoss = make(map[string][]map[string]string)
-	//获取公司信息
-	//ensInfos.Infos["passive_dns"] = append(ensInfos.Infos["passive_dns"], gjson.Parse(Result[0].String()))oomEye
+
 	addedURLs := make(map[string]bool)
 	for aa, _ := range responselist {
 		ResponseJia := "{" + "\"hostname\"" + ":" + "\"" + responselist[aa].String() + "\"" + "}"
@@ -72,11 +69,6 @@ func GetEnInfoSitedossier(response string, DomainsIP *outputfile.DomainsIP) (*Ut
 
 	Utils.DomainTableShow(keyword, data, "Sitedossier")
 
-	//zuo := strings.ReplaceAll(response, "[", "")
-	//you := strings.ReplaceAll(zuo, "]", "")
-
-	//ensInfos.Infos["hostname"] = append(ensInfos.Infos["hostname"], gjson.Parse(Result[1].String()))
-	//getCompanyInfoById(pid, 1, true, "", options.Getfield, ensInfos, options)
 	return ensInfos, ensOutMap
 
 }
@@ -105,12 +97,12 @@ func Sitedossier(domain string, options *Utils.ENOptions, DomainsIP *outputfile.
 	result := "["
 	clientR.URL = urls
 	//强制延时1s
-	time.Sleep(1 * time.Second)
+	time.Sleep(3 * time.Second)
 	resp, err := clientR.Get(urls)
 	for adda := 1; adda < 4; adda += 1 {
 		if resp.RawResponse == nil {
 			resp, _ = clientR.Get(urls)
-			time.Sleep(1 * time.Second)
+			time.Sleep(3 * time.Second)
 		} else if resp.Body() != nil {
 			break
 		}
@@ -140,7 +132,7 @@ func Sitedossier(domain string, options *Utils.ENOptions, DomainsIP *outputfile.
 
 	for add := 0; add < totalItems; add += 100 {
 
-		if strings.Contains(string(resp.Body()), "Show next") || strings.Contains(string(resp.Body()), "Show remaining") {
+		if strings.Contains(string(resp.Body()), "Show next") || strings.Contains(string(resp.Body()), "Show remaining") || add == 0 {
 			doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(resp.Body())))
 			if err != nil {
 				panic(err)
@@ -169,16 +161,11 @@ func Sitedossier(domain string, options *Utils.ENOptions, DomainsIP *outputfile.
 		}
 
 	}
+
 	result = result + "]"
 	res, ensOutMap := GetEnInfoSitedossier(result, DomainsIP)
 
 	outputfile.MergeOutPut(res, ensOutMap, "Sitedossier", options)
-	//outputfile.OutPutExcelByMergeEnInfo(options)
-	//
-	//Result := gjson.GetMany(string(resp.Body()), "passive_dns.#.address", "passive_dns.#.hostname")
-	//AlienvaultResult[0] = append(AlienvaultResult[0], Result[0].String())
-	//AlienvaultResult[1] = append(AlienvaultResult[1], Result[1].String())
-	//
-	//fmt.Printf(Result[0].String())
+
 	return "Success"
 }

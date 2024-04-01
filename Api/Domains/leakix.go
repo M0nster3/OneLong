@@ -25,10 +25,7 @@ func GetEnInfoLeakix(response string, DomainsIP *outputfile.DomainsIP) (*Utils.E
 	for k, v := range GetENMap() {
 		ensOutMap[k] = &outputfile.ENSMap{Name: v.Name, Field: v.Field, KeyWord: v.KeyWord}
 	}
-	//Result := gjson.GetMany(response, "passive_dns.#.address", "passive_dns.#.hostname")
-	//ensInfos.Infoss = make(map[string][]map[string]string)
-	//获取公司信息
-	//ensInfos.Infos["passive_dns"] = append(ensInfos.Infos["passive_dns"], gjson.Parse(Result[0].String()))
+
 	addedURLs := make(map[string]bool)
 	for _, item := range respons {
 		res := item.Get("subdomain").String()
@@ -97,7 +94,7 @@ func Leakix(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 	client.Header.Del("Cookie")
 
 	//强制延时1s
-	time.Sleep(1 * time.Second)
+	time.Sleep(3 * time.Second)
 	//加入随机延迟
 	time.Sleep(time.Duration(options.GetDelayRTime()) * time.Second)
 	clientR := client.R()
@@ -107,7 +104,7 @@ func Leakix(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 	for add := 1; add < 4; add += 1 {
 		if resp.RawResponse == nil {
 			resp, _ = clientR.Get(urls)
-			time.Sleep(1 * time.Second)
+			time.Sleep(3 * time.Second)
 		} else if resp.Body() != nil {
 			break
 		}
@@ -126,12 +123,6 @@ func Leakix(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 	res, ensOutMap := GetEnInfoLeakix(string(resp.Body()), DomainsIP)
 
 	outputfile.MergeOutPut(res, ensOutMap, "Leakix", options)
-	//outputfile.OutPutExcelByMergeEnInfo(options)
-	//
-	//Result := gjson.GetMany(string(resp.Body()), "passive_dns.#.address", "passive_dns.#.hostname")
-	//AlienvaultResult[0] = append(AlienvaultResult[0], Result[0].String())
-	//AlienvaultResult[1] = append(AlienvaultResult[1], Result[1].String())
-	//
-	//fmt.Printf(Result[0].String())
+
 	return "Success"
 }

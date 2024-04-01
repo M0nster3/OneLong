@@ -36,10 +36,7 @@ func GetEnInfoWaybackarchive(response string, DomainsIP *outputfile.DomainsIP) (
 	for k, v := range GetENMap() {
 		ensOutMap[k] = &outputfile.ENSMap{Name: v.Name, Field: v.Field, KeyWord: v.KeyWord}
 	}
-	//Result := gjson.GetMany(response, "passive_dns.#.address", "passive_dns.#.hostname")
-	//ensInfos.Infoss = make(map[string][]map[string]string)
-	//获取公司信息
-	//ensInfos.Infos["passive_dns"] = append(ensInfos.Infos["passive_dns"], gjson.Parse(Result[0].String()))oomEye
+
 	addedURLs := make(map[string]bool)
 	for aa, _ := range result {
 		ResponseJia := "{" + "\"hostname\"" + ":" + "\"" + result[aa] + "\"" + "}"
@@ -80,11 +77,6 @@ func GetEnInfoWaybackarchive(response string, DomainsIP *outputfile.DomainsIP) (
 
 	Utils.DomainTableShow(keyword, data, "waybackarchive")
 
-	//zuo := strings.ReplaceAll(response, "[", "")
-	//you := strings.ReplaceAll(zuo, "]", "")
-
-	//ensInfos.Infos["hostname"] = append(ensInfos.Infos["hostname"], gjson.Parse(Result[1].String()))
-	//getCompanyInfoById(pid, 1, true, "", options.Getfield, ensInfos, options)
 	return ensInfos, ensOutMap
 
 }
@@ -107,7 +99,7 @@ func Waybackarchive(domain string, options *Utils.ENOptions, DomainsIP *outputfi
 	client.Header.Del("Cookie")
 
 	//强制延时1s
-	time.Sleep(1 * time.Second)
+	time.Sleep(3 * time.Second)
 	//加入随机延迟
 	time.Sleep(time.Duration(options.GetDelayRTime()) * time.Second)
 	clientR := client.R()
@@ -120,7 +112,7 @@ func Waybackarchive(domain string, options *Utils.ENOptions, DomainsIP *outputfi
 		}
 		resp, err = client.R().Get(urls)
 		if err != nil || resp == nil || resp.RawResponse == nil {
-			time.Sleep(1 * time.Second) // 在重试前等待
+			time.Sleep(3 * time.Second) // 在重试前等待
 			continue
 		}
 		// 如果得到有效响应，处理响应
@@ -143,12 +135,6 @@ func Waybackarchive(domain string, options *Utils.ENOptions, DomainsIP *outputfi
 	res, ensOutMap := GetEnInfoWaybackarchive(string(resp.Body()), DomainsIP)
 
 	outputfile.MergeOutPut(res, ensOutMap, "waybackarchive 历史快照", options)
-	//outputfile.OutPutExcelByMergeEnInfo(options)
-	//
-	//Result := gjson.GetMany(string(resp.Body()), "passive_dns.#.address", "passive_dns.#.hostname")
-	//AlienvaultResult[0] = append(AlienvaultResult[0], Result[0].String())
-	//AlienvaultResult[1] = append(AlienvaultResult[1], Result[1].String())
-	//
-	//fmt.Printf(Result[0].String())
+
 	return "Success"
 }

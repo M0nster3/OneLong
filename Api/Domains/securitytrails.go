@@ -24,10 +24,7 @@ func GetEnInfoSecuritytrails(response string, DomainsIP *outputfile.DomainsIP) (
 	for k, v := range GetENMap() {
 		ensOutMap[k] = &outputfile.ENSMap{Name: v.Name, Field: v.Field, KeyWord: v.KeyWord}
 	}
-	//Result := gjson.GetMany(response, "passive_dns.#.address", "passive_dns.#.hostname")
-	//ensInfos.Infoss = make(map[string][]map[string]string)
-	//获取公司信息
-	//ensInfos.Infos["passive_dns"] = append(ensInfos.Infos["passive_dns"], gjson.Parse(Result[0].String()))
+
 	for aa, _ := range respons {
 		ensInfos.Infos["Urls"] = append(ensInfos.Infos["Urls"], gjson.Parse(respons[aa].String()))
 	}
@@ -57,11 +54,6 @@ func GetEnInfoSecuritytrails(response string, DomainsIP *outputfile.DomainsIP) (
 
 	Utils.DomainTableShow(keyword, data, "Securitytrails")
 
-	//zuo := strings.ReplaceAll(response, "[", "")
-	//you := strings.ReplaceAll(zuo, "]", "")
-
-	//ensInfos.Infos["hostname"] = append(ensInfos.Infos["hostname"], gjson.Parse(Result[1].String()))
-	//getCompanyInfoById(pid, 1, true, "", options.Getfield, ensInfos, options)
 	return ensInfos, ensOutMap
 
 }
@@ -85,7 +77,7 @@ func Securitytrails(domain string, options *Utils.ENOptions, DomainsIP *outputfi
 	client.Header.Set("Content-Type", "application/json")
 
 	//强制延时1s
-	time.Sleep(1 * time.Second)
+	time.Sleep(3 * time.Second)
 	//加入随机延迟
 	time.Sleep(time.Duration(options.GetDelayRTime()) * time.Second)
 	clientR := client.R()
@@ -93,7 +85,7 @@ func Securitytrails(domain string, options *Utils.ENOptions, DomainsIP *outputfi
 	for add := 1; add < 4; add += 1 {
 		if response.RawResponse == nil {
 			response, _ = clientR.Get(urls)
-			time.Sleep(1 * time.Second)
+			time.Sleep(3 * time.Second)
 		} else if response.Body() != nil {
 			break
 		}

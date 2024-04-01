@@ -41,7 +41,7 @@ func CommoncrawlLogin(domain string, options *Utils.ENOptions, DomainsIP *output
 	client.Header.Del("Cookie")
 
 	//强制延时1s
-	time.Sleep(1 * time.Second)
+	time.Sleep(3 * time.Second)
 	//加入随机延迟
 	time.Sleep(time.Duration(options.GetDelayRTime()) * time.Second)
 	clientR := client.R()
@@ -132,10 +132,6 @@ func CommoncrawlLogin(domain string, options *Utils.ENOptions, DomainsIP *output
 		if respa.StatusCode() == 404 {
 			return ""
 		}
-
-		//hostname := `(?:[a-z0-9](?:[a-z0-9\-]{0,61}[a-z0-9])?\.)+` + regexp.QuoteMeta(domain)
-		// 编译正则表达式
-		//re := regexp.MustCompile(hostname)
 
 		loginurls := strings.Split(string(respa.Body()), "\n")
 

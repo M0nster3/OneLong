@@ -57,7 +57,7 @@ func WaybackarchiveLogin(domain string, options *Utils.ENOptions, DomainsIP *out
 	client.Header.Del("Cookie")
 
 	//强制延时1s
-	time.Sleep(1 * time.Second)
+	time.Sleep(3 * time.Second)
 	//加入随机延迟
 	time.Sleep(time.Duration(options.GetDelayRTime()) * time.Second)
 	clientR := client.R()
@@ -126,12 +126,6 @@ func WaybackarchiveLogin(domain string, options *Utils.ENOptions, DomainsIP *out
 
 	}
 	wg.Wait()
-	//outputfile.OutPutExcelByMergeEnInfo(options)
-	//
-	//Result := gjson.GetMany(string(resp.Body()), "passive_dns.#.address", "passive_dns.#.hostname")
-	//AlienvaultResult[0] = append(AlienvaultResult[0], Result[0].String())
-	//AlienvaultResult[1] = append(AlienvaultResult[1], Result[1].String())
-	//
-	//fmt.Printf(Result[0].String())
+
 	return "Success"
 }

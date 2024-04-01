@@ -25,10 +25,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 	for k, v := range getENMap() {
 		ensOutMap[k] = &outputfile.ENSMap{Name: v.name, Field: v.field, KeyWord: v.keyWord}
 	}
-	//Result := gjson.GetMany(response, "passive_dns.#.address", "passive_dns.#.hostname")
-	//ensInfos.Infoss = make(map[string][]map[string]string)
-	//获取公司信息
-	//ensInfos.Infos["passive_dns"] = append(ensInfos.Infos["passive_dns"], gjson.Parse(Result[0].String()))
+
 	addedURLs := make(map[string]bool)
 	for aa, _ := range respons {
 		hostname := gjson.Get(respons[aa].String(), "Email").String()
@@ -40,11 +37,6 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 
 	}
 
-	//zuo := strings.ReplaceAll(response, "[", "")
-	//you := strings.ReplaceAll(zuo, "]", "")
-
-	//ensInfos.Infos["hostname"] = append(ensInfos.Infos["hostname"], gjson.Parse(Result[1].String()))
-	//getCompanyInfoById(pid, 1, true, "", options.Getfield, ensInfos, options)
 	return ensInfos, ensOutMap
 
 }
@@ -92,7 +84,7 @@ func TombaEmail(domain string, options *Utils.ENOptions, DomainsIP *outputfile.D
 	client.Header.Set("Content-Type", "application/json")
 
 	//强制延时1s
-	time.Sleep(1 * time.Second)
+	time.Sleep(3 * time.Second)
 	//加入随机延迟
 	time.Sleep(time.Duration(options.GetDelayRTime()) * time.Second)
 	//requestBody := fmt.Sprintf(`{"query":"domain: %s", "include":["service.http.host"], "latest": true, "start":0, "size":500}`, domain)
@@ -100,7 +92,7 @@ func TombaEmail(domain string, options *Utils.ENOptions, DomainsIP *outputfile.D
 	for add := 1; add < 4; add += 1 {
 		if response.RawResponse == nil {
 			response, _ = client.R().Get(urls)
-			time.Sleep(1 * time.Second)
+			time.Sleep(3 * time.Second)
 		} else if response.Body() != nil {
 			break
 		}
@@ -109,13 +101,6 @@ func TombaEmail(domain string, options *Utils.ENOptions, DomainsIP *outputfile.D
 		gologger.Errorf("TombaEmail 访问失败尝试切换代理\n")
 		return ""
 	}
-
-	//if gjson.Get(string(resp.Body()), "total_count").Int() == 0 {
-	//	gologger.Labelf("github 未发现域名 %s\n", domain)
-	//	return ""
-	//} else if len(gjson.Get(string(resp.Body()), "items").Array()) == 0 {
-	//	return ""
-	//}
 
 	respnsehe = clearresponse(string(response.Body()))
 	Email := `[a-zA-Z0-9.\-_+#~!$&',;=:]+@` + `[a-zA-Z0-9.-]*` + strings.ReplaceAll(domain, "www.", "")
@@ -130,10 +115,6 @@ func TombaEmail(domain string, options *Utils.ENOptions, DomainsIP *outputfile.D
 	}
 	result1 = result1 + "]}"
 
-	//for _, aa := range matches {
-	//	fmt.Print("111111\n")
-	//	fmt.Print(aa)
-	//}
 	res, ensOutMap := GetEnInfo(result1, DomainsIP)
 	//
 	outputfile.MergeOutPut(res, ensOutMap, "Tomba", options)

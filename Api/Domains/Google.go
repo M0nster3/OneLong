@@ -26,10 +26,7 @@ func GetEnInfoGoogle(response string, DomainsIP *outputfile.DomainsIP) (*Utils.E
 	for k, v := range GetENMap() {
 		ensOutMap[k] = &outputfile.ENSMap{Name: v.Name, Field: v.Field, KeyWord: v.KeyWord}
 	}
-	//Result := gjson.GetMany(response, "passive_dns.#.address", "passive_dns.#.hostname")
-	//ensInfos.Infoss = make(map[string][]map[string]string)
-	//获取公司信息
-	//ensInfos.Infos["passive_dns"] = append(ensInfos.Infos["passive_dns"], gjson.Parse(Result[0].String()))
+
 	for aa, _ := range respons {
 		ensInfos.Infos["Urls"] = append(ensInfos.Infos["Urls"], gjson.Parse(respons[aa].String()))
 	}
@@ -116,7 +113,7 @@ func Google(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 		for attempt := 0; attempt < 4; attempt++ {
 			if response.RawResponse == nil {
 				response, _ = clientR.Get(urls)
-				time.Sleep(1 * time.Second)
+				time.Sleep(3 * time.Second)
 			} else if response.Body() != nil {
 				break
 			}
@@ -129,7 +126,7 @@ func Google(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 			//gologger.Labelf("Google未查询到域名 \n")
 			return ""
 		}
-		time.Sleep(1 * time.Second)
+		time.Sleep(3 * time.Second)
 		llink := gjson.Get(string(response.Body()), "items.#.link").Array()
 		hostname := `(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}`
 		// 编译正则表达式
@@ -165,7 +162,7 @@ func Google(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 					clientR = clientR.SetQueryParam(key, value)
 				}
 				response, _ = clientR.Get(urls)
-				time.Sleep(1 * time.Second)
+				time.Sleep(3 * time.Second)
 				startB += 10
 				llink := gjson.Get(string(response.Body()), "items.#.link").Array()
 				// 编译正则表达式

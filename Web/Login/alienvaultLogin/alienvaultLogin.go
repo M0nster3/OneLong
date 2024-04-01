@@ -23,9 +23,7 @@ import (
 var wg sync.WaitGroup
 
 func AlienvaultLogin(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
-	//gologger.Infof("Alienvault\n")
-	//urls := "https://otx.alienvault.com/api/v1/indicators/domain/" + domain + "/url_list?limit=100&page=11"
-	//addedURLs := make(map[string]bool)
+
 	dir := filepath.Join(Utils.GetPathDir(), "Script/Dict/Login.txt")
 	file, err := os.Open(dir)
 	if err != nil {
@@ -61,7 +59,7 @@ func AlienvaultLogin(domain string, options *Utils.ENOptions, DomainsIP *outputf
 	client.Header.Del("Cookie")
 
 	//强制延时1s
-	time.Sleep(1 * time.Second)
+	time.Sleep(3 * time.Second)
 	//加入随机延迟
 	time.Sleep(time.Duration(options.GetDelayRTime()) * time.Second)
 	clientR := client.R()
@@ -113,14 +111,4 @@ func AlienvaultLogin(domain string, options *Utils.ENOptions, DomainsIP *outputf
 
 	}
 
-	//res, ensOutMap := GetEnInfo(string(resp.Body()), DomainsIP)
-
-	//outputfile.MergeOutPut(res, ensOutMap, "alienvault", options)
-	//outputfile.OutPutExcelByMergeEnInfo(options)
-	//
-	//Result := gjson.GetMany(string(resp.Body()), "passive_dns.#.address", "passive_dns.#.hostname")
-	//AlienvaultResult[0] = append(AlienvaultResult[0], Result[0].String())
-	//AlienvaultResult[1] = append(AlienvaultResult[1], Result[1].String())
-	//
-	//fmt.Printf(Result[0].String())
 }

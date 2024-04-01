@@ -30,7 +30,7 @@ func IpWhois(domain string, ip string, options *Utils.ENOptions, DomainsIP *outp
 	client.Header.Del("Cookie")
 
 	//强制延时1s
-	time.Sleep(1 * time.Second)
+	time.Sleep(3 * time.Second)
 
 	clientR := client.R()
 
@@ -39,7 +39,7 @@ func IpWhois(domain string, ip string, options *Utils.ENOptions, DomainsIP *outp
 	for i := 0; i < 4; i++ {
 		if resp.RawResponse == nil {
 			resp, _ = clientR.Get(urls)
-			time.Sleep(1 * time.Second)
+			time.Sleep(3 * time.Second)
 		} else if resp.Body() != nil {
 			break
 		}

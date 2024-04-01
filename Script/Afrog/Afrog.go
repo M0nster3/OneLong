@@ -33,11 +33,6 @@ func GetEnInfoAfrog(response string, DomainsIP *outputfile.DomainsIP) (*Utils.En
 		targetinfoseg = append(targetinfoseg, infoe)
 	}
 
-	//Result := gjson.GetMany(response, "passive_dns.#.address", "passive_dns.#.hostname")
-	//ensInfos.Infoss = make(map[string][]map[string]string)
-	//获取公司信息
-	//ensInfos.Infos["passive_dns"] = append(ensInfos.Infos["passive_dns"], gjson.Parse(Result[0].String()))
-	//Field:   []string{"Url", "info", "infoname"},
 	for aa, _ := range targeturl {
 		ResponseJia := fmt.Sprintf("{\"Url\": \"%s\", \"info\": \"%s\", \"infoname\": \"%s\"}", targeturl[aa], targetinfoseg[aa], targetinfoname[aa])
 		ensInfos.Infos["Afrog"] = append(ensInfos.Infos["Afrog"], gjson.Parse(ResponseJia))
@@ -48,6 +43,7 @@ func GetEnInfoAfrog(response string, DomainsIP *outputfile.DomainsIP) (*Utils.En
 }
 
 func Afrog(options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
+	//color.RGBStyleFromString("244,211,49").Println("\n--------------------漏洞扫描--------------------")
 	var SetProxy string
 	if options.Proxy != "" {
 		SetProxy = options.Proxy

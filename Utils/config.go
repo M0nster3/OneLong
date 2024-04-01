@@ -17,29 +17,23 @@ type ENOptions struct {
 	Output    string
 	ScanType  string
 	Proxy     string
-	//ISKeyPid       bool
-	//IsGroup        bool
-	IsGetBranch    bool
+
+	IsGetBranch    bool //分支机构（分公司）信息
 	IsSearchBranch bool
-	//IsInvestRd     bool
-	//IsEmailPro   bool
+
 	InvestNum    float64
 	DelayTime    int
 	DelayMaxTime int64
 	TimeOut      int
-	//GetFlags     string
-	//Version        bool
-	//IsBiuCreate    bool
-	IsHold      bool
-	IsSupplier  bool
+
+	IsHold      bool //控股公司
+	IsSupplier  bool //供应商信息
 	IsShow      bool
 	CompanyName string
 	GetField    []string
 	GetType     []string
-	//IsDebug        bool
-	Deep int
-	//IsJsonOutput   bool
-	//IsApiMode      bool
+	Deep        int
+
 	IsMergeOut bool //合并导出
 	IsMerge    bool //聚合
 	ICP        []string

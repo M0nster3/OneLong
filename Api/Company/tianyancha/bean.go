@@ -250,7 +250,7 @@ func GetReq(url string, data string, options *Utils.ENOptions) string {
 	}
 
 	//强制延时1s
-	time.Sleep(1 * time.Second)
+	time.Sleep(3 * time.Second)
 	//加入随机延迟
 	time.Sleep(time.Duration(options.GetDelayRTime()) * time.Second)
 	clientR := client.R()
@@ -285,7 +285,7 @@ func GetReq(url string, data string, options *Utils.ENOptions) string {
 			UpCookie(string(resp.Body()), options)
 
 		}
-		time.Sleep(1 * time.Second)
+		time.Sleep(3 * time.Second)
 		return GetReq(url, data, options)
 	}
 	if resp.StatusCode() == 200 {

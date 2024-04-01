@@ -26,10 +26,7 @@ func GetEnInfoBevigil(response string, DomainsIP *outputfile.DomainsIP) (*Utils.
 	for k, v := range GetENMap() {
 		ensOutMap[k] = &outputfile.ENSMap{Name: v.Name, Field: v.Field, KeyWord: v.KeyWord}
 	}
-	//Result := gjson.GetMany(response, "passive_dns.#.address", "passive_dns.#.hostname")
-	//ensInfos.Infoss = make(map[string][]map[string]string)
-	//获取公司信息
-	//ensInfos.Infos["passive_dns"] = append(ensInfos.Infos["passive_dns"], gjson.Parse(Result[0].String()))
+
 	addedURLs := make(map[string]bool)
 	for aa, _ := range respons {
 		ResponseJia := "{" + "\"hostname\"" + ":" + "\"" + respons[aa].String() + "\"" + "}"
@@ -69,11 +66,6 @@ func GetEnInfoBevigil(response string, DomainsIP *outputfile.DomainsIP) (*Utils.
 
 	Utils.DomainTableShow(keyword, data, "bevigil")
 
-	//zuo := strings.ReplaceAll(response, "[", "")
-	//you := strings.ReplaceAll(zuo, "]", "")
-
-	//ensInfos.Infos["hostname"] = append(ensInfos.Infos["hostname"], gjson.Parse(Result[1].String()))
-	//getCompanyInfoById(pid, 1, true, "", options.Getfield, ensInfos, options)
 	return ensInfos, ensOutMap
 
 }
@@ -96,7 +88,7 @@ func Bevigil(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Doma
 	client.Header.Del("Cookie")
 
 	//强制延时1s
-	time.Sleep(1 * time.Second)
+	time.Sleep(3 * time.Second)
 	//加入随机延迟
 	time.Sleep(time.Duration(options.GetDelayRTime()) * time.Second)
 	clientR := client.R()
@@ -106,7 +98,7 @@ func Bevigil(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Doma
 	for add := 1; add < 4; add += 1 {
 		if resp.RawResponse == nil {
 			resp, _ = clientR.Get(urls)
-			time.Sleep(1 * time.Second)
+			time.Sleep(3 * time.Second)
 		} else if resp.Body() != nil {
 			break
 		}
@@ -127,13 +119,6 @@ func Bevigil(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Doma
 	res, ensOutMap := GetEnInfoBevigil(string(resp.Body()), DomainsIP)
 
 	outputfile.MergeOutPut(res, ensOutMap, "Bevigil", options)
-	//outputfile.OutPutExcelByMergeEnInfo(options)
-	//
-	//Result := gjson.GetMany(string(resp.Body()), "passive_dns.#.address", "passive_dns.#.hostname")
-	//AlienvaultResult[0] = append(AlienvaultResult[0], Result[0].String())
-	//AlienvaultResult[1] = append(AlienvaultResult[1], Result[1].String())
-	//
-	//fmt.Printf(Result[0].String())
 
 	return "Success"
 }

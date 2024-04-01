@@ -15,7 +15,7 @@ import (
 )
 
 func Email(domain string, enOptions *Utils.ENOptions, Domainip *outputfile.DomainsIP) {
-
+	//color.RGBStyleFromString("244,211,49").Println("\n--------------------探测邮箱--------------------")
 	var wg sync.WaitGroup
 	if domain != "" {
 		wg.Add(1)

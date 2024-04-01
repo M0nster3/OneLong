@@ -19,10 +19,7 @@ import (
 
 // 用于保护 addedURLs
 func GetEnInfoDnsrepo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
-	//respons := gjson.Get(response, "events").Array()
-	//zuo := strings.ReplaceAll(response, "[", "")
-	//you := strings.ReplaceAll(zuo, "[", "")
-	//respons := gjson.Parse(response).Array()
+
 	respons := gjson.Get(response, "passive_dns").Array()
 	ensInfos := &Utils.EnInfos{}
 	ensInfos.Infos = make(map[string][]gjson.Result)
@@ -31,10 +28,7 @@ func GetEnInfoDnsrepo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.
 	for k, v := range GetENMap() {
 		ensOutMap[k] = &outputfile.ENSMap{Name: v.Name, Field: v.Field, KeyWord: v.KeyWord}
 	}
-	//Result := gjson.GetMany(response, "passive_dns.#.address", "passive_dns.#.hostname")
-	//ensInfos.Infoss = make(map[string][]map[string]string)
-	//获取公司信息
-	//ensInfos.Infos["passive_dns"] = append(ensInfos.Infos["passive_dns"], gjson.Parse(Result[0].String()))
+
 	for aa, _ := range respons {
 		ensInfos.Infos["Urls"] = append(ensInfos.Infos["Urls"], gjson.Parse(respons[aa].String()))
 	}
@@ -93,7 +87,7 @@ func Dnsrepo(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Doma
 	//client.Header.Del("Cookie")
 
 	//强制延时1s
-	time.Sleep(1 * time.Second)
+	time.Sleep(3 * time.Second)
 	//加入随机延迟
 	time.Sleep(time.Duration(options.GetDelayRTime()) * time.Second)
 	clientR := client.R()
@@ -103,7 +97,7 @@ func Dnsrepo(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Doma
 	for add := 1; add < 4; add += 1 {
 		if resp.RawResponse == nil {
 			resp, _ = clientR.Get(urls)
-			time.Sleep(1 * time.Second)
+			time.Sleep(3 * time.Second)
 		} else if resp.Body() != nil {
 			break
 		}

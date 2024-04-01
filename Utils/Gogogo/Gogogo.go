@@ -131,6 +131,7 @@ func CompanyRunJob(options *Utils.ENOptions) {
 	color.RGBStyleFromString("244,211,49").Println("\n--------------------探测网站后台--------------------")
 	Login.Login(Domainip.DomainA, options, &Domainip)
 	// 如果不是API模式，而且不是批量文件形式查询 不是API 就合并导出到表格里面
+
 	color.RGBStyleFromString("244,211,49").Println("\n--------------------探测邮箱--------------------")
 	Email.Email(options.Domain, options, &Domainip)
 	if !options.NoPoc {
@@ -144,6 +145,7 @@ func CompanyRunJob(options *Utils.ENOptions) {
 }
 func DomainRunJob(options *Utils.ENOptions) {
 	// 创建一个信号接收器
+
 	options.Domain = strings.ReplaceAll(options.Domain, "http://", "")
 	options.Domain = strings.ReplaceAll(options.Domain, "https://", "")
 	sig := make(chan os.Signal, 1)
@@ -166,25 +168,23 @@ func DomainRunJob(options *Utils.ENOptions) {
 	//color.RGBStyleFromString("237,64,35").Println("查询子域名\n")
 	re := regexp.MustCompile(`(?:\d{1,3}\.){3}\d{1,3}`)
 	matches := re.FindAllStringSubmatch(options.Domain, -1)
-	if matches == nil {
-		color.RGBStyleFromString("244,211,49").Println("\n--------------------查询子域名--------------------")
-		Domains.Domains(options.Domain, options, &Domainip)
-		HttpZhiwen.Status(options.Domain, options, &Domainip)
-		color.RGBStyleFromString("244,211,49").Println("\n--------------------探测邮箱--------------------")
-		Email.Email(options.Domain, options, &Domainip)
-		color.RGBStyleFromString("244,211,49").Println("\n--------------------探测网站后台--------------------")
-		Login.Login(Domainip.DomainA, options, &Domainip)
+	if matches != nil {
+		color.RGBStyleFromString("244,211,49").Println("当前不支持IP查询")
+		os.Exit(0)
 	}
 
+	color.RGBStyleFromString("244,211,49").Println("\n--------------------查询子域名--------------------")
+	Domains.Domains(options.Domain, options, &Domainip)
+	HttpZhiwen.Status(options.Domain, options, &Domainip)
+
+	color.RGBStyleFromString("244,211,49").Println("\n--------------------探测邮箱--------------------")
+	Email.Email(options.Domain, options, &Domainip)
+	color.RGBStyleFromString("244,211,49").Println("\n--------------------探测网站后台--------------------")
+	Login.Login(Domainip.DomainA, options, &Domainip)
+
 	if !options.NoPoc {
-		if matches == nil {
-			color.RGBStyleFromString("244,211,49").Println("\n--------------------漏洞扫描--------------------")
-			Afrog.Afrog(options, &Domainip)
-		} else {
-			Domainip.DomainA = append(Domainip.DomainA, options.Domain)
-			color.RGBStyleFromString("244,211,49").Println("\n--------------------漏洞扫描--------------------")
-			Afrog.Afrog(options, &Domainip)
-		}
+		color.RGBStyleFromString("244,211,49").Println("\n--------------------漏洞扫描--------------------")
+		Afrog.Afrog(options, &Domainip)
 
 	}
 

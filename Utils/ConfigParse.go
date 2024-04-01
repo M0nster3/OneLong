@@ -10,7 +10,9 @@ import (
 
 func ConfigParse(options *ENOptions) {
 	// 配置文件检查
-
+	options.IsHold = true
+	options.IsSupplier = true
+	options.IsGetBranch = true
 	if ok, _ := PathExists(cfgYName); !ok {
 		gologger.Infof("未发现配置文件，创建配置文件，请从新执行命令\n")
 		f, errs := os.Create(cfgYName) //创建文件
@@ -48,10 +50,7 @@ func ConfigParse(options *ENOptions) {
 	options.IsMergeOut = true
 	options.Deep = 5
 	options.GetType = []string{"aqc", "tyc", "aldzs", "qimai"}
-	//options.GetType = []string{"aqc"}
-	//options.ScanType = "aqc,tyc,aldzs,qimai"
-	//options.GetType = strings.Split(options.ScanType, ",")
-	//}
+
 	options.GetType = SetStr(options.GetType)
 	var tmp []string
 	for _, v := range options.GetType {
@@ -63,39 +62,6 @@ func ConfigParse(options *ENOptions) {
 	}
 	options.GetType = tmp
 
-	////判断是否添加墨子任务
-	//if options.IsBiuCreate {
-	//	if conf.Biu.Api == "" || conf.Biu.Key == "" {
-	//		gologger.Fatalf("没有配置 墨子 API地址与Api key （请前往个人设置->安全设置中获取Api Key） \n")
-	//	}
-	//}
-
-	//if len(conf.Biu.Tags) == 0 {
-	//	conf.Biu.Tags = []string{"ENScan"}
-	//}
-
-	// 判断获取数据字段信息
-
-	//options.GetField = SetStr(options.GetField)
-	options.GetField = DefaultAllInfos
-	//if options.GetFlags == "" && len(conf.Utils.Field) == 0 {
-	//	if len(options.GetField) == 0 {
-	//		options.GetField = DefaultInfos
-	//	}
-	//} else if options.GetFlags == "all" {
-	//	options.GetField = DefaultAllInfos
-	//} else {
-	//	if len(conf.Utils.Field) > 0 {
-	//		options.GetField = conf.Utils.Field
-	//	}
-	//	if options.GetFlags != "" {
-	//		options.GetField = strings.Split(options.GetFlags, ",")
-	//		if len(options.GetField) <= 0 {
-	//			gologger.Fatalf("没有获取到字段信息 \n" + options.GetFlags)
-	//		}
-	//
-	//	}
-	//}
 	//是否获取分支机构
 	if options.IsGetBranch {
 		options.GetField = append(options.GetField, "branch")
@@ -112,23 +78,6 @@ func ConfigParse(options *ENOptions) {
 		options.GetField = append(options.GetField, "supplier")
 	}
 	options.GetField = SetStr(options.GetField)
-	//// 判断是否在给定范围内，防止产生入库问题
-	//if options.IsApiMode {
-	//	//var tmps []string
-	//	//for _, v := range options.GetField {
-	//	//	if _, ok := outputfile.ENSMapLN[v]; ok {
-	//	//		tmps = append(tmps, v)
-	//	//	} else {
-	//	//		gologger.Debugf("%s不在范围内\n", v)
-	//	//	}
-	//	//}
-	//	//options.GetType = tmps
-	//}
-
-	//if options.IsMerge == true {
-	//	gologger.Infof("====已强制取消合并导出！====\n")
-	//	options.IsMergeOut = false
-	//}
 
 	options.GetField = SetStr(options.GetField)
 

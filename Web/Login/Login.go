@@ -45,6 +45,7 @@ func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) 
 
 }
 func Login(domains []string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
+	//color.RGBStyleFromString("244,211,49").Println("\n--------------------探测网站后台--------------------")
 	gologger.Infof("扫描网站后台，当前共有存活子域%d个\n", len(domains))
 	for domainint, domain := range domains {
 		gologger.Infof("当前扫描第%d个  %s\n", domainint+1, domain)
@@ -82,7 +83,7 @@ func ParseLoginurl(options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
 			client.Header.Del("Cookie")
 
 			//强制延时1s
-			time.Sleep(1 * time.Second)
+			time.Sleep(3 * time.Second)
 			//加入随机延迟
 			time.Sleep(time.Duration(options.GetDelayRTime()) * time.Second)
 			clientR := client.R()
@@ -102,7 +103,7 @@ func ParseLoginurl(options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
 					}
 					resp, err = client.R().Get(urls)
 					if err != nil || resp == nil || resp.RawResponse == nil {
-						time.Sleep(1 * time.Second) // 在重试前等待
+						time.Sleep(3 * time.Second) // 在重试前等待
 						continue
 					}
 					// 如果得到有效响应，处理响应

@@ -11,10 +11,6 @@ import (
 // 用于保护 addedURLs
 func GetEnInfoChaos(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
 
-	//respons := gjson.Get(response, "events").Array()
-	//zuo := strings.ReplaceAll(response, "[", "")
-	//you := strings.ReplaceAll(zuo, "[", "")
-	//respons := gjson.Parse(response).Array()
 	respons := gjson.Get(response, "passive_dns").Array()
 	ensInfos := &Utils.EnInfos{}
 	ensInfos.Infos = make(map[string][]gjson.Result)
@@ -23,10 +19,7 @@ func GetEnInfoChaos(response string, DomainsIP *outputfile.DomainsIP) (*Utils.En
 	for k, v := range GetENMap() {
 		ensOutMap[k] = &outputfile.ENSMap{Name: v.Name, Field: v.Field, KeyWord: v.KeyWord}
 	}
-	//Result := gjson.GetMany(response, "passive_dns.#.address", "passive_dns.#.hostname")
-	//ensInfos.Infoss = make(map[string][]map[string]string)
-	//获取公司信息
-	//ensInfos.Infos["passive_dns"] = append(ensInfos.Infos["passive_dns"], gjson.Parse(Result[0].String()))
+
 	for aa, _ := range respons {
 		ensInfos.Infos["Urls"] = append(ensInfos.Infos["Urls"], gjson.Parse(respons[aa].String()))
 	}
@@ -56,11 +49,6 @@ func GetEnInfoChaos(response string, DomainsIP *outputfile.DomainsIP) (*Utils.En
 
 	Utils.DomainTableShow(keyword, data, "chaos")
 
-	//zuo := strings.ReplaceAll(response, "[", "")
-	//you := strings.ReplaceAll(zuo, "]", "")
-
-	//ensInfos.Infos["hostname"] = append(ensInfos.Infos["hostname"], gjson.Parse(Result[1].String()))
-	//getCompanyInfoById(pid, 1, true, "", options.Getfield, ensInfos, options)
 	return ensInfos, ensOutMap
 
 }
@@ -78,10 +66,6 @@ func Chaos(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domain
 		res := strings.ReplaceAll(result.Subdomain, "*.", "")
 		Hostname = append(Hostname, res+"."+domain)
 
-		//results <- subscraping.Result{
-		//	Source: s.Name(), Type: subscraping.Subdomain, Value: fmt.Sprintf("%s.%s", result.Subdomain, domain),
-		//}
-		//s.results++
 	}
 	if len(Hostname) == 0 {
 		//gologger.Labelf("Chaos API 未发现到域名 %s\n", domain)
@@ -98,12 +82,6 @@ func Chaos(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domain
 	res, ensOutMap := GetEnInfoChaos(result, DomainsIP)
 
 	outputfile.MergeOutPut(res, ensOutMap, "Chaos Api查询", options)
-	//outputfile.OutPutExcelByMergeEnInfo(options)
-	//
-	//Result := gjson.GetMany(string(resp.Body()), "passive_dns.#.address", "passive_dns.#.hostname")
-	//AlienvaultResult[0] = append(AlienvaultResult[0], Result[0].String())
-	//AlienvaultResult[1] = append(AlienvaultResult[1], Result[1].String())
-	//
-	//fmt.Printf(Result[0].String())
+
 	return "Success"
 }

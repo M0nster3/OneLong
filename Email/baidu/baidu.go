@@ -25,10 +25,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 	for k, v := range getENMap() {
 		ensOutMap[k] = &outputfile.ENSMap{Name: v.name, Field: v.field, KeyWord: v.keyWord}
 	}
-	//Result := gjson.GetMany(response, "passive_dns.#.address", "passive_dns.#.hostname")
-	//ensInfos.Infoss = make(map[string][]map[string]string)
-	//获取公司信息
-	//ensInfos.Infos["passive_dns"] = append(ensInfos.Infos["passive_dns"], gjson.Parse(Result[0].String()))
+
 	addedURLs := make(map[string]bool)
 	for aa, _ := range respons {
 		hostname := gjson.Get(respons[aa].String(), "Email").String()
@@ -40,11 +37,6 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 
 	}
 
-	//zuo := strings.ReplaceAll(response, "[", "")
-	//you := strings.ReplaceAll(zuo, "]", "")
-
-	//ensInfos.Infos["hostname"] = append(ensInfos.Infos["hostname"], gjson.Parse(Result[1].String()))
-	//getCompanyInfoById(pid, 1, true, "", options.Getfield, ensInfos, options)
 	return ensInfos, ensOutMap
 
 }
@@ -118,7 +110,7 @@ func Baidu(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domain
 		}
 
 		//强制延时1s
-		time.Sleep(1 * time.Second)
+		time.Sleep(3 * time.Second)
 		//加入随机延迟
 		time.Sleep(time.Duration(options.GetDelayRTime()) * time.Second)
 		clientR := client.R()
@@ -129,7 +121,7 @@ func Baidu(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domain
 		for add := 1; add < 4; add += 1 {
 			if resp.RawResponse == nil {
 				resp, _ = clientR.Get(urls)
-				time.Sleep(1 * time.Second)
+				time.Sleep(3 * time.Second)
 			} else if resp.Body() != nil {
 				break
 			} else if strings.Contains(string(resp.Body()), "网络不给力，请稍后重试") {
@@ -162,10 +154,6 @@ func Baidu(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domain
 	}
 	result1 = result1 + "]}"
 
-	//for _, aa := range matches {
-	//	fmt.Print("111111\n")
-	//	fmt.Print(aa)
-	//}
 	res, ensOutMap := GetEnInfo(result1, DomainsIP)
 
 	outputfile.MergeOutPut(res, ensOutMap, "Baidu", options)
