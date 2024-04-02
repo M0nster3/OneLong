@@ -62,7 +62,7 @@ func StartScan(options *Utils.ENOptions) {
 		outputfile.OutPutExcelByMergeEnInfo(options)
 
 	} else {
-		if strings.Contains(options.Domain, ".") {
+		if !strings.Contains(options.Domain, ".") {
 			CompanyRunJob(options)
 		} else {
 			DomainRunJob(options)
