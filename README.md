@@ -218,3 +218,5 @@ reverse:
 [gau](https://github.com/lc/gau)
 
 [subfinder](https://github.com/projectdiscovery/subfinder)
+
+[Ehole](https://github.com/EdgeSecurityTeam/EHole)
