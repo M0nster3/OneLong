@@ -11,6 +11,8 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
+	"sync"
+
 	//"strconv"
 	//"strings"
 	"time"
@@ -84,44 +86,53 @@ func clearresponse(results string) string {
 
 func YahooEmail(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
 	//gologger.Infof("Alienvault\n")
-
+	var wg sync.WaitGroup
 	urlss := ParseUrl(domain)
 	var respnsehe string
-	for _, urls := range urlss {
-		client := resty.New()
-		client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
-		client.SetTimeout(time.Duration(options.TimeOut) * time.Minute)
-		if options.Proxy != "" {
-			client.SetProxy(options.Proxy)
-		}
-		client.Header = http.Header{
-			"User-Agent": {"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"},
-			"Accept":     {"text/html,application/json,application/xhtml+xml, image/jxr, */*"},
-		}
-
-		client.Header.Set("Content-Type", "application/json")
-		client.Header.Del("Cookie")
-
-		//加入随机延迟
-		time.Sleep(time.Duration(options.GetDelayRTime()) * time.Second)
-		clientR := client.R()
-		resp, err := clientR.Get(urls)
-
-		for add := 1; add < 4; add += 1 {
-			if resp.RawResponse == nil {
-				resp, _ = clientR.Get(urls)
-				time.Sleep(3 * time.Second)
-			} else if resp.Body() != nil {
-				break
+	for aa, urls := range urlss {
+		wg.Add(1)
+		urls := urls
+		aa := aa
+		go func() {
+			client := resty.New()
+			client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
+			client.SetTimeout(time.Duration(options.TimeOut) * time.Minute)
+			if options.Proxy != "" {
+				client.SetProxy(options.Proxy)
 			}
-		}
+			client.Header = http.Header{
+				"User-Agent": {"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"},
+				"Accept":     {"text/html,application/json,application/xhtml+xml, image/jxr, */*"},
+			}
 
-		if err != nil {
-			gologger.Errorf("Yahoo 链接访问失败尝试切换代理\n")
+			client.Header.Set("Content-Type", "application/json")
+			client.Header.Del("Cookie")
 
-		}
-		respnsehe += string(resp.Body())
+			//强制延时1s
+			time.Sleep(3 * time.Second)
+			//加入随机延迟
+			time.Sleep(time.Duration(options.GetDelayRTime()) * time.Second)
+			clientR := client.R()
+			resp, err := clientR.Get(urls)
+
+			for add := 1; add < 4; add += 1 {
+				if resp.RawResponse == nil {
+					resp, _ = clientR.Get(urls)
+					time.Sleep(3 * time.Second)
+				} else if resp.Body() != nil {
+					break
+				}
+			}
+
+			if err != nil && aa == 1 {
+				gologger.Errorf("Yahoo 链接访问失败尝试切换代理\n")
+			}
+			respnsehe += string(resp.Body())
+			wg.Done()
+		}()
+
 	}
+	wg.Wait()
 	respnsehe = clearresponse(respnsehe)
 	Email := `[a-zA-Z0-9.\-_+#~!$&',;=:]+@` + `[a-zA-Z0-9.-]*` + strings.ReplaceAll(domain, "www.", "")
 
