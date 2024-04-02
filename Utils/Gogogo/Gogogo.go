@@ -20,9 +20,45 @@ import (
 	"strings"
 	"sync"
 	"syscall"
+	"time"
 )
 
-// RunJob 运行项目 添加新参数记得去Config添加
+// FileScan 可批量导入文件查询
+func StartScan(options *Utils.ENOptions) {
+	if options.InputFile != "" {
+		res := Utils.ReadFile(options.InputFile)
+
+		time.Sleep(5 * time.Second)
+		res = Utils.SetStr(res)
+		gologger.Infof("--------------------批量查询%d条资产--------------------\n", len(res))
+
+		for _, v := range res {
+			if v == "" {
+				continue
+			}
+			//color.RGBStyleFromString("244,211,49").Printf(fmt.Sprintf("--------------------【第%d条】 %s 查询中--------------------\n", k+1, v))
+			if !strings.Contains(v, ".") {
+				options.CompanyID = ""
+				options.KeyWord = v
+				CompanyRunJob(options)
+			} else {
+				options.Domain = v
+				DomainRunJob(options)
+			}
+		}
+		if options.IsMergeOut {
+			outputfile.OutPutExcelByMergeEnInfo(options)
+		}
+	} else {
+		if strings.Contains(options.Domain, ".") {
+			CompanyRunJob(options)
+		} else {
+			DomainRunJob(options)
+		}
+	}
+}
+
+// CompanyRunJob 运行项目
 func CompanyRunJob(options *Utils.ENOptions) {
 	// 创建一个信号接收器
 	sig := make(chan os.Signal, 1)

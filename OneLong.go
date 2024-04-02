@@ -9,10 +9,11 @@ func main() {
 	var enOptions Utils.ENOptions
 	Utils.Flag(&enOptions)
 	Utils.ConfigParse(&enOptions)
-	if enOptions.KeyWord != "" {
-		Gogogo.CompanyRunJob(&enOptions)
-	} else {
-		Gogogo.DomainRunJob(&enOptions)
-	}
+	Gogogo.StartScan(&enOptions)
+	//if enOptions.KeyWord != "" {
+	//	Gogogo.CompanyRunJob(&enOptions)
+	//} else {
+	//	Gogogo.DomainRunJob(&enOptions)
+	//}
 
 }

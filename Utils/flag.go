@@ -21,13 +21,14 @@ func Banner() {
 	gologger.Printf("%s\n\n", banner)
 	gologger.Printf("\t\thttps://github.com/M0nster3/OneLong\n\n")
 	color.RGBStyleFromString("237,64,35").Println("工具仅用于信息收集，请勿用于非法用途\n开发人员不承担任何责任，也不对任何滥用或损坏负责.\n")
-	color.RGBStyleFromString("244,211,49").Println("使用方式: \n\tOneLong -n 企业名称\n\tOneLong -d target.com\n")
+	color.RGBStyleFromString("244,211,49").Println("使用方式: \n\tOneLong -n 企业名称\n\tOneLong -d target.com\n\tOneLong -f file.txt\n")
 }
 
 func Flag(Info *ENOptions) {
 	Banner()
 	flag.BoolVar(&Info.NoBao, "nb", false, "不进行爆破子域名")
-	flag.BoolVar(&Info.NoPoc, "np", false, "不进行漏洞扫描")
+	flag.BoolVar(&Info.NoPoc, "np", false, "不进行漏洞扫描") //InputFile
+	flag.StringVar(&Info.InputFile, "f", "", "批量扫描")
 	flag.StringVar(&Info.KeyWord, "n", "", "企业关键词 eg 百度")
 	flag.StringVar(&Info.Domain, "d", "", "域名")
 	flag.StringVar(&Info.Output, "o", "", "结果输出的文件夹位置(可选)")

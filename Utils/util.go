@@ -2,6 +2,7 @@ package Utils
 
 import (
 	"OneLong/Utils/gologger"
+	"bufio"
 	"crypto/rand"
 	"fmt"
 	"math"
@@ -79,6 +80,36 @@ func RangeString(n int) string {
 	randBytes := make([]byte, n/2)
 	rand.Read(randBytes)
 	return fmt.Sprintf("%x", randBytes)
+}
+
+// FileExists checks if a file exists and is not a directory
+func FileExists(filename string) bool {
+	info, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return !info.IsDir()
+}
+func ReadFile(filename string) []string {
+	var result []string
+	if FileExists(filename) {
+		f, err := os.Open(filename)
+		if err != nil {
+			gologger.Fatalf("Read fail: %v\n", err)
+		}
+		fileScanner := bufio.NewScanner(f)
+		// read line by line
+		for fileScanner.Scan() {
+			result = append(result, fileScanner.Text())
+		}
+		// handle first encountered error while reading
+		if err := fileScanner.Err(); err != nil {
+			gologger.Fatalf("Error while reading file: %s\n", err)
+		}
+		_ = f.Close()
+	}
+	result = SetStr(result)
+	return result
 }
 
 // 获得配置文件的绝对路径

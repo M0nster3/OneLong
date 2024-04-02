@@ -42,7 +42,7 @@ func ConfigParse(options *ENOptions) {
 		options.Output = "outs"
 	}
 
-	if options.KeyWord == "" && options.Domain == "" {
+	if options.KeyWord == "" && options.Domain == "" && options.InputFile == "" {
 		gologger.Errorf("参数输入错误")
 		os.Exit(0)
 	}

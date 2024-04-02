@@ -151,7 +151,7 @@ func parseurl(domain string, options *Utils.ENOptions) string {
 	}
 
 	if err != nil {
-		gologger.Errorf("parseurl 链接访问失败尝试切换代理\n")
+		gologger.Errorf("duckduckgo 链接访问失败尝试切换代理\n")
 	}
 	return string(resp.Body())
 }
