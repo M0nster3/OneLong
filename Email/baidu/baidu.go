@@ -1,6 +1,7 @@
 package baidu
 
 import (
+	Email2 "OneLong/Email/yahoo"
 	"OneLong/Utils"
 	outputfile "OneLong/Utils/OutPutfile"
 	"OneLong/Utils/gologger"
@@ -41,7 +42,7 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 
 }
 
-func ParseUrl(domain string) []string {
+func parseUrl(domain string) []string {
 
 	var urls []string
 	for num := 0; num < 500; num += 10 {
@@ -80,7 +81,7 @@ func clearresponse(results string) string {
 func Baidu(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
 	//gologger.Infof("Alienvault\n")
 
-	urlss := ParseUrl(domain)
+	urlss := Email2.ParseUrl(domain)
 	var respnsehe string
 	for _, urls := range urlss {
 

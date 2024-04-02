@@ -14,37 +14,31 @@ import (
 	"sync"
 )
 
+var wg sync.WaitGroup
+
+type FuncInfo struct {
+	Func func(string, *Utils.ENOptions, *outputfile.DomainsIP) // 函数签名应匹配你的函数
+}
+
 func Email(domain string, enOptions *Utils.ENOptions, Domainip *outputfile.DomainsIP) {
 	//color.RGBStyleFromString("244,211,49").Println("\n--------------------探测邮箱--------------------")
-	var wg sync.WaitGroup
-	if domain != "" {
-		wg.Add(1)
-		go func() {
 
-			baidu.Baidu(domain, enOptions, Domainip)
-
-			wg.Done()
-		}()
+	// 创建一个函数切片，包含要执行的函数及其参数
+	funcInfos := []FuncInfo{
+		{baidu.Baidu},
+		{brave.Brave},
+		{duckduckgo.Duckduckgo},
+		{yahoo.YahooEmail},
 	}
-
+	// 为每个非空域名启动一个 goroutine
 	if domain != "" {
-		wg.Add(1)
-		go func() {
-
-			brave.Brave(domain, enOptions, Domainip)
-
-			wg.Done()
-		}()
-	}
-
-	if domain != "" {
-		wg.Add(1)
-		go func() {
-
-			duckduckgo.Duckduckgo(domain, enOptions, Domainip)
-
-			wg.Done()
-		}()
+		for _, info := range funcInfos {
+			wg.Add(1)
+			go func(fInfo FuncInfo) {
+				fInfo.Func(domain, enOptions, Domainip)
+				wg.Done()
+			}(info)
+		}
 	}
 
 	if enOptions.ENConfig.Cookies.Github != "" {
@@ -85,15 +79,7 @@ func Email(domain string, enOptions *Utils.ENOptions, Domainip *outputfile.Domai
 			wg.Done()
 		}()
 	}
-	if domain != "" {
-		wg.Add(1)
-		go func() {
 
-			yahoo.YahooEmail(domain, enOptions, Domainip)
-
-			wg.Done()
-		}()
-	}
 	wg.Wait()
 
 }
