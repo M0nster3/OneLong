@@ -102,8 +102,6 @@ func YahooEmail(domain string, options *Utils.ENOptions, DomainsIP *outputfile.D
 		client.Header.Set("Content-Type", "application/json")
 		client.Header.Del("Cookie")
 
-		//强制延时1s
-		time.Sleep(3 * time.Second)
 		//加入随机延迟
 		time.Sleep(time.Duration(options.GetDelayRTime()) * time.Second)
 		clientR := client.R()
