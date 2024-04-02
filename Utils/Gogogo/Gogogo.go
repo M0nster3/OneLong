@@ -46,15 +46,18 @@ func StartScan(options *Utils.ENOptions) {
 				DomainRunJob(options)
 			}
 		}
-		if options.IsMergeOut {
-			outputfile.OutPutExcelByMergeEnInfo(options)
-		}
+
+		outputfile.OutPutExcelByMergeEnInfo(options)
+
 	} else {
 		if strings.Contains(options.Domain, ".") {
 			CompanyRunJob(options)
 		} else {
 			DomainRunJob(options)
 		}
+
+		outputfile.OutPutExcelByMergeEnInfo(options)
+
 	}
 }
 
@@ -68,9 +71,9 @@ func CompanyRunJob(options *Utils.ENOptions) {
 	go func() {
 		// 等待信号
 		<-sig
-		if options.IsMergeOut && options.InputFile == "" {
-			outputfile.OutPutExcelByMergeEnInfo(options)
-		}
+
+		outputfile.OutPutExcelByMergeEnInfo(options)
+
 		os.Exit(0) // 可以执行一些清理工作后退出程序
 	}()
 	color.RGBStyleFromString("244,211,49").Println("\n--------------------查询企业信息--------------------")
@@ -174,9 +177,9 @@ func CompanyRunJob(options *Utils.ENOptions) {
 	color.RGBStyleFromString("244,211,49").Println("\n--------------------探测邮箱--------------------")
 	Email.Email(options.Domain, options, &Domainip)
 
-	if options.IsMergeOut && options.InputFile == "" {
-		outputfile.OutPutExcelByMergeEnInfo(options)
-	}
+	//if options.IsMergeOut && options.InputFile == "" {
+	//	outputfile.OutPutExcelByMergeEnInfo(options)
+	//}
 }
 func DomainRunJob(options *Utils.ENOptions) {
 	// 创建一个信号接收器
@@ -222,7 +225,7 @@ func DomainRunJob(options *Utils.ENOptions) {
 	color.RGBStyleFromString("244,211,49").Println("\n--------------------探测网站后台--------------------")
 	Login.Login(Domainip.DomainA, options, &Domainip)
 
-	if options.IsMergeOut && options.InputFile == "" {
-		outputfile.OutPutExcelByMergeEnInfo(options)
-	}
+	//if options.IsMergeOut && options.InputFile == "" {
+	//	outputfile.OutPutExcelByMergeEnInfo(options)
+	//}
 }

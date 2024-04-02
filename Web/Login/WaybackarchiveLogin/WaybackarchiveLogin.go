@@ -87,7 +87,7 @@ func WaybackarchiveLogin(domain string, options *Utils.ENOptions, DomainsIP *out
 	}
 
 	loginurls := strings.Split(string(resp.Body()), "\n")
-	last := "svg,css,eot,ttf,woff,jpg,png,jpeg,js,woff2,htm,gif,html"
+	last := "svg,css,eot,ttf,woff,jpg,png,jpeg,js,woff2,htm,gif,html,xml"
 	var mu sync.Mutex // 用于保护 addedURLs
 	addedURLs := sync.Map{}
 	for _, loginurl := range loginurls {
