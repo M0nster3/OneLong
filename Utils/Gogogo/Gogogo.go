@@ -25,6 +25,18 @@ import (
 
 // FileScan 可批量导入文件查询
 func StartScan(options *Utils.ENOptions) {
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, os.Interrupt, syscall.SIGINT)
+
+	// 在另一个 goroutine 中等待信号
+	go func() {
+		// 等待信号
+		<-sig
+
+		outputfile.OutPutExcelByMergeEnInfo(options)
+
+		os.Exit(0) // 可以执行一些清理工作后退出程序
+	}()
 	if options.InputFile != "" {
 		res := Utils.ReadFile(options.InputFile)
 
@@ -63,19 +75,7 @@ func StartScan(options *Utils.ENOptions) {
 
 // CompanyRunJob 运行项目
 func CompanyRunJob(options *Utils.ENOptions) {
-	// 创建一个信号接收器
-	sig := make(chan os.Signal, 1)
-	signal.Notify(sig, os.Interrupt, syscall.SIGINT)
 
-	// 在另一个 goroutine 中等待信号
-	go func() {
-		// 等待信号
-		<-sig
-
-		outputfile.OutPutExcelByMergeEnInfo(options)
-
-		os.Exit(0) // 可以执行一些清理工作后退出程序
-	}()
 	color.RGBStyleFromString("244,211,49").Println("\n--------------------查询企业信息--------------------")
 	var Domainip outputfile.DomainsIP
 	if options.Proxy != "" {
@@ -186,18 +186,6 @@ func DomainRunJob(options *Utils.ENOptions) {
 
 	options.Domain = strings.ReplaceAll(options.Domain, "http://", "")
 	options.Domain = strings.ReplaceAll(options.Domain, "https://", "")
-	sig := make(chan os.Signal, 1)
-	signal.Notify(sig, os.Interrupt, syscall.SIGINT)
-
-	// 在另一个 goroutine 中等待信号
-	go func() {
-		// 等待信号
-		<-sig
-		if options.IsMergeOut && options.InputFile == "" {
-			outputfile.OutPutExcelByMergeEnInfo(options)
-		}
-		os.Exit(0) // 可以执行一些清理工作后退出程序
-	}()
 	var Domainip outputfile.DomainsIP
 	if options.Proxy != "" {
 		gologger.Infof("代理地址: %s\n", options.Proxy)
