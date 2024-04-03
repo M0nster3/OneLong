@@ -4,6 +4,7 @@ import (
 	"OneLong/Utils"
 	outputfile "OneLong/Utils/OutPutfile"
 	"OneLong/Utils/gologger"
+	"crypto/tls"
 	"fmt"
 	"github.com/go-resty/resty/v2"
 	"github.com/tidwall/gjson"
@@ -110,7 +111,8 @@ func Baidu(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domain
 		//if err != nil {
 		//	// 处理错误
 		//}
-		//client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
+
+		client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
 		client.SetTimeout(time.Duration(options.TimeOut) * time.Minute)
 		if options.Proxy != "" {
 			client.SetProxy(options.Proxy)
