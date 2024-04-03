@@ -41,18 +41,19 @@ func GetEnInfoFofa(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnI
 		Fen[1] = strings.ReplaceAll(Fen[1], "\"", "")
 		Fen[1] = strings.ReplaceAll(Fen[1], "]", "")
 		matches := re.FindAllStringSubmatch(respons[aa].String(), -1)
+		if len(matches) > 0 {
+			ResponseJia := fmt.Sprintf("{\"hostname\": \"%s\", \"address\": \"%s\"}", matches[0][0], Fen[1])
 
-		ResponseJia := fmt.Sprintf("{\"hostname\": \"%s\", \"address\": \"%s\"}", matches[0][0], Fen[1])
-
-		url := gjson.Parse(ResponseJia).Get("hostname").String()
-		ip := gjson.Parse(ResponseJia).Get("address").String()
-		DomainsIP.Domains = append(DomainsIP.Domains, url)
-		DomainsIP.IP = append(DomainsIP.IP, ip)
-		// 检查是否已存在相同的 URL
-		if !addedURLs[url] {
-			// 如果不存在重复则将 URL 添加到 Infos["Urls"] 中，并在 map 中标记为已添加
-			ensInfos.Infos["Urls"] = append(ensInfos.Infos["Urls"], gjson.Parse(ResponseJia))
-			addedURLs[url] = true
+			url := gjson.Parse(ResponseJia).Get("hostname").String()
+			ip := gjson.Parse(ResponseJia).Get("address").String()
+			DomainsIP.Domains = append(DomainsIP.Domains, url)
+			DomainsIP.IP = append(DomainsIP.IP, ip)
+			// 检查是否已存在相同的 URL
+			if !addedURLs[url] {
+				// 如果不存在重复则将 URL 添加到 Infos["Urls"] 中，并在 map 中标记为已添加
+				ensInfos.Infos["Urls"] = append(ensInfos.Infos["Urls"], gjson.Parse(ResponseJia))
+				addedURLs[url] = true
+			}
 		}
 
 	}
