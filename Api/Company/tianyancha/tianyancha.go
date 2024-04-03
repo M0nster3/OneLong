@@ -222,6 +222,7 @@ func SearchBaseInfo(pid string, tds bool, options *Utils.ENOptions) (result gjso
 	} else {
 		body := GetReqReturnPage(urls, options)
 		htmlInfos := htmlquery.FindOne(body, "//*[@id=\"__NEXT_DATA__\"]")
+
 		enInfo := gjson.Parse(htmlquery.InnerText(htmlInfos))
 		enInfoD := enInfo.Get("props.pageProps.dehydratedState.queries").Array()
 		result = enInfoD[0].Get("state.data.data")

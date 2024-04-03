@@ -13,6 +13,7 @@ import (
 	"OneLong/Utils/gologger"
 	"OneLong/Web/HttpZhiwen"
 	"OneLong/Web/Login"
+	"fmt"
 	"github.com/gookit/color"
 	"os"
 	"os/signal"
@@ -154,6 +155,11 @@ func CompanyRunJob(options *Utils.ENOptions) {
 	wg.Wait()
 
 	options.ICP = Utils.SetStr(options.ICP)
+	if len(options.ICP) == 0 {
+		color.RGBStyleFromString("237,64,35").Println(fmt.Sprintf("当前 %s 字段没有相关备案域名", options.KeyWord))
+		outputfile.OutPutExcelByMergeEnInfo(options)
+		os.Exit(1)
+	}
 	color.RGBStyleFromString("244,211,49").Println("\n--------------------查询子域名--------------------")
 	for _, domain := range options.ICP {
 		Domains.Domains(domain, options, &Domainip)

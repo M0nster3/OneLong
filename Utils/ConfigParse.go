@@ -13,6 +13,7 @@ func ConfigParse(options *ENOptions) {
 	options.IsHold = true
 	options.IsSupplier = true
 	options.IsGetBranch = true
+	options.GetField = DefaultAllInfos
 	if ok, _ := PathExists(cfgYName); !ok {
 		gologger.Infof("未发现配置文件，创建配置文件，请从新执行命令\n")
 		f, errs := os.Create(cfgYName) //创建文件
@@ -46,11 +47,16 @@ func ConfigParse(options *ENOptions) {
 		gologger.Errorf("参数输入错误")
 		os.Exit(0)
 	}
+	options.ENConfig = conf
 	options.IsShow = false
 	options.IsMergeOut = true
 	options.Deep = 5
 	options.GetType = []string{"aqc", "tyc", "aldzs", "qimai"}
-
+	if options.ENConfig.Cookies.Aiqicha == "" {
+		options.GetType = []string{"tyc", "aldzs", "qimai"}
+	} else if options.ENConfig.Cookies.Tycid == "" || options.ENConfig.Cookies.Securitytrails == "" {
+		options.GetType = []string{"aqc", "aldzs", "qimai"}
+	}
 	options.GetType = SetStr(options.GetType)
 	var tmp []string
 	for _, v := range options.GetType {
@@ -80,7 +86,5 @@ func ConfigParse(options *ENOptions) {
 	options.GetField = SetStr(options.GetField)
 
 	options.GetField = SetStr(options.GetField)
-
-	options.ENConfig = conf
 
 }
