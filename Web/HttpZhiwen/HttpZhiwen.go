@@ -52,6 +52,7 @@ func Status(domaina string, options *Utils.ENOptions, DomainsIP *outputfile.Doma
 	wg.Wait()
 	DomainsIP.IPA = Utils.SetStr(DomainsIP.IPA)
 	DomainsIP.Domains = Utils.SetStr(DomainsIP.Domains)
+
 	color.RGBStyleFromString("244,211,49").Println("\n--------------------检测指纹以及域名存活--------------------")
 	client := resty.New()
 	client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
@@ -60,6 +61,7 @@ func Status(domaina string, options *Utils.ENOptions, DomainsIP *outputfile.Doma
 		client.SetProxy(options.Proxy)
 		//client.SetProxy("192.168.203.111:1111")
 	}
+
 	Ehole.Ehole(DomainsIP.Domains, options, DomainsIP)
 
 	result := "["

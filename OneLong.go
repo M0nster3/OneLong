@@ -7,13 +7,10 @@ import (
 
 func main() {
 	var enOptions Utils.ENOptions
+	//var Domainip outputfile.DomainsIP
 	Utils.Flag(&enOptions)
 	Utils.ConfigParse(&enOptions)
 	Gogogo.StartScan(&enOptions)
-	//if enOptions.KeyWord != "" {
-	//	Gogogo.CompanyRunJob(&enOptions)
-	//} else {
-	//	Gogogo.DomainRunJob(&enOptions)
-	//}
+	//Email.Email(enOptions.Domain, &enOptions, &Domainip)
 
 }

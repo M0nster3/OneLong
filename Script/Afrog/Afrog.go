@@ -53,9 +53,9 @@ func Afrog(options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
 	tempInputFile := Utils.GetTempPathFileName()
 	file, _ := os.OpenFile(tempInputFile, os.O_CREATE|os.O_WRONLY, 0644)
 	for _, url := range DomainsIP.DomainA {
-		_, err := file.WriteString(url)
+		_, err := file.WriteString(url + "\n")
 		if err != nil {
-			return
+			break
 		}
 	}
 	defer file.Close()

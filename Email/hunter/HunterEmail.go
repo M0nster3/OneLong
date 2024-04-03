@@ -37,7 +37,29 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 		}
 
 	}
+	//命令输出展示
 
+	var data [][]string
+	var keyword []string
+	for _, y := range getENMap() {
+		for _, ss := range y.keyWord {
+			if ss == "数据关联" {
+				continue
+			}
+			keyword = append(keyword, ss)
+		}
+
+		for _, res := range ensInfos.Infos["Email"] {
+			results := gjson.GetMany(res.Raw, y.field...)
+			var str []string
+			for _, s := range results {
+				str = append(str, s.String())
+			}
+			data = append(data, str)
+		}
+
+	}
+	Utils.DomainTableShow(keyword, data, "HunterEmail")
 	return ensInfos, ensOutMap
 
 }

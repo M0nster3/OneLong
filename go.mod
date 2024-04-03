@@ -9,6 +9,7 @@ require (
 	github.com/antchfx/htmlquery v1.3.0
 	github.com/go-resty/resty/v2 v2.11.0
 	github.com/gookit/color v1.5.4
+	github.com/hashicorp/go-retryablehttp v0.7.5
 	github.com/logrusorgru/aurora v2.0.3+incompatible
 	github.com/mattn/go-colorable v0.1.13
 	github.com/olekukonko/tablewriter v0.0.5
@@ -80,6 +81,7 @@ require (
 	github.com/gorilla/css v1.0.0 // indirect
 	github.com/gosuri/uilive v0.0.4 // indirect
 	github.com/gosuri/uiprogress v0.0.1 // indirect
+	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/jmoiron/sqlx v1.3.5 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/karrick/godirwalk v1.16.1 // indirect

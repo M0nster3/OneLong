@@ -1,19 +1,15 @@
 package baidu
 
 import (
-	Email2 "OneLong/Email/yahoo"
 	"OneLong/Utils"
 	outputfile "OneLong/Utils/OutPutfile"
 	"OneLong/Utils/gologger"
-	"crypto/tls"
 	"fmt"
 	"github.com/go-resty/resty/v2"
 	"github.com/tidwall/gjson"
 	"net/http"
 	"regexp"
 	"strings"
-	//"strconv"
-	//"strings"
 	"time"
 )
 
@@ -37,12 +33,35 @@ func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos
 		}
 
 	}
+	//命令输出展示
 
+	var data [][]string
+	var keyword []string
+	for _, y := range getENMap() {
+		for _, ss := range y.keyWord {
+			if ss == "数据关联" {
+				continue
+			}
+			keyword = append(keyword, ss)
+		}
+
+		for _, res := range ensInfos.Infos["Email"] {
+			results := gjson.GetMany(res.Raw, y.field...)
+			var str []string
+			for _, s := range results {
+				str = append(str, s.String())
+			}
+			data = append(data, str)
+		}
+
+	}
+
+	Utils.DomainTableShow(keyword, data, "Baidu")
 	return ensInfos, ensOutMap
 
 }
 
-func parseUrl(domain string) []string {
+func baiduparseUrl(domain string) []string {
 
 	var urls []string
 	for num := 0; num < 500; num += 10 {
@@ -81,33 +100,25 @@ func clearresponse(results string) string {
 func Baidu(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
 	//gologger.Infof("Alienvault\n")
 
-	urlss := Email2.ParseUrl(domain)
+	urlss := baiduparseUrl(domain)
 	var respnsehe string
 	for _, urls := range urlss {
 
 		client := resty.New()
-		client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
+		// 获取系统根证书列表
+		//roots, err := x509.SystemCertPool()
+		//if err != nil {
+		//	// 处理错误
+		//}
+		//client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
 		client.SetTimeout(time.Duration(options.TimeOut) * time.Minute)
 		if options.Proxy != "" {
 			client.SetProxy(options.Proxy)
 		}
 		client.Header = http.Header{
-			"Accept":          {"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"},
-			"Accept-Encoding": {"gzip, deflate, br, zstd"},
-			"Accept-Language": {"zh-CN,zh;q=0.9"},
-			"Cache-Control":   {"max-age=0"},
-			"Connection":      {"keep-alive"},
-			//"Cookie":                    {"BIDUPSID=E5CBE91A1AFA0DE768B8836161C4B5DD; PSTM=1711609247; BAIDUID=E5CBE91A1AFA0DE7D8785DAA4084CF17:FG=1; BD_UPN=12314753; H_PS_PSSID=40170_40080_40368_40379_40415_40445_40464_40458_40481_40317_39661_40487_40511_40514_40398_60041_60027_60034_60047; BDORZ=B490B5EBF6F3CD402E515D22BCDA1598; kleck=86bf3a1f689c07d154ee2ce3f9366ebc; BA_HECTOR=0l2l818lak2k24a48g2k858hs14dms1j0a7je1t; BAIDUID_BFESS=E5CBE91A1AFA0DE7D8785DAA4084CF17:FG=1; ZFY=sF0pysXgRmUHpErRNjf9aHTIUiPPBAQqlz:BaQbYC8Oc:C; delPer=0; BD_CK_SAM=1; PSINO=7; H_PS_645EC=671doRul3CR5KeWAZpKiD%2FvWfSm12fpyFlBeTAQCileoBXECcVJwChS9tKs"},
-			"Host":                      {"www.baidu.com"},
-			"Sec-Ch-Ua":                 {"\"Chromium\";v=\"122\", \"Not(A:Brand\";v=\"24\", \"Google Chrome\";v=\"122\""},
-			"Sec-Ch-Ua-Mobile":          {"?0"},
-			"Sec-Ch-Ua-Platform":        {"\"Windows\""},
-			"Sec-Fetch-Dest":            {"document"},
-			"Sec-Fetch-Mode":            {"navigate"},
-			"Sec-Fetch-Site":            {"none"},
-			"Sec-Fetch-User":            {"?1"},
-			"Upgrade-Insecure-Requests": {"1"},
-			"User-Agent":                {Utils.RandUA()},
+			"Accept":     {"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"},
+			"Host":       {"www.baidu.com"},
+			"User-Agent": {"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36"},
 		}
 
 		//强制延时1s

@@ -185,6 +185,9 @@ func Google(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 	// 查找具有特定 class 的元素并获取其内容
 	//var Hostname []string
 	buff = Utils.SetStr(buff)
+	if len(buff) == 0 {
+		return ""
+	}
 	var result string
 	result = "{\"passive_dns\":["
 	for i := 0; i < len(buff); i++ {

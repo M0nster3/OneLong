@@ -112,6 +112,10 @@ func Fullhunt(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Dom
 		gologger.Errorf("Fullhunt 威胁平台次数用完\n")
 		return ""
 	}
+	num := gjson.Get(string(resp.Body()), "hosts").Array()
+	if len(num) == 0 {
+		return ""
+	}
 	res, ensOutMap := GetEnInfoFullhunt(string(resp.Body()), DomainsIP)
 
 	outputfile.MergeOutPut(res, ensOutMap, "Fullhunt", options)

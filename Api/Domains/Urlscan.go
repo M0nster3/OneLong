@@ -9,8 +9,6 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/tidwall/gjson"
 	"net/http"
-	"strings"
-
 	//"strconv"
 	//"strings"
 	"time"
@@ -108,23 +106,20 @@ func Urlscan(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Doma
 	}
 	hostname := gjson.Get(string(resp.Body()), "results.#.task.domain").Array()
 	address := gjson.Get(string(resp.Body()), "results.#.page.ip").Array()
-	HeiUrl := "https://www.lianwoapp.com，https://www.momojc.cn，https://www.omnex.com.cn，https://omnex.com.cn，https://www.admach.net，https://i.zkaq.cn，http://csfdk.com，https://jnbeiyou.com，https://www.wwhxkj.com，google.comhttp://www.hellolunarly.com/,https://doc.nasdt.cn,http://fyi6.uuidapi.anz.online.cfgsg.comhttp://vhn4.uuidapi.anz.online.cfgsg.comhttp://socialmediamanagementuk.comhttp://www.billurcevre.comhttps://www.artisanbenefitauctioneer.comhttps://jiance.icloudshield.comhttp://kekeyue.comhttps://t.cohttp://www.shicaituku.comhttps://www.bdjiayu.comhttp://telegramlh.com,chqzyy.com"
+	//HeiUrl := "https://www.lianwoapp.com，https://www.momojc.cn，https://www.omnex.com.cn，https://omnex.com.cn，https://www.admach.net，https://i.zkaq.cn，http://csfdk.com，https://jnbeiyou.com，https://www.wwhxkj.com，google.comhttp://www.hellolunarly.com/,https://doc.nasdt.cn,http://fyi6.uuidapi.anz.online.cfgsg.comhttp://vhn4.uuidapi.anz.online.cfgsg.comhttp://socialmediamanagementuk.comhttp://www.billurcevre.comhttps://www.artisanbenefitauctioneer.comhttps://jiance.icloudshield.comhttp://kekeyue.comhttps://t.cohttp://www.shicaituku.comhttps://www.bdjiayu.comhttp://telegramlh.com,chqzyy.com"
 	// 查找匹配的内容
 	var add int
 	result1 := "{\"passive_dns\":["
 	for add = 0; add < len(address); add++ {
-		if !strings.Contains(HeiUrl, hostname[add].String()) {
-			result1 += "{\"hostname\"" + ":" + "\"" + hostname[add].String() + "\"" + "," + "\"address\"" + ":" + "\"" + address[add].String() + "\"" + "},"
-			DomainsIP.Domains = append(DomainsIP.Domains, hostname[add].String())
-			DomainsIP.IP = append(DomainsIP.IP, address[add].String())
-		}
+
+		result1 += "{\"hostname\"" + ":" + "\"" + hostname[add].String() + "\"" + "," + "\"address\"" + ":" + "\"" + address[add].String() + "\"" + "},"
+		DomainsIP.Domains = append(DomainsIP.Domains, hostname[add].String())
+		DomainsIP.IP = append(DomainsIP.IP, address[add].String())
 
 	}
 	for ii := add; ii < len(hostname); ii++ {
-		if !strings.Contains(HeiUrl, hostname[add].String()) {
-			result1 += "{\"hostname\"" + ":" + "\"" + hostname[ii].String() + "\"" + "},"
-			DomainsIP.Domains = append(DomainsIP.Domains, hostname[ii].String())
-		}
+		result1 += "{\"hostname\"" + ":" + "\"" + hostname[ii].String() + "\"" + "},"
+		DomainsIP.Domains = append(DomainsIP.Domains, hostname[ii].String())
 
 	}
 	result1 = result1 + "]}"

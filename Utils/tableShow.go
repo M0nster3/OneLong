@@ -22,7 +22,7 @@ func TableShow(keys []string, values [][]string) {
 func DomainTableShow(keys []string, values [][]string, Gong string) {
 	mu.Lock()
 	defer mu.Unlock()
-	color.RGBStyleFromString("205,155,29").Println("\n", Gong, " 查询子域名")
+	color.RGBStyleFromString("205,155,29").Println("\n", Gong, " 查询")
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetAlignment(tablewriter.ALIGN_CENTER)
 	table.SetHeader(keys)
