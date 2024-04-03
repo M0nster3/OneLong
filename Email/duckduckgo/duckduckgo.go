@@ -160,7 +160,6 @@ func Duckduckgo(domain string, options *Utils.ENOptions, DomainsIP *outputfile.D
 	//gologger.Infof("Alienvault\n")
 	var wg sync.WaitGroup
 	var respnsehe string
-	//domain = "https://api.duckduckgo.com/?q=nthu.edu.tw&format=json&pretty=1"
 	urls := "https://api.duckduckgo.com/?q=" + domain + "&format=json&pretty=1"
 
 	client := resty.New()
