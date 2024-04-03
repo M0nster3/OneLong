@@ -16,7 +16,7 @@
 
 注意：在调用API的时候有些需要科学上网，最好在进行使用的时候加上-proxy=http://127.0.0.1:7897 进行科学上网。
 
-1、根据企业关键字去进行信息搜集，最后填写正确完整的关键字，这部分主要参考了[ENScan_GO](https://github.com/wgpsec/ENScan_GO),相关搜索企业细节以及方法和它是一样
+1、根据企业关键字去进行信息搜集，最后填写正确完整的关键字，这部分主要参考了[ENScan_GO](https://github.com/wgpsec/ENScan_GO),相关搜索企业细节以及方法和它是一样，注意的是使用这种方式必须填写aqc和qcc的Cookie
 
 - OneLong -n 企业名称 -proxy=http://127.0.0.1:7890
 
@@ -24,7 +24,11 @@
 
 - OneLong -d target.com -proxy=http://127.0.0.1:7890
 
-3、如果目标企业存在安全设备，并且IP资源不多的话，可以只进行被动探测
+3、批量域名信息搜集
+
+- OneLong -f file.txt -proxy=http://127.0.0.1:7890
+
+4、如果目标企业存在安全设备，并且IP资源不多的话，可以只进行被动探测
 
 - OneLong -d target.com/-n 企业名称 -nb -np -proxy=http://127.0.0.1:7890
 
@@ -37,6 +41,8 @@
         递归搜索n层公司 (default 5)
   -delay int
         填写最大延迟时间（秒）将会在1-n间随机延迟
+  -f string
+        批量扫描
   -invest float
         投资比例  (default 70)
   -is-branch
@@ -53,6 +59,7 @@
         设置代理例如:-proxy=http://127.0.0.1:7897
   -timeout int
         每个请求默认1（分钟）超时 (default 1)
+
 ```
 
 
@@ -60,6 +67,9 @@
 ## 0x03、相关配置文件解读
 
 ### 子域名相关配置文件
+
+-  ***OneLong -n 企业名称*** 在使用这种方式的时候必须添加Aiqicha或者是TYC的token，否则不能正常使用，因为这个流程是需要这两个api去查询相应的备案号，然后才能进行后续的资产收集
+- ***OneLong -d target.com*** 在使用这种方式因为工具里面带了一些不需要key的api，所以可以直接跑。
 
 想要搜集的信息更加全面，可以添加相应的API，添加的API不含直接收费的，都是一些免费的和一些有免费次数的
 
