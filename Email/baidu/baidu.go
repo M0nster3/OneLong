@@ -118,9 +118,10 @@ func Baidu(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domain
 			client.SetProxy(options.Proxy)
 		}
 		client.Header = http.Header{
-			"Accept":     {"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"},
-			"Host":       {"www.baidu.com"},
-			"User-Agent": {"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36"},
+			"Accept":          {"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"},
+			"Host":            {"www.baidu.com"},
+			"User-Agent":      {"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36"},
+			"Accept-Encoding": {"gzip"},
 		}
 
 		//强制延时1s

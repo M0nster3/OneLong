@@ -46,17 +46,20 @@ func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) 
 }
 func Login(domains []string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
 	//color.RGBStyleFromString("244,211,49").Println("\n--------------------探测网站后台--------------------")
+
 	gologger.Infof("扫描网站后台，当前共有存活子域%d个\n", len(domains))
 	for domainint, domain := range domains {
+
 		gologger.Infof("当前扫描第%d个  %s\n", domainint+1, domain)
 		domain = strings.ReplaceAll(domain, "https://", "")
 		domain = strings.ReplaceAll(domain, "http://", "")
 		if !strings.Contains(domain, "\\") {
-			//CommoncrawlLogin.CommoncrawlLogin(domain, options, DomainsIP)
 			alienvaultLogin.AlienvaultLogin(domain, options, DomainsIP)
 			WaybackarchiveLogin.WaybackarchiveLogin(domain, options, DomainsIP)
+			//CommoncrawlLogin.CommoncrawlLogin(domain, options, DomainsIP)
 		}
 	}
+
 	ParseLoginurl(options, DomainsIP)
 }
 

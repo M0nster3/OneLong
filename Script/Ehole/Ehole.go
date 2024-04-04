@@ -14,12 +14,22 @@ func Ehole(domain []string, options *Utils.ENOptions, DomainsIP *outputfile.Doma
 	BlackUrl, _ := os.ReadFile(filepath.Join(Utils.GetPathDir(), "Script/Dict/BlackUrl.txt"))
 	for _, aa := range domain {
 		parts := strings.Split(aa, ".")
-		dom := parts[len(parts)-2:]
-		if !strings.Contains(string(BlackUrl), strings.Join(dom, ".")) {
-			if !strings.Contains(aa, "http://") && !strings.Contains(aa, "https://") {
-				Buff = append(Buff, "https://"+aa)
-			} else {
-				Buff = append(Buff, aa)
+		if len(parts) > 2 {
+			dom := parts[len(parts)-2:]
+			if !strings.Contains(string(BlackUrl), strings.Join(dom, ".")) {
+				if !strings.Contains(aa, "http://") && !strings.Contains(aa, "https://") {
+					Buff = append(Buff, "https://"+aa)
+				} else {
+					Buff = append(Buff, aa)
+				}
+			}
+		} else {
+			if !strings.Contains(string(BlackUrl), aa) {
+				if !strings.Contains(aa, "http://") && !strings.Contains(aa, "https://") {
+					Buff = append(Buff, "https://"+aa)
+				} else {
+					Buff = append(Buff, aa)
+				}
 			}
 		}
 

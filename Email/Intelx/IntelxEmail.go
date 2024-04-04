@@ -99,9 +99,10 @@ func IntelxEmail(domain string, options *Utils.ENOptions, DomainsIP *outputfile.
 	}
 	urls := "https://2.intelx.io/phonebook/search"
 	client.Header = http.Header{
-		"User-Agent": {"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"},
-		"Accept":     {"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"},
-		"x-key":      {options.ENConfig.Email.EmailIntelx},
+		"User-Agent":      {"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"},
+		"Accept":          {"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"},
+		"x-key":           {options.ENConfig.Email.EmailIntelx},
+		"Accept-Encoding": {"gzip"},
 	}
 	client.Header.Set("Content-Type", "application/json")
 

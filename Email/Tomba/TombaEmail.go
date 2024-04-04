@@ -96,10 +96,11 @@ func TombaEmail(domain string, options *Utils.ENOptions, DomainsIP *outputfile.D
 	}
 	urls := "https://api.tomba.io/v1/domain-search?domain=" + domain + "&limit=10"
 	client.Header = http.Header{
-		"User-Agent":     {"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"},
-		"Accept":         {"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"},
-		"X-Tomba-Key":    {options.ENConfig.Email.TombaKey},
-		"X-Tomba-Secret": {options.ENConfig.Email.TombaSecret},
+		"User-Agent":      {"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"},
+		"Accept":          {"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"},
+		"X-Tomba-Key":     {options.ENConfig.Email.TombaKey},
+		"Accept-Encoding": {"gzip"},
+		"X-Tomba-Secret":  {options.ENConfig.Email.TombaSecret},
 	}
 	client.Header.Set("Content-Type", "application/json")
 
