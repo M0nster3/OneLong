@@ -12,7 +12,7 @@ func main() {
 	Utils.ConfigParse(&enOptions)
 	//Gogogo.StartScan(&enOptions)
 	var Config Port.Config
-	Config.Target = "107.163.229.83"
+	Config.Target = ""
 	Config.Rate = 5000
 	Config.Port = "1-65535"
 	Port.DoMasscanPlusNmap(Config)
