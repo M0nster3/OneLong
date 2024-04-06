@@ -188,7 +188,6 @@ func CompanyRunJob(options *Utils.ENOptions) {
 	//}
 }
 func DomainRunJob(options *Utils.ENOptions) {
-	// 创建一个信号接收器
 
 	options.Domain = strings.ReplaceAll(options.Domain, "http://", "")
 	options.Domain = strings.ReplaceAll(options.Domain, "https://", "")

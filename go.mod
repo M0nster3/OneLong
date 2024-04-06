@@ -9,15 +9,14 @@ require (
 	github.com/antchfx/htmlquery v1.3.0
 	github.com/go-resty/resty/v2 v2.11.0
 	github.com/gookit/color v1.5.4
-	github.com/hashicorp/go-retryablehttp v0.7.5
+	github.com/lair-framework/go-nmap v0.0.0-20191202052157-3507e0b03523
 	github.com/logrusorgru/aurora v2.0.3+incompatible
 	github.com/mattn/go-colorable v0.1.13
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/oschwald/geoip2-golang v1.9.0
 	github.com/projectdiscovery/chaos-client v0.5.1
-	github.com/projectdiscovery/goflags v0.1.41
-	github.com/projectdiscovery/naabu/v2 v2.3.0
 	github.com/projectdiscovery/shuffledns v1.0.9
+	github.com/remeh/sizedwaitgroup v1.0.0
 	github.com/robertkrimen/otto v0.3.0
 	github.com/tidwall/gjson v1.17.1
 	github.com/tidwall/sjson v1.2.5
@@ -76,12 +75,10 @@ require (
 	github.com/google/cel-go v0.9.0 // indirect
 	github.com/google/go-github/v30 v30.1.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
-	github.com/google/gopacket v1.1.19 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gorilla/css v1.0.0 // indirect
 	github.com/gosuri/uilive v0.0.4 // indirect
 	github.com/gosuri/uiprogress v0.0.1 // indirect
-	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/jmoiron/sqlx v1.3.5 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/karrick/godirwalk v1.16.1 // indirect
@@ -114,24 +111,17 @@ require (
 	github.com/pierrec/lz4/v4 v4.1.15 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/power-devops/perfstat v0.0.0-20210106213030-5aafc221ea8c // indirect
-	github.com/projectdiscovery/asnmap v1.1.0 // indirect
 	github.com/projectdiscovery/blackrock v0.0.1 // indirect
-	github.com/projectdiscovery/cdncheck v1.0.9 // indirect
-	github.com/projectdiscovery/clistats v0.0.20 // indirect
-	github.com/projectdiscovery/dnsx v1.2.1 // indirect
 	github.com/projectdiscovery/fastdialer v0.0.61 // indirect
-	github.com/projectdiscovery/freeport v0.0.5 // indirect
+	github.com/projectdiscovery/goflags v0.1.41 // indirect
 	github.com/projectdiscovery/gologger v1.1.12 // indirect
 	github.com/projectdiscovery/hmap v0.0.41 // indirect
-	github.com/projectdiscovery/ipranger v0.0.37 // indirect
 	github.com/projectdiscovery/machineid v0.0.0-20240226150047-2e2c51e35983 // indirect
-	github.com/projectdiscovery/mapcidr v1.1.16 // indirect
 	github.com/projectdiscovery/networkpolicy v0.0.7 // indirect
 	github.com/projectdiscovery/ratelimit v0.0.30 // indirect
 	github.com/projectdiscovery/retryabledns v1.0.58 // indirect
 	github.com/projectdiscovery/retryablehttp-go v1.0.51 // indirect
 	github.com/projectdiscovery/roundrobin v0.0.6 // indirect
-	github.com/projectdiscovery/uncover v1.0.7 // indirect
 	github.com/projectdiscovery/utils v0.0.83 // indirect
 	github.com/prometheus/client_golang v1.14.0 // indirect
 	github.com/prometheus/client_model v0.3.0 // indirect
@@ -139,7 +129,6 @@ require (
 	github.com/prometheus/procfs v0.9.0 // indirect
 	github.com/quic-go/quic-go v0.38.2 // indirect
 	github.com/refraction-networking/utls v1.5.4 // indirect
-	github.com/remeh/sizedwaitgroup v1.0.0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/richardlehane/mscfb v1.0.4 // indirect
 	github.com/richardlehane/msoleps v1.0.3 // indirect
@@ -152,6 +141,7 @@ require (
 	github.com/sirupsen/logrus v1.9.0 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
 	github.com/stoewer/go-strcase v1.2.0 // indirect
+	github.com/stretchr/testify v1.9.0 // indirect
 	github.com/syndtr/goleveldb v1.0.0 // indirect
 	github.com/tidwall/btree v1.6.0 // indirect
 	github.com/tidwall/buntdb v1.3.0 // indirect
@@ -196,7 +186,6 @@ require (
 	golang.org/x/mod v0.14.0 // indirect
 	golang.org/x/oauth2 v0.13.0 // indirect
 	golang.org/x/sys v0.18.0 // indirect
-	golang.org/x/term v0.18.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/tools v0.17.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
