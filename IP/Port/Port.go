@@ -33,10 +33,8 @@ type Result struct {
 
 // IPResult IP结果
 type IPResult struct {
-	OrgId    *int
-	Location string
-	Status   string
-	Ports    map[int]*PortResult
+	OrgId *int
+	Ports map[int]*PortResult
 }
 type Masscan struct {
 	Config Config
@@ -73,18 +71,10 @@ type PortAttrResult struct {
 	Tag       string
 	Content   string
 }
-type HttpResult struct {
-	RelatedId int
-	Source    string
-	Tag       string
-	Content   string
-}
 
 // PortResult 端口结果
 type PortResult struct {
-	Status    string
 	PortAttrs []PortAttrResult
-	HttpInfo  []HttpResult
 }
 
 func (r *Result) SetIP(ip string) {
@@ -286,7 +276,6 @@ func DoMasscanPlusNmap(config Config) {
 	resultPortScan := &Result{
 		IPResult: make(map[string]*IPResult),
 	}
-	//resultPortScan.IPResult = make(map[string]*IPResult)
 	//masscan扫描
 	masscan := NewMasscan(config)
 	masscan.Do()

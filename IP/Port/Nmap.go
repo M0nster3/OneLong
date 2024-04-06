@@ -30,7 +30,7 @@ type Service struct {
 
 // loadNmapService 加载nmap的service定义
 func (s *Service) loadNmapService() {
-	content, err := os.ReadFile(filepath.Join(Utils.GetPathDir(), "thirdparty/nmap/nmap-services"))
+	content, err := os.ReadFile(filepath.Join(Utils.GetPathDir(), "Script/Nmap/nmap-services"))
 	if err != nil {
 		//logging.RuntimeLog.Info(err)
 		//logging.CLILog.Info(err)
@@ -51,7 +51,7 @@ func (s *Service) loadNmapService() {
 
 // loadCustomService 加载自定义service定义文件
 func (s *Service) loadCustomService() {
-	content, err := os.ReadFile(filepath.Join(Utils.GetPathDir(), "thirdparty/custom/services-custom.txt"))
+	content, err := os.ReadFile(filepath.Join(Utils.GetPathDir(), "Script/Port/Nmap/services-custom.txt"))
 	if err != nil {
 		//logging.RuntimeLog.Info(err)
 		//logging.CLILog.Info(err)
