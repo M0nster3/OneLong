@@ -114,7 +114,7 @@ func Hunter(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 		return ""
 	}
 	if gjson.Get(string(resp.Body()), "data.total").Int() == 0 {
-		gologger.Labelf("Hunter 威胁平台未查询到域名\n")
+		//gologger.Labelf("Hunter 威胁平台未查询到域名\n")
 		return ""
 	}
 	res, ensOutMap := GetEnInfoHunter(string(resp.Body()), DomainsIP)

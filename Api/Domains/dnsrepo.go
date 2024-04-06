@@ -107,7 +107,7 @@ func Dnsrepo(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Doma
 		return ""
 	}
 	if resp.Body() == nil || strings.Contains(string(resp.Body()), "nothing found") {
-		gologger.Labelf("Dnsrepo API 未查询到域名 %s\n", domain)
+		//gologger.Labelf("Dnsrepo API 未查询到域名 %s\n", domain)
 		return ""
 	}
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(resp.String()))

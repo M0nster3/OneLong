@@ -126,6 +126,9 @@ func Sitedossier(domain string, options *Utils.ENOptions, DomainsIP *outputfile.
 
 	// 如果找到了匹配项
 	// 提取匹配到的数字，并去除逗号
+	if len(matches) == 0 {
+		return ""
+	}
 	totalItemsStr := strings.ReplaceAll(matches[1], ",", "")
 	// 将字符串转换为整数
 	totalItems, _ := strconv.Atoi(totalItemsStr)

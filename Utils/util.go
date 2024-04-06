@@ -212,9 +212,3 @@ func DName(str string) (srt string) { // 获得文件名
 	str = strings.ReplaceAll(str, "</em>", "")
 	return str
 }
-
-//func VerifyEmailFormat(email string) bool {
-//	pattern := `\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*` //匹配电子邮箱
-//	reg := regexp.MustCompile(pattern)
-//	return reg.MatchString(email)
-//}
