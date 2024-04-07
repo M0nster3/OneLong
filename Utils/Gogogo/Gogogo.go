@@ -210,10 +210,10 @@ func DomainRunJob(options *Utils.ENOptions) {
 
 	color.RGBStyleFromString("244,211,49").Println("\n--------------------探测邮箱--------------------")
 	Email.Email(options.Domain, options, &Domainip)
+
 	if !options.NoPoc {
 		color.RGBStyleFromString("244,211,49").Println("\n--------------------漏洞扫描--------------------")
 		Afrog.Afrog(options, &Domainip)
-
 	}
 	color.RGBStyleFromString("244,211,49").Println("\n--------------------探测网站后台--------------------")
 	Login.Login(Domainip.DomainA, options, &Domainip)

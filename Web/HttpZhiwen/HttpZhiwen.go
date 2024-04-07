@@ -7,9 +7,11 @@ import (
 	outputfile "OneLong/Utils/OutPutfile"
 	"OneLong/Web/CDN"
 	"crypto/tls"
+	"fmt"
 	"github.com/go-resty/resty/v2"
 	"github.com/gookit/color"
 	"github.com/tidwall/gjson"
+	"net"
 	"sync"
 	"time"
 )
@@ -52,6 +54,18 @@ func Status(domaina string, options *Utils.ENOptions, DomainsIP *outputfile.Doma
 	wg.Wait()
 	DomainsIP.IPA = Utils.SetStr(DomainsIP.IPA)
 	DomainsIP.Domains = Utils.SetStr(DomainsIP.Domains)
+	for _, C := range DomainsIP.IPA {
+		ip := net.ParseIP(C)
+		if ip == nil {
+			continue
+		}
+		cidr := fmt.Sprint("%s/24", ip.String())
+		_, ipnet, err := net.ParseCIDR(cidr)
+		if err != nil {
+			continue
+		}
+		DomainsIP.C = append(DomainsIP.C, ipnet.String())
+	}
 
 	color.RGBStyleFromString("244,211,49").Println("\n--------------------检测指纹以及域名存活--------------------")
 	client := resty.New()
