@@ -22,7 +22,7 @@ import (
  * admin@wgpsec.org
  */
 
-func GetEnInfoByPid(options *Utils.ENOptions) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
+func GetEnInfoByPid(options *Utils.LongOptions) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
 	ensInfos := &Utils.EnInfos{}
 	ensInfos.Infos = make(map[string][]gjson.Result)
 	ensInfos.SType = "TYC"
@@ -53,7 +53,7 @@ func GetEnInfoByPid(options *Utils.ENOptions) (*Utils.EnInfos, map[string]*outpu
 // pid 公司id
 // isSearch 是否递归搜索信息【分支机构、对外投资信息】
 // options options
-func getCompanyInfoById(pid string, deep int, isEnDetail bool, inFrom string, searchList []string, ensInfo *Utils.EnInfos, options *Utils.ENOptions) {
+func getCompanyInfoById(pid string, deep int, isEnDetail bool, inFrom string, searchList []string, ensInfo *Utils.EnInfos, options *Utils.LongOptions) {
 	//获取初始化API数据
 	ensMap := getENMap()
 	var enCount gjson.Result
@@ -211,7 +211,7 @@ func pageParseJson(content string) (res gjson.Result) {
 	return gjson.Parse(content)
 }
 
-func SearchBaseInfo(pid string, tds bool, options *Utils.ENOptions) (result gjson.Result, enBaseInfo gjson.Result) {
+func SearchBaseInfo(pid string, tds bool, options *Utils.LongOptions) (result gjson.Result, enBaseInfo gjson.Result) {
 	urls := "https://www.tianyancha.com/company/" + pid
 
 	if tds {
@@ -238,7 +238,7 @@ func SearchBaseInfo(pid string, tds bool, options *Utils.ENOptions) (result gjso
 	return result, enBaseInfo
 }
 
-func SearchBaseInfoByTables(pid string, ensMap map[string]*EnsGo, options *Utils.ENOptions) (result map[string]string, enInfoCout gjson.Result) {
+func SearchBaseInfoByTables(pid string, ensMap map[string]*EnsGo, options *Utils.LongOptions) (result map[string]string, enInfoCout gjson.Result) {
 	//var re = regexp.MustCompile(`(?m)placeholder="请输入公司名称、老板姓名、品牌名称等\"\s*value="(.*?)\"\/>`)
 	defer func() {
 		if x := recover(); x != nil {
@@ -287,7 +287,7 @@ func SearchBaseInfoByTables(pid string, ensMap map[string]*EnsGo, options *Utils
 	return result, enInfoCout
 }
 
-func SearchName(options *Utils.ENOptions) ([]gjson.Result, string) {
+func SearchName(options *Utils.LongOptions) ([]gjson.Result, string) {
 	name := options.KeyWord
 	//使用关键词推荐方法进行检索，会出现信息不对的情况
 	//urls := "https://sp0.tianyancha.com/search/suggestV2.json?key=" + url.QueryEscape(name)
@@ -345,7 +345,7 @@ func JudgePageNumWithCookie(page *html.Node) int {
 	return len(list) - 1
 }
 
-func getInfoList(pid string, types string, s *EnsGo, options *Utils.ENOptions) (listData []gjson.Result) {
+func getInfoList(pid string, types string, s *EnsGo, options *Utils.LongOptions) (listData []gjson.Result) {
 	data := ""
 	if len(s.sData) != 0 {
 		dataTmp, _ := json.Marshal(s.sData)
@@ -412,7 +412,7 @@ func getInfoList(pid string, types string, s *EnsGo, options *Utils.ENOptions) (
 
 }
 
-func getInfoListByTable(pid string, ensInfoMap *EnsGo, options *Utils.ENOptions) []map[string]string {
+func getInfoListByTable(pid string, ensInfoMap *EnsGo, options *Utils.LongOptions) []map[string]string {
 	urls := "https://www.tianyancha.com/" + ensInfoMap.api + "?ps=30&id=" + pid
 	page := GetReqReturnPage(urls, options)
 
@@ -430,7 +430,7 @@ func getInfoListByTable(pid string, ensInfoMap *EnsGo, options *Utils.ENOptions)
 
 }
 
-func SearchByName(options *Utils.ENOptions) (enName string) {
+func SearchByName(options *Utils.LongOptions) (enName string) {
 	res, _ := SearchName(options)
 	if len(res) > 0 {
 		enName = res[0].Get("comName").String()

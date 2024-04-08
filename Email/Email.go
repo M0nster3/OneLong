@@ -17,10 +17,10 @@ import (
 var wg sync.WaitGroup
 
 type FuncInfo struct {
-	Func func(string, *Utils.ENOptions, *outputfile.DomainsIP) // 函数签名应匹配你的函数
+	Func func(string, *Utils.LongOptions, *outputfile.DomainsIP) // 函数签名应匹配你的函数
 }
 
-func Email(domain string, enOptions *Utils.ENOptions, Domainip *outputfile.DomainsIP) {
+func Email(domain string, enOptions *Utils.LongOptions, Domainip *outputfile.DomainsIP) {
 	//color.RGBStyleFromString("244,211,49").Println("\n--------------------探测邮箱--------------------")
 
 	// 创建一个函数切片，包含要执行的函数及其参数
@@ -41,7 +41,7 @@ func Email(domain string, enOptions *Utils.ENOptions, Domainip *outputfile.Domai
 		}
 	}
 
-	if enOptions.ENConfig.Cookies.Github != "" {
+	if enOptions.LongConfig.Cookies.Github != "" {
 		wg.Add(1)
 		go func() {
 
@@ -51,7 +51,7 @@ func Email(domain string, enOptions *Utils.ENOptions, Domainip *outputfile.Domai
 		}()
 	}
 
-	if enOptions.ENConfig.Email.Emailhunter != "" {
+	if enOptions.LongConfig.Email.Emailhunter != "" {
 		wg.Add(1)
 		go func() {
 
@@ -61,7 +61,7 @@ func Email(domain string, enOptions *Utils.ENOptions, Domainip *outputfile.Domai
 		}()
 	}
 
-	if enOptions.ENConfig.Email.EmailIntelx != "" {
+	if enOptions.LongConfig.Email.EmailIntelx != "" {
 		wg.Add(1)
 		go func() {
 
@@ -70,7 +70,7 @@ func Email(domain string, enOptions *Utils.ENOptions, Domainip *outputfile.Domai
 			wg.Done()
 		}()
 	}
-	if enOptions.ENConfig.Email.TombaKey != "" {
+	if enOptions.LongConfig.Email.TombaKey != "" {
 		wg.Add(1)
 		go func() {
 

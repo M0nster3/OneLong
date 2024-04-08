@@ -24,7 +24,7 @@ func Banner() {
 	color.RGBStyleFromString("244,211,49").Println("使用方式: \n\tOneLong -n 企业名称\n\tOneLong -d target.com\n\tOneLong -f file.txt\n")
 }
 
-func Flag(Info *ENOptions) {
+func Flag(Info *LongOptions) {
 	Banner()
 	flag.BoolVar(&Info.NoBao, "nb", false, "不进行爆破子域名")
 	flag.BoolVar(&Info.NoPoc, "np", false, "不进行漏洞扫描") //InputFile

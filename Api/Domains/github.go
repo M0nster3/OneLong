@@ -76,7 +76,7 @@ func GetEnInfoGithub(response string, DomainsIP *outputfile.DomainsIP) (*Utils.E
 
 }
 
-func Github(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
+func Github(domain string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) string {
 
 	var Hostname []string
 	for add := 1; add < 11; add += 1 {
@@ -88,7 +88,7 @@ func Github(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 		if options.Proxy != "" {
 			client.SetProxy(options.Proxy)
 		}
-		Authorization := " token " + options.ENConfig.Cookies.Github
+		Authorization := " token " + options.LongConfig.Cookies.Github
 		client.Header = http.Header{
 			"User-Agent":    {"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"},
 			"Accept":        {"application/vnd.github.v3.text-match+json"},

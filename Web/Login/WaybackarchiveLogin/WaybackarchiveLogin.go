@@ -19,7 +19,7 @@ import (
 	"time"
 )
 
-func WaybackarchiveLogin(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
+func WaybackarchiveLogin(domain string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) string {
 	//gologger.Infof("waybackarchive 历史快照查询\n")
 	var wg sync.WaitGroup
 	dir := filepath.Join(Utils.GetPathDir(), "Script/Dict/Login.txt")

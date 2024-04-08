@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func Ehole(domain []string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
+func Ehole(domain []string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) {
 	var Buff []string
 	BlackUrl, _ := os.ReadFile(filepath.Join(Utils.GetPathDir(), "Script/Dict/BlackUrl.txt"))
 	for _, aa := range domain {

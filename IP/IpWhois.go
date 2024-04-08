@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-func IpWhois(domain string, ip string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
+func IpWhois(domain string, ip string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) {
 	urls := fmt.Sprintf("http://api.webscan.cc/?action=query&ip=%s", ip)
 	client := resty.New()
 	client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})

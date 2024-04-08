@@ -81,7 +81,7 @@ func GetEnInfoWaybackarchive(response string, DomainsIP *outputfile.DomainsIP) (
 
 }
 
-func Waybackarchive(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
+func Waybackarchive(domain string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) string {
 	//gologger.Infof("waybackarchive 历史快照查询\n")
 
 	urls := fmt.Sprintf("http://web.archive.org/cdx/search/cdx?url=*.%s/*&output=txt&fl=original&collapse=urlkey", domain)

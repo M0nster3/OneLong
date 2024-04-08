@@ -78,14 +78,14 @@ func sign(params string, url string) string {
 	return ne
 }
 
-func GetReq(url string, params map[string]string, options *Utils.ENOptions) string {
+func GetReq(url string, params map[string]string, options *Utils.LongOptions) string {
 	client := resty.New()
 	client.SetTimeout(time.Duration(options.TimeOut) * time.Minute)
 	if options.Proxy != "" {
 		client.SetProxy(options.Proxy)
 	}
 	gologger.Debugf("[qimai] url: %s, params: %s\n", url, params)
-	cookie := options.ENConfig.Cookies.QiMai
+	cookie := options.LongConfig.Cookies.QiMai
 	cookie = strings.ReplaceAll(cookie, "syncd", "syncds")
 	cookie = cookie + ";synct=1690024926.196; syncd=-1652"
 	client.Header = http.Header{

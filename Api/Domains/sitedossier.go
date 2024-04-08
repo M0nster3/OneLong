@@ -73,7 +73,7 @@ func GetEnInfoSitedossier(response string, DomainsIP *outputfile.DomainsIP) (*Ut
 
 }
 
-func Sitedossier(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
+func Sitedossier(domain string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) string {
 	//gologger.Infof("Sitedossier Api查询\n")
 
 	urls := fmt.Sprintf("http://www.sitedossier.com/parentdomain/%s", domain)

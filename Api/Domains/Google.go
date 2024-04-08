@@ -73,7 +73,7 @@ func countCharacters(arr []string) map[string]int {
 
 	return charCount
 }
-func Google(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
+func Google(domain string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) string {
 	//gologger.Infof("Google 搜索域名 \n")
 	client := resty.New()
 	client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
@@ -98,8 +98,8 @@ func Google(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 	var buff []string
 	for start := 1; start < 120; start += 10 {
 		queryParams := map[string]string{
-			"key":    options.ENConfig.Cookies.GoogleApi,
-			"cx":     options.ENConfig.Cookies.GoogleID,
+			"key":    options.LongConfig.Cookies.GoogleApi,
+			"cx":     options.LongConfig.Cookies.GoogleID,
 			"q":      "site:." + domain,
 			"fields": "items/link",
 			"start":  strconv.Itoa(start),
@@ -150,8 +150,8 @@ func Google(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 			}
 			for startB := 1; startB < 120; startB += 10 {
 				queryParams := map[string]string{
-					"key":    options.ENConfig.Cookies.GoogleApi,
-					"cx":     options.ENConfig.Cookies.GoogleID,
+					"key":    options.LongConfig.Cookies.GoogleApi,
+					"cx":     options.LongConfig.Cookies.GoogleID,
 					"q":      "site:." + domain + statement,
 					"fields": "items/link",
 					"start":  strconv.Itoa(startB),

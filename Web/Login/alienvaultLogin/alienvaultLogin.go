@@ -22,7 +22,7 @@ import (
 
 var wg sync.WaitGroup
 
-func AlienvaultLogin(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
+func AlienvaultLogin(domain string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) {
 
 	dir := filepath.Join(Utils.GetPathDir(), "Script/Dict/Login.txt")
 	file, err := os.Open(dir)

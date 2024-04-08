@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-func ConfigParse(options *ENOptions) {
+func ConfigParse(options *LongOptions) {
 	// 配置文件检查
 	options.IsHold = true
 	options.IsSupplier = true
@@ -27,7 +27,7 @@ func ConfigParse(options *ENOptions) {
 	}
 
 	//加载配置信息~
-	conf := new(ENConfig)
+	conf := new(LongConfig)
 	yamlFile, err := ioutil.ReadFile(cfgYName)
 	if err != nil {
 		gologger.Fatalf("配置文件解析错误 #%v ", err)
@@ -47,14 +47,14 @@ func ConfigParse(options *ENOptions) {
 		gologger.Errorf("参数输入错误")
 		os.Exit(0)
 	}
-	options.ENConfig = conf
+	options.LongConfig = conf
 	options.IsShow = false
 	options.IsMergeOut = true
 	options.Deep = 5
 	options.GetType = []string{"aqc", "tyc", "aldzs", "qimai"}
-	if options.ENConfig.Cookies.Aiqicha == "" {
+	if options.LongConfig.Cookies.Aiqicha == "" {
 		options.GetType = []string{"tyc", "aldzs", "qimai"}
-	} else if options.ENConfig.Cookies.Tycid == "" || options.ENConfig.Cookies.Securitytrails == "" {
+	} else if options.LongConfig.Cookies.Tycid == "" || options.LongConfig.Cookies.Securitytrails == "" {
 		options.GetType = []string{"aqc", "aldzs", "qimai"}
 	}
 	options.GetType = SetStr(options.GetType)

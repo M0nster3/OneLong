@@ -42,7 +42,7 @@ func GetEnInfoAfrog(response string, DomainsIP *outputfile.DomainsIP) (*Utils.En
 
 }
 
-func Afrog(options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
+func Afrog(options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) {
 	//color.RGBStyleFromString("244,211,49").Println("\n--------------------漏洞扫描--------------------")
 	var SetProxy string
 	if options.Proxy != "" {

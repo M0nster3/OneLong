@@ -3,6 +3,7 @@ package HttpZhiwen
 import (
 	"OneLong/IP"
 	"OneLong/Script/Ehole"
+	"OneLong/Script/Port"
 	"OneLong/Utils"
 	outputfile "OneLong/Utils/OutPutfile"
 	"OneLong/Web/CDN"
@@ -36,7 +37,7 @@ func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) 
 	return ensInfos, ensOutMap
 
 }
-func Status(domaina string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
+func Status(domaina string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) {
 	DomainsIP.IP = Utils.SetStr(DomainsIP.IP)
 	//Ip反差域名
 
@@ -65,6 +66,29 @@ func Status(domaina string, options *Utils.ENOptions, DomainsIP *outputfile.Doma
 			continue
 		}
 		DomainsIP.C = append(DomainsIP.C, ipnet.String())
+	}
+
+	for _, ipStr := range DomainsIP.Domains {
+		ip := net.ParseIP(ipStr)
+		if ip == nil {
+			continue
+		}
+
+		// 提取C段
+		cidr := fmt.Sprintf("%s/24", ip.String()) // 使用/24表示C段
+		_, ipnet, err := net.ParseCIDR(cidr)
+		if err != nil {
+			continue
+		}
+		// 输出C段
+		DomainsIP.C = append(DomainsIP.C, ipnet.String())
+	}
+	var Config Port.Config
+	for _, C := range DomainsIP.C {
+		Config.Target = C
+		Config.Rate = 5000
+		Config.Port = "1-65535"
+		Port.DoMasscanPlusNmap(Config)
 	}
 
 	color.RGBStyleFromString("244,211,49").Println("\n--------------------检测指纹以及域名存活--------------------")

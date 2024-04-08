@@ -71,9 +71,9 @@ func GetEnInfoRacent(response string, DomainsIP *outputfile.DomainsIP) (*Utils.E
 
 }
 
-func Racent(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
+func Racent(domain string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) string {
 	//gologger.Infof("Fullhunt 威胁平台查询\n")
-	urls := fmt.Sprintf("https://face.racent.com/tool/query_ctlog?token=%s&keyWord=%s", options.ENConfig.Cookies.Racent, domain)
+	urls := fmt.Sprintf("https://face.racent.com/tool/query_ctlog?token=%s&keyWord=%s", options.LongConfig.Cookies.Racent, domain)
 
 	client := resty.New()
 	client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})

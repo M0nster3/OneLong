@@ -64,7 +64,7 @@ func GetEnInfoUrlscan(response string, DomainsIP *outputfile.DomainsIP) (*Utils.
 
 }
 
-func Urlscan(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
+func Urlscan(domain string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) string {
 
 	urls := fmt.Sprintf("https://urlscan.io/api/v1/search/?q=domain:%s", domain)
 	client := resty.New()

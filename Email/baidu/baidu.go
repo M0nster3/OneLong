@@ -98,7 +98,7 @@ func clearresponse(results string) string {
 
 }
 
-func Baidu(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
+func Baidu(domain string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) {
 	//gologger.Infof("Alienvault\n")
 
 	urlss := baiduparseUrl(domain)

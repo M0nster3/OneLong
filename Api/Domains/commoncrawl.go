@@ -65,7 +65,7 @@ func GetEnInfoCommoncrawl(response string, DomainsIP *outputfile.DomainsIP) (*Ut
 
 }
 
-func Commoncrawl(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
+func Commoncrawl(domain string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) string {
 	//gologger.Infof("Commoncrawl  API 查询 \n")
 	//gologger.Labelf("只实现普通Api 如果是企业修改Api接口 免费的每月250次\n")
 	urls := "https://index.commoncrawl.org/collinfo.json"
@@ -79,7 +79,7 @@ func Commoncrawl(domain string, options *Utils.ENOptions, DomainsIP *outputfile.
 	client.Header = http.Header{
 		"User-Agent": {Utils.RandUA()},
 		"Accept":     {"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"},
-		//"X-Key":      {options.ENConfig.Cookies.Binaryedge},
+		//"X-Key":      {options.LongConfig.Cookies.Binaryedge},
 	}
 
 	client.Header.Set("Content-Type", "application/json")
@@ -121,7 +121,7 @@ func Commoncrawl(domain string, options *Utils.ENOptions, DomainsIP *outputfile.
 		clienta.Header = http.Header{
 			"User-Agent": {Utils.RandUA()},
 			"Accept":     {"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"},
-			//"X-Key":      {options.ENConfig.Cookies.Binaryedge},
+			//"X-Key":      {options.LongConfig.Cookies.Binaryedge},
 		}
 
 		clienta.Header.Set("Content-Type", "application/json")
@@ -136,7 +136,7 @@ func Commoncrawl(domain string, options *Utils.ENOptions, DomainsIP *outputfile.
 				clientaa.Header = http.Header{
 					"User-Agent": {Utils.RandUA()},
 					"Accept":     {"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"},
-					//"X-Key":      {options.ENConfig.Cookies.Binaryedge},
+					//"X-Key":      {options.LongConfig.Cookies.Binaryedge},
 				}
 
 				clientaa.Header.Set("Content-Type", "application/json")

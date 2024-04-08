@@ -23,6 +23,7 @@ type DomainsIP struct {
 	DomainA     []string //DomainA 指纹识别里面需要的
 	C           []string
 	IP          []string
+	C           []string
 	IPA         []string //ipa 指纹识别里面需要的
 	TitleBUff   []string
 	Size        []string
@@ -108,7 +109,7 @@ var ENSMapLN = map[string]*ENSMap{
 var EnJsonList = make(map[string][]map[string]interface{})
 
 // MergeOutPut 数据合并到MAP
-func MergeOutPut(ensInfos *Utils.EnInfos, ensMap map[string]*ENSMap, info string, options *Utils.ENOptions) map[string][][]interface{} {
+func MergeOutPut(ensInfos *Utils.EnInfos, ensMap map[string]*ENSMap, info string, options *Utils.LongOptions) map[string][][]interface{} {
 	if options.Output != "!" {
 		//gologger.Infof("%s【%s】信息合并\n", info, ensInfos.Name)
 		for k, s := range ensInfos.Infos {
@@ -142,7 +143,7 @@ func MergeOutPut(ensInfos *Utils.EnInfos, ensMap map[string]*ENSMap, info string
 }
 
 // OutPutExcelByMergeEnInfo 根据合并信息导出表格
-func OutPutExcelByMergeEnInfo(options *Utils.ENOptions) {
+func OutPutExcelByMergeEnInfo(options *Utils.LongOptions) {
 	if options.Output != "!" {
 		tmp := options.Output
 		_, err := os.Stat(tmp)
@@ -202,7 +203,7 @@ func OutPutExcelByMergeEnInfo(options *Utils.ENOptions) {
 }
 
 // OutPutExcelByEnInfo 直接导出单独表格信息
-func OutPutExcelByEnInfo(ensInfos *Utils.EnInfos, ensMap map[string]*ENSMap, options *Utils.ENOptions) {
+func OutPutExcelByEnInfo(ensInfos *Utils.EnInfos, ensMap map[string]*ENSMap, options *Utils.LongOptions) {
 	if options.Output != "!" {
 		if ensInfos.Name == "" {
 			ensInfos.Name = options.KeyWord

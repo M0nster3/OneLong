@@ -70,7 +70,7 @@ func GetEnInfoAnubis(response string, DomainsIP *outputfile.DomainsIP) (*Utils.E
 
 }
 
-func Anubis(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
+func Anubis(domain string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) string {
 	//gologger.Infof("Anubis\n")
 	urls := "https://jonlu.ca/anubis/subdomains/" + domain
 	client := resty.New()
@@ -112,6 +112,8 @@ func Anubis(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 		//gologger.Labelf("Anubis Api 未发现域名 %s\n", domain)
 		return ""
 	} else if strings.Contains(string(resp.Body()), "Not Found") {
+		return ""
+	} else if len(gjson.Parse(string(resp.Body())).Array()) == 0 {
 		return ""
 	}
 	res, ensOutMap := GetEnInfoAnubis(string(resp.Body()), DomainsIP)

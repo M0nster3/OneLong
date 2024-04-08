@@ -53,10 +53,10 @@ func GetEnInfoChaos(response string, DomainsIP *outputfile.DomainsIP) (*Utils.En
 
 }
 
-func Chaos(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
+func Chaos(domain string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) string {
 	//gologger.Infof("Chaos API 域名查询 \n")
 	var Hostname []string
-	chaosClient := chaos.New(options.ENConfig.Cookies.Chaos)
+	chaosClient := chaos.New(options.LongConfig.Cookies.Chaos)
 	for result := range chaosClient.GetSubdomains(&chaos.SubdomainsRequest{
 		Domain: domain,
 	}) {

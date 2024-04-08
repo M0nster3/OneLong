@@ -29,7 +29,7 @@ func checkWildcardDNS(domain string) bool {
 	return true
 }
 
-func Massdns(domain string, ENOptions *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
+func Massdns(domain string, ENOptions *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) {
 	if checkWildcardDNS(domain) {
 		gologger.Errorf("[%s存在泛解析不进行爆破]\n", domain)
 		return
@@ -47,9 +47,9 @@ func Massdns(domain string, ENOptions *Utils.ENOptions, DomainsIP *outputfile.Do
 		Directory:          tempDir,
 		Domain:             domain,
 		SubdomainsList:     "",
-		ResolversFile:      filepath.Join(Utils.GetPathDir(), "Script/MsassDns/", ENOptions.ENConfig.Massdns.Resolvers),
-		Wordlist:           filepath.Join(Utils.GetPathDir(), "Script/Dict/", ENOptions.ENConfig.Massdns.Wordlist),
-		MassdnsPath:        filepath.Join(Utils.GetPathDir(), "Script/MsassDns/", ENOptions.ENConfig.Massdns.MassdnsPath),
+		ResolversFile:      filepath.Join(Utils.GetPathDir(), "Script/MsassDns/", ENOptions.LongConfig.Massdns.Resolvers),
+		Wordlist:           filepath.Join(Utils.GetPathDir(), "Script/Dict/", ENOptions.LongConfig.Massdns.Wordlist),
+		MassdnsPath:        filepath.Join(Utils.GetPathDir(), "Script/MsassDns/", ENOptions.LongConfig.Massdns.MassdnsPath),
 		Output:             tempOutputFile,
 		Json:               false,
 		Silent:             false,

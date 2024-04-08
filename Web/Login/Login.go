@@ -44,7 +44,7 @@ func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) 
 	return ensInfos, ensOutMap
 
 }
-func Login(domains []string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
+func Login(domains []string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) {
 	//color.RGBStyleFromString("244,211,49").Println("\n--------------------探测网站后台--------------------")
 
 	gologger.Infof("扫描网站后台，当前共有存活子域%d个\n", len(domains))
@@ -63,7 +63,7 @@ func Login(domains []string, options *Utils.ENOptions, DomainsIP *outputfile.Dom
 	ParseLoginurl(options, DomainsIP)
 }
 
-func ParseLoginurl(options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
+func ParseLoginurl(options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) {
 	var wg sync.WaitGroup
 	DomainsIP.LoginUrl = Utils.SetStr(DomainsIP.LoginUrl)
 	for _, domain := range DomainsIP.LoginUrl {
@@ -138,8 +138,14 @@ func ParseLoginurl(options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
 	wg.Wait()
 	passive_dns := "{\"passive_dns\":["
 	var add int
+
 	for add = 0; add < len(DomainsIP.LoginUrlA); add++ {
-		passive_dns += "{\"hostname\"" + ":" + "\"" + DomainsIP.LoginUrlA[add] + "\"" + "," + "\"title\"" + ":" + "\"" + DomainsIP.LoginTitle[add] + "\"" + "},"
+		if add < len(DomainsIP.LoginUrlA) && add < len(DomainsIP.LoginTitle) {
+			passive_dns += "{\"hostname\"" + ":" + "\"" + DomainsIP.LoginUrlA[add] + "\"" + "," + "\"title\"" + ":" + "\"" + DomainsIP.LoginTitle[add] + "\"" + "},"
+		} else if add < len(DomainsIP.LoginUrlA) {
+			passive_dns += "{\"hostname\"" + ":" + "\"" + DomainsIP.LoginUrlA[add] + "\"" + "},"
+		}
+
 	}
 	passive_dns = passive_dns + "]}"
 

@@ -68,10 +68,10 @@ func GetEnInfoWhoisxmlapi(response string, DomainsIP *outputfile.DomainsIP) (*Ut
 
 }
 
-func Whoisxmlapi(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
+func Whoisxmlapi(domain string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) string {
 	//gologger.Infof("Whoisxmlapi Api查询\n")
 
-	urls := fmt.Sprintf("https://subdomains.whoisxmlapi.com/api/v1?apiKey=%s&domainName=%s", options.ENConfig.Cookies.Whoisxmlapi, domain)
+	urls := fmt.Sprintf("https://subdomains.whoisxmlapi.com/api/v1?apiKey=%s&domainName=%s", options.LongConfig.Cookies.Whoisxmlapi, domain)
 	client := resty.New()
 	client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
 	client.SetTimeout(time.Duration(options.TimeOut) * time.Minute)

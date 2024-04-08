@@ -62,7 +62,7 @@ func GetEnInfoNetlas(response string, DomainsIP *outputfile.DomainsIP) (*Utils.E
 
 }
 
-func Netlas(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
+func Netlas(domain string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) string {
 
 	//gologger.Infof("Netlas 威胁平台查询\n")
 	//urls := "https://leakix.net/api/subdomains/" + domain
@@ -81,7 +81,7 @@ func Netlas(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 	client.Header = http.Header{
 		"User-Agent": {"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"},
 		"Accept":     {"text/html,application/json,application/xhtml+xml, image/jxr, */*"},
-		"api-key":    {options.ENConfig.Cookies.Netlas},
+		"api-key":    {options.LongConfig.Cookies.Netlas},
 	}
 
 	client.Header.Del("Cookie")

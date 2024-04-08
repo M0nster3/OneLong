@@ -87,11 +87,11 @@ func clearresponse(results string) string {
 	return results
 
 }
-func HunterEmail(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
+func HunterEmail(domain string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) string {
 
 	var respnsehe string
 
-	urls := fmt.Sprintf("https://api.hunter.io/v2/domain-search?domain=%s&api_key=%s&limit=10", domain, options.ENConfig.Email.Emailhunter)
+	urls := fmt.Sprintf("https://api.hunter.io/v2/domain-search?domain=%s&api_key=%s&limit=10", domain, options.LongConfig.Email.Emailhunter)
 
 	client := resty.New()
 	client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
