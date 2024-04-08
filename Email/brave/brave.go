@@ -89,7 +89,7 @@ func clearresponse(results string) string {
 
 }
 
-func Brave(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
+func Brave(domain string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) {
 	//gologger.Infof("Alienvault\n")
 	var wg sync.WaitGroup
 	var respnsehe string

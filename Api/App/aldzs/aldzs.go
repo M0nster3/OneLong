@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-func getReq(searchType string, data map[string]string, options *Utils.ENOptions) gjson.Result {
+func getReq(searchType string, data map[string]string, options *Utils.LongOptions) gjson.Result {
 	url := fmt.Sprintf("https://zhishuapi.aldwx.com/Main/action/%s", searchType)
 	client := resty.New()
 	client.SetTimeout(time.Duration(options.TimeOut) * time.Minute)
@@ -41,14 +41,14 @@ func getReq(searchType string, data map[string]string, options *Utils.ENOptions)
 	return res.Get("data")
 }
 
-func GetInfoByKeyword(options *Utils.ENOptions) (ensInfos *Utils.EnInfos, ensOutMap map[string]*outputfile.ENSMap) {
+func GetInfoByKeyword(options *Utils.LongOptions) (ensInfos *Utils.EnInfos, ensOutMap map[string]*outputfile.ENSMap) {
 	ensInfos = &Utils.EnInfos{}
 	ensInfos.Infos = make(map[string][]gjson.Result)
 	ensOutMap = make(map[string]*outputfile.ENSMap)
 
 	keyword := options.KeyWord
 	//拿到Token信息
-	token := options.ENConfig.Cookies.Aldzs
+	token := options.LongConfig.Cookies.Aldzs
 	gologger.Infof("查询关键词 %s 的小程序\n", keyword)
 	appList := getReq("Search/Search/search", map[string]string{
 		"appName":    keyword,

@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-func GetInfoByKeyword(options *Utils.ENOptions) (ensInfos *Utils.EnInfos, ensOutMap map[string]*outputfile.ENSMap) {
+func GetInfoByKeyword(options *Utils.LongOptions) (ensInfos *Utils.EnInfos, ensOutMap map[string]*outputfile.ENSMap) {
 	ensInfos = &Utils.EnInfos{}
 	ensInfos.Infos = make(map[string][]gjson.Result)
 	ensOutMap = make(map[string]*outputfile.ENSMap)
@@ -33,7 +33,7 @@ func GetInfoByKeyword(options *Utils.ENOptions) (ensInfos *Utils.EnInfos, ensOut
 	return ensInfos, ensOutMap
 }
 
-func GetInfoByCompanyId(companyId int64, options *Utils.ENOptions) (data map[string][]gjson.Result) {
+func GetInfoByCompanyId(companyId int64, options *Utils.LongOptions) (data map[string][]gjson.Result) {
 	gologger.Infof("GetInfoByCompanyId: %d\n", companyId)
 	data = map[string][]gjson.Result{}
 	ensMap := getENMap()
@@ -70,7 +70,7 @@ func GetInfoByCompanyId(companyId int64, options *Utils.ENOptions) (data map[str
 	return data
 }
 
-func getInfoList(types string, params map[string]string, options *Utils.ENOptions) (listData []gjson.Result) {
+func getInfoList(types string, params map[string]string, options *Utils.LongOptions) (listData []gjson.Result) {
 	data := gjson.Parse(GetReq(types, params, options))
 	if data.Get("code").String() == "10000" {
 		getPath := "appList"

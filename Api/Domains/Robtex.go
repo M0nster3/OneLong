@@ -61,7 +61,7 @@ func GetEnInfoRobtex(response string, DomainsIP *outputfile.DomainsIP) (*Utils.E
 
 }
 
-func Robtex(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
+func Robtex(domain string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) string {
 	//gologger.Infof("Robtex Api查詢\n")
 
 	urls := fmt.Sprintf("https://freeapi.robtex.com/pdns/forward/%s", domain)

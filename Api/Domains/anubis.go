@@ -70,7 +70,7 @@ func GetEnInfoAnubis(response string, DomainsIP *outputfile.DomainsIP) (*Utils.E
 
 }
 
-func Anubis(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
+func Anubis(domain string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) string {
 	//gologger.Infof("Anubis\n")
 	urls := "https://jonlu.ca/anubis/subdomains/" + domain
 	client := resty.New()

@@ -100,7 +100,7 @@ func clearresponse(results string) string {
 
 }
 
-func YahooEmail(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
+func YahooEmail(domain string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) {
 	//gologger.Infof("Alienvault\n")
 	var wg sync.WaitGroup
 	urlss := ParseUrl(domain)

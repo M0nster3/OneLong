@@ -25,7 +25,7 @@ import (
 )
 
 // FileScan 可批量导入文件查询
-func StartScan(options *Utils.ENOptions) {
+func StartScan(options *Utils.LongOptions) {
 	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, os.Interrupt, syscall.SIGINT)
 
@@ -75,7 +75,7 @@ func StartScan(options *Utils.ENOptions) {
 }
 
 // CompanyRunJob 运行项目
-func CompanyRunJob(options *Utils.ENOptions) {
+func CompanyRunJob(options *Utils.LongOptions) {
 
 	color.RGBStyleFromString("244,211,49").Println("\n--------------------查询企业信息--------------------")
 	var Domainip outputfile.DomainsIP
@@ -109,7 +109,7 @@ func CompanyRunJob(options *Utils.ENOptions) {
 	if Utils.IsInList("tyc", options.GetType) {
 		if options.CompanyID == "" || (options.CompanyID != "" && Utils.CheckPid(options.CompanyID) == "tyc") {
 			wg.Add(1)
-			if options.ENConfig.Cookies.Tianyancha == "" || options.ENConfig.Cookies.Tycid == "" {
+			if options.LongConfig.Cookies.Tianyancha == "" || options.LongConfig.Cookies.Tycid == "" {
 				gologger.Fatalf("【TYC】MUST LOGIN 请在配置文件补充天眼查COOKIE和tycId\n")
 			}
 			go func() {
@@ -187,7 +187,7 @@ func CompanyRunJob(options *Utils.ENOptions) {
 	//	outputfile.OutPutExcelByMergeEnInfo(options)
 	//}
 }
-func DomainRunJob(options *Utils.ENOptions) {
+func DomainRunJob(options *Utils.LongOptions) {
 
 	options.Domain = strings.ReplaceAll(options.Domain, "http://", "")
 	options.Domain = strings.ReplaceAll(options.Domain, "https://", "")

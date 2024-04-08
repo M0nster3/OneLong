@@ -61,7 +61,7 @@ func GetEnInfoIP138(response string, DomainsIP *outputfile.DomainsIP) (*Utils.En
 
 }
 
-func IP138(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
+func IP138(domain string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) string {
 	//gologger.Infof("Robtex Api查詢\n")
 
 	IP := fmt.Sprintf("https://site.ip138.com/%s", domain)

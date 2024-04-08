@@ -87,7 +87,7 @@ func GetEnInfoAlienvault(response string, DomainsIP *outputfile.DomainsIP) (*Uti
 
 }
 
-func Alienvault(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
+func Alienvault(domain string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) string {
 	//gologger.Infof("Alienvault\n")
 	urls := "https://otx.alienvault.com/api/v1/indicators/domain/" + domain + "/passive_dns"
 	client := resty.New()

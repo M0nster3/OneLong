@@ -11,10 +11,10 @@ import (
 var wg sync.WaitGroup
 
 type FuncInfo struct {
-	Func func(string, *Utils.ENOptions, *outputfile.DomainsIP) string // 函数签名应匹配你的函数
+	Func func(string, *Utils.LongOptions, *outputfile.DomainsIP) string // 函数签名应匹配你的函数
 }
 
-func Domains(domain string, enOptions *Utils.ENOptions, Domainip *outputfile.DomainsIP) {
+func Domains(domain string, enOptions *Utils.LongOptions, Domainip *outputfile.DomainsIP) {
 
 	// 创建一个函数切片，包含要执行的函数及其参数
 	funcInfos := []FuncInfo{
@@ -42,7 +42,7 @@ func Domains(domain string, enOptions *Utils.ENOptions, Domainip *outputfile.Dom
 			}(info)
 		}
 	}
-	if enOptions.ENConfig.Cookies.Binaryedge != "" {
+	if enOptions.LongConfig.Cookies.Binaryedge != "" {
 
 		wg.Add(1)
 		go func() {
@@ -51,14 +51,14 @@ func Domains(domain string, enOptions *Utils.ENOptions, Domainip *outputfile.Dom
 		}()
 	}
 
-	if enOptions.ENConfig.Cookies.Fullhunt != "" {
+	if enOptions.LongConfig.Cookies.Fullhunt != "" {
 		wg.Add(1)
 		go func() {
 			Fullhunt(domain, enOptions, Domainip)
 			wg.Done()
 		}()
 	}
-	if enOptions.ENConfig.Cookies.FofaKey != "" && enOptions.ENConfig.Cookies.FofaEmail != "" {
+	if enOptions.LongConfig.Cookies.FofaKey != "" && enOptions.LongConfig.Cookies.FofaEmail != "" {
 
 		wg.Add(1)
 		go func() {
@@ -66,7 +66,7 @@ func Domains(domain string, enOptions *Utils.ENOptions, Domainip *outputfile.Dom
 			wg.Done()
 		}()
 	}
-	if enOptions.ENConfig.Cookies.Github != "" {
+	if enOptions.LongConfig.Cookies.Github != "" {
 		wg.Add(1)
 		go func() {
 			Github(domain, enOptions, Domainip)
@@ -74,14 +74,14 @@ func Domains(domain string, enOptions *Utils.ENOptions, Domainip *outputfile.Dom
 		}()
 	}
 
-	if enOptions.ENConfig.Cookies.Hunter != "" {
+	if enOptions.LongConfig.Cookies.Hunter != "" {
 		wg.Add(1)
 		go func() {
 			Hunter(domain, enOptions, Domainip)
 			wg.Done()
 		}()
 	}
-	if enOptions.ENConfig.Cookies.Bevigil != "" {
+	if enOptions.LongConfig.Cookies.Bevigil != "" {
 		wg.Add(1)
 		go func() {
 			Bevigil(domain, enOptions, Domainip)
@@ -89,7 +89,7 @@ func Domains(domain string, enOptions *Utils.ENOptions, Domainip *outputfile.Dom
 		}()
 	}
 
-	if enOptions.ENConfig.Cookies.Racent != "" {
+	if enOptions.LongConfig.Cookies.Racent != "" {
 		wg.Add(1)
 		go func() {
 			Racent(domain, enOptions, Domainip)
@@ -97,7 +97,7 @@ func Domains(domain string, enOptions *Utils.ENOptions, Domainip *outputfile.Dom
 		}()
 	}
 
-	if enOptions.ENConfig.Cookies.Whoisxmlapi != "" {
+	if enOptions.LongConfig.Cookies.Whoisxmlapi != "" {
 		wg.Add(1)
 		go func() {
 			Whoisxmlapi(domain, enOptions, Domainip)
@@ -105,7 +105,7 @@ func Domains(domain string, enOptions *Utils.ENOptions, Domainip *outputfile.Dom
 		}()
 	}
 
-	if enOptions.ENConfig.Cookies.Virustotal != "" {
+	if enOptions.LongConfig.Cookies.Virustotal != "" {
 
 		wg.Add(1)
 		go func() {
@@ -114,7 +114,7 @@ func Domains(domain string, enOptions *Utils.ENOptions, Domainip *outputfile.Dom
 		}()
 	}
 
-	if enOptions.ENConfig.Cookies.Shodan != "" {
+	if enOptions.LongConfig.Cookies.Shodan != "" {
 
 		wg.Add(1)
 		go func() {
@@ -123,7 +123,7 @@ func Domains(domain string, enOptions *Utils.ENOptions, Domainip *outputfile.Dom
 		}()
 	}
 
-	if enOptions.ENConfig.Cookies.Zoomeye != "" {
+	if enOptions.LongConfig.Cookies.Zoomeye != "" {
 
 		wg.Add(1)
 		go func() {
@@ -131,7 +131,7 @@ func Domains(domain string, enOptions *Utils.ENOptions, Domainip *outputfile.Dom
 			wg.Done()
 		}()
 	}
-	if enOptions.ENConfig.Cookies.CensysToken != "" && enOptions.ENConfig.Cookies.CensysSecret != "" {
+	if enOptions.LongConfig.Cookies.CensysToken != "" && enOptions.LongConfig.Cookies.CensysSecret != "" {
 		wg.Add(1)
 		go func() {
 
@@ -139,7 +139,7 @@ func Domains(domain string, enOptions *Utils.ENOptions, Domainip *outputfile.Dom
 			wg.Done()
 		}()
 	}
-	if enOptions.ENConfig.Cookies.Chaos != "" {
+	if enOptions.LongConfig.Cookies.Chaos != "" {
 
 		wg.Add(1)
 		go func() {
@@ -148,7 +148,7 @@ func Domains(domain string, enOptions *Utils.ENOptions, Domainip *outputfile.Dom
 		}()
 	}
 
-	if enOptions.ENConfig.Cookies.Quake != "" {
+	if enOptions.LongConfig.Cookies.Quake != "" {
 		wg.Add(1)
 		go func() {
 			Quake(domain, enOptions, Domainip)
@@ -156,7 +156,7 @@ func Domains(domain string, enOptions *Utils.ENOptions, Domainip *outputfile.Dom
 		}()
 	}
 
-	if enOptions.ENConfig.Cookies.Securitytrails != "" {
+	if enOptions.LongConfig.Cookies.Securitytrails != "" {
 
 		wg.Add(1)
 		go func() {
@@ -164,7 +164,7 @@ func Domains(domain string, enOptions *Utils.ENOptions, Domainip *outputfile.Dom
 			wg.Done()
 		}()
 	}
-	if enOptions.ENConfig.Cookies.GoogleApi != "" && enOptions.ENConfig.Cookies.GoogleID != "" {
+	if enOptions.LongConfig.Cookies.GoogleApi != "" && enOptions.LongConfig.Cookies.GoogleID != "" {
 
 		wg.Add(1)
 		go func() {

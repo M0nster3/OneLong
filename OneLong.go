@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	var enOptions Utils.ENOptions
+	var enOptions Utils.LongOptions
 	//var Domainip outputfile.DomainsIP
 	Utils.Flag(&enOptions)
 	Utils.ConfigParse(&enOptions)

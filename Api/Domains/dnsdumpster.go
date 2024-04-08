@@ -63,7 +63,7 @@ func GetEnInfoPostBuffer(response string, DomainsIP *outputfile.DomainsIP) (*Uti
 
 }
 
-func PostBuffer(domain string, options *Utils.ENOptions, token string, client *resty.Client, DomainsIP *outputfile.DomainsIP) string {
+func PostBuffer(domain string, options *Utils.LongOptions, token string, client *resty.Client, DomainsIP *outputfile.DomainsIP) string {
 	urls := "https://dnsdumpster.com/"
 	client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
 	client.SetTimeout(time.Duration(options.TimeOut) * time.Minute)
@@ -149,7 +149,7 @@ func PostBuffer(domain string, options *Utils.ENOptions, token string, client *r
 	return ""
 }
 
-func Dnsdumpster(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
+func Dnsdumpster(domain string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) string {
 	//gologger.Infof("Dnsdumpster  API DNS反差域名 \n")
 	urls := "https://dnsdumpster.com/"
 	client := resty.New()
@@ -162,7 +162,7 @@ func Dnsdumpster(domain string, options *Utils.ENOptions, DomainsIP *outputfile.
 	client.Header = http.Header{
 		"User-Agent": {"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"},
 		"Accept":     {"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"},
-		//"X-Key":      {options.ENConfig.Cookies.Binaryedge},
+		//"X-Key":      {options.LongConfig.Cookies.Binaryedge},
 	}
 
 	client.Header.Set("Content-Type", "application/json")

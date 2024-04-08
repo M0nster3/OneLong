@@ -59,7 +59,7 @@ func GetEnInfoRapiddns(response string, DomainsIP *outputfile.DomainsIP) (*Utils
 
 }
 
-func Rapiddns(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
+func Rapiddns(domain string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) string {
 	//gologger.Infof("Rapiddns Api搜索域名 \n")
 	client := resty.New()
 	client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})

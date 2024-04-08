@@ -67,7 +67,7 @@ func GetEnInfoDnsrepo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.
 
 }
 
-func Dnsrepo(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
+func Dnsrepo(domain string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) string {
 	//gologger.Infof("Dnsrepo API 域名查询 \n")
 	urls := "https://dnsrepo.noc.org/?search=" + domain
 	client := resty.New()
@@ -80,7 +80,7 @@ func Dnsrepo(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Doma
 	client.Header = http.Header{
 		"User-Agent": {"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"},
 		"Accept":     {"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"},
-		//"X-Key":      {options.ENConfig.Cookies.Binaryedge},
+		//"X-Key":      {options.LongConfig.Cookies.Binaryedge},
 	}
 
 	client.Header.Set("Content-Type", "application/json")

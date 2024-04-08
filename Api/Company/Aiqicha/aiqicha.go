@@ -17,7 +17,7 @@ import (
 	"time"
 )
 
-func GetReq(url string, options *Utils.ENOptions) string {
+func GetReq(url string, options *Utils.LongOptions) string {
 	client := resty.New()
 	client.SetTimeout(time.Duration(options.TimeOut) * time.Minute)
 	if options.Proxy != "" {
@@ -27,7 +27,7 @@ func GetReq(url string, options *Utils.ENOptions) string {
 	client.Header = http.Header{
 		"User-Agent": {"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.80 Safari/537.36 Edg/98.0.1108.43"},
 		"Accept":     {"text/html, application/xhtml+xml, image/jxr, */*"},
-		"Cookie":     {options.ENConfig.Cookies.Aiqicha},
+		"Cookie":     {options.LongConfig.Cookies.Aiqicha},
 		"Referer":    {"https://aiqicha.baidu.com/"},
 	}
 	resp, err := client.R().Get(url)
@@ -77,7 +77,7 @@ func pageParseJson(content string) gjson.Result {
 }
 
 // GetEnInfoByPid 根据PID获取公司信息
-func GetEnInfoByPid(options *Utils.ENOptions) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
+func GetEnInfoByPid(options *Utils.LongOptions) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
 	pid := ""
 	if options.CompanyID == "" {
 		_, pid = SearchName(options)
@@ -111,7 +111,7 @@ func GetEnInfoByPid(options *Utils.ENOptions) (*Utils.EnInfos, map[string]*outpu
 // pid 公司id
 // isSearch 是否递归搜索信息【分支机构、对外投资信息】
 // options options
-func getCompanyInfoById(pid string, deep int, isEnDetail bool, inFrom string, searchList []string, ensInfo *Utils.EnInfos, options *Utils.ENOptions) {
+func getCompanyInfoById(pid string, deep int, isEnDetail bool, inFrom string, searchList []string, ensInfo *Utils.EnInfos, options *Utils.LongOptions) {
 
 	// 获取初始化API数据
 	ensInfoMap := getENMap()
@@ -302,7 +302,7 @@ func getCompanyInfoById(pid string, deep int, isEnDetail bool, inFrom string, se
 }
 
 // getInfoList 获取信息列表
-func getInfoList(pid string, types string, options *Utils.ENOptions) []gjson.Result {
+func getInfoList(pid string, types string, options *Utils.LongOptions) []gjson.Result {
 	urls := "https://aiqicha.baidu.com/" + types + "?pid=" + pid
 	content := GetReq(urls, options)
 	var listData []gjson.Result
@@ -330,7 +330,7 @@ func getInfoList(pid string, types string, options *Utils.ENOptions) []gjson.Res
 }
 
 // SearchName 根据企业名称搜索信息
-func SearchName(options *Utils.ENOptions) ([]gjson.Result, string) {
+func SearchName(options *Utils.LongOptions) ([]gjson.Result, string) {
 	name := options.KeyWord
 
 	urls := "https://aiqicha.baidu.com/s?q=" + urlTool.QueryEscape(name) + "&t=0"

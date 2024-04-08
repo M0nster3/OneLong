@@ -97,10 +97,10 @@ func GetEnInfoShodan(response string, domain string, DomainsIP *outputfile.Domai
 
 }
 
-func Shodan(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
+func Shodan(domain string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) string {
 	//gologger.Infof("Shodan 威胁平台查询\n")
 
-	urls := fmt.Sprintf("https://api.shodan.io/dns/domain/%s?key=%s", domain, options.ENConfig.Cookies.Shodan)
+	urls := fmt.Sprintf("https://api.shodan.io/dns/domain/%s?key=%s", domain, options.LongConfig.Cookies.Shodan)
 	client := resty.New()
 	client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
 	client.SetTimeout(time.Duration(options.TimeOut) * time.Minute)

@@ -71,7 +71,7 @@ func GetEnInfoCensys(response string, DomainsIP *outputfile.DomainsIP) (*Utils.E
 
 }
 
-func Censys(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
+func Censys(domain string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) string {
 	//gologger.Infof("Censys 空间探测\n")
 	urls := "https://search.censys.io/api/v2/certificates/search"
 	client := resty.New()
@@ -93,8 +93,8 @@ func Censys(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 			"per_page": 100,
 			"cursor":   cursor,
 		}
-		username := options.ENConfig.Cookies.CensysToken
-		password := options.ENConfig.Cookies.CensysSecret
+		username := options.LongConfig.Cookies.CensysToken
+		password := options.LongConfig.Cookies.CensysSecret
 		client.SetBasicAuth(username, password)
 
 		//强制延时1s

@@ -226,7 +226,7 @@ func getENMap() map[string]*EnsGo {
 	return ensInfoMap
 }
 
-func GetReq(url string, data string, options *Utils.ENOptions) string {
+func GetReq(url string, data string, options *Utils.LongOptions) string {
 	client := resty.New()
 	client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
 	client.SetTimeout(time.Duration(options.TimeOut) * time.Minute)
@@ -237,7 +237,7 @@ func GetReq(url string, data string, options *Utils.ENOptions) string {
 		"User-Agent": {"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"},
 		"Accept":     {"text/html,application/json,application/xhtml+xml, image/jxr, */*"},
 		"Version":    {"TYC-Web"},
-		"Cookie":     {options.ENConfig.Cookies.Tianyancha},
+		"Cookie":     {options.LongConfig.Cookies.Tianyancha},
 		"Origin":     {"https://www.tianyancha.com"},
 		"Referer":    {"https://www.tianyancha.com/"},
 	}
@@ -245,7 +245,7 @@ func GetReq(url string, data string, options *Utils.ENOptions) string {
 	if strings.Contains(url, "capi.tianyancha.com") {
 		client.Header.Set("Content-Type", "application/json")
 		client.Header.Del("Cookie")
-		client.Header.Set("X-Tycid", options.ENConfig.Cookies.Tycid)
+		client.Header.Set("X-Tycid", options.LongConfig.Cookies.Tycid)
 		//client.Header.Set("X-Auth-Token", "") //暂时好像没发现问题，等有问题再加上吧~
 	}
 
@@ -264,7 +264,7 @@ func GetReq(url string, data string, options *Utils.ENOptions) string {
 	resp, err := clientR.Send()
 
 	//暂时没法直接算出Cookie信息等之后再看看吧
-	if options.ENConfig.Cookies.Tianyancha == "" {
+	if options.LongConfig.Cookies.Tianyancha == "" {
 		re := regexp.MustCompile(`arg1='([\w\s]+)';`)
 		rr := re.FindAllStringSubmatch(string(resp.Body()), 1)
 		if len(rr) > 0 {
@@ -306,7 +306,7 @@ func GetReq(url string, data string, options *Utils.ENOptions) string {
 	return ""
 }
 
-func GetReqReturnPage(url string, options *Utils.ENOptions) *html.Node {
+func GetReqReturnPage(url string, options *Utils.LongOptions) *html.Node {
 	body := GetReq(url, "", options)
 	if strings.Contains(body, "请输入中国大陆手机号") {
 		gologger.Errorf("[TYC] COOKIE检查失效，请检查COOKIE是否正确！\n")
@@ -315,26 +315,26 @@ func GetReqReturnPage(url string, options *Utils.ENOptions) *html.Node {
 	return page
 }
 
-func UpCookie(res string, options *Utils.ENOptions) {
+func UpCookie(res string, options *Utils.LongOptions) {
 	re := regexp.MustCompile(`arg1='([\w\s]+)';`)
 	rr := re.FindAllStringSubmatch(res, 1)
 	str := rr[0][1]
 	if str != "" {
-		if options.ENConfig.Cookies.Tianyancha != "" {
+		if options.LongConfig.Cookies.Tianyancha != "" {
 			re = regexp.MustCompile(`acw_sc__v2=([\w\s]+)`)
-			rr = re.FindAllStringSubmatch(options.ENConfig.Cookies.Tianyancha, 1)
+			rr = re.FindAllStringSubmatch(options.LongConfig.Cookies.Tianyancha, 1)
 			if len(rr) > 0 {
 				str2 := rr[0][1]
 				if str2 != "" {
 					gologger.Infof("【TYC】反爬计算签名成功！\n")
-					options.ENConfig.Cookies.Tianyancha = strings.ReplaceAll(options.ENConfig.Cookies.Tianyancha, str2, SingAwcSCV2(str))
+					options.LongConfig.Cookies.Tianyancha = strings.ReplaceAll(options.LongConfig.Cookies.Tianyancha, str2, SingAwcSCV2(str))
 				} else {
 					gologger.Errorf("【TYC】反爬Cookie存在问题\n")
 				}
 			}
 		} else {
 			gologger.Infof("【TYC】未登录反爬计算签名成功！\n")
-			options.ENConfig.Cookies.Tianyancha = SingAwcSCV2(str)
+			options.LongConfig.Cookies.Tianyancha = SingAwcSCV2(str)
 		}
 	} else {
 		gologger.Errorf("【TYC】反爬存在问题\n")

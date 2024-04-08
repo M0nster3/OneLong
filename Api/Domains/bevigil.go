@@ -70,7 +70,7 @@ func GetEnInfoBevigil(response string, DomainsIP *outputfile.DomainsIP) (*Utils.
 
 }
 
-func Bevigil(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
+func Bevigil(domain string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) string {
 	//gologger.Infof("Bevigil 空间探测\n")
 	urls := "https://osint.bevigil.com/api/" + domain + "/subdomains/"
 	client := resty.New()
@@ -82,7 +82,7 @@ func Bevigil(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Doma
 	client.Header = http.Header{
 		"User-Agent":     {"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"},
 		"Accept":         {"text/html,application/json,application/xhtml+xml, image/jxr, */*"},
-		"X-Access-Token": {options.ENConfig.Cookies.Bevigil},
+		"X-Access-Token": {options.LongConfig.Cookies.Bevigil},
 	}
 
 	client.Header.Del("Cookie")

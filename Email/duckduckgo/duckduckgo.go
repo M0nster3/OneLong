@@ -138,7 +138,7 @@ func clearresponse(results string) string {
 
 }
 
-func parseurl(domain string, options *Utils.ENOptions) string {
+func parseurl(domain string, options *Utils.LongOptions) string {
 
 	client := resty.New()
 	client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
@@ -179,7 +179,7 @@ func parseurl(domain string, options *Utils.ENOptions) string {
 	return string(resp.Body())
 }
 
-func Duckduckgo(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
+func Duckduckgo(domain string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) {
 	//gologger.Infof("Alienvault\n")
 	var wg sync.WaitGroup
 	var respnsehe string

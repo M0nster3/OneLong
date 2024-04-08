@@ -60,7 +60,7 @@ func GetEnInfoQuake(response string, DomainsIP *outputfile.DomainsIP) (*Utils.En
 
 }
 
-func Quake(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
+func Quake(domain string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) string {
 	//gologger.Infof("Quake 空间探测搜索域名 \n")
 	client := resty.New()
 	client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
@@ -73,7 +73,7 @@ func Quake(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domain
 	client.Header = http.Header{
 		"User-Agent":   {"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"},
 		"Accept":       {"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"},
-		"X-QuakeToken": {options.ENConfig.Cookies.Quake},
+		"X-QuakeToken": {options.LongConfig.Cookies.Quake},
 	}
 	client.Header.Set("Content-Type", "application/json")
 

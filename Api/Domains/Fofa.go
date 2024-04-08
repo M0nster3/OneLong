@@ -87,10 +87,10 @@ func GetEnInfoFofa(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnI
 
 }
 
-func Fofa(domain string, options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) string {
+func Fofa(domain string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) string {
 
 	qbase64 := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("domain=\"%s\"", domain)))
-	urls := fmt.Sprintf("https://fofa.info/api/v1/search/all?full=true&fields=host,ip&page=1&size=1000&email=%s&key=%s&qbase64=%s", options.ENConfig.Cookies.FofaEmail, options.ENConfig.Cookies.FofaKey, qbase64)
+	urls := fmt.Sprintf("https://fofa.info/api/v1/search/all?full=true&fields=host,ip&page=1&size=1000&email=%s&key=%s&qbase64=%s", options.LongConfig.Cookies.FofaEmail, options.LongConfig.Cookies.FofaKey, qbase64)
 	client := resty.New()
 	client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
 	client.SetTimeout(time.Duration(options.TimeOut) * time.Minute)

@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-type ENOptions struct {
+type LongOptions struct {
 	NoBao     bool
 	NoPoc     bool
 	Domain    string
@@ -37,10 +37,10 @@ type ENOptions struct {
 	IsMergeOut bool //合并导出
 	IsMerge    bool //聚合
 	ICP        []string
-	ENConfig   *ENConfig
+	LongConfig *LongConfig
 }
 
-func (h *ENOptions) GetDelayRTime() int64 {
+func (h *LongOptions) GetDelayRTime() int64 {
 	if h.DelayTime != 0 {
 		h.DelayMaxTime = int64(h.DelayTime)
 	}
@@ -50,8 +50,8 @@ func (h *ENOptions) GetDelayRTime() int64 {
 	return RangeRand(1, h.DelayMaxTime)
 }
 
-// ENConfig YML配置文件，更改时注意变更 cfgYV 版本
-type ENConfig struct {
+// LongConfig YML配置文件，更改时注意变更 cfgYV 版本
+type LongConfig struct {
 	//Version float64 `yaml:"version"`
 	Utils struct {
 		Output string `yaml:"output"`
@@ -228,6 +228,12 @@ email:
   intelxEmail: ''		# Email Intelx Token
   tombaKey: ''			# Email tombaKey
   tombaSecret: ''		# Email tombaSecret
+Port:
+  Masscan:
+	masscanpath: "masscan"					# Masscan放的位置如果是在环境变量中
+    Rate: "5000"					# Masscan速率，速率如果太大很有可能直接带宽占满
+    port: "--top-ports 1000"		# 爆破的端口，默认未Top1000，还可修改为100或者10
+  Nmap: ''		# Email Intelx Token
 #Afrog配置
 reverse:
   alphalog:
