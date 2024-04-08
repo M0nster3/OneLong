@@ -2,13 +2,13 @@ package Port
 
 import (
 	"OneLong/Utils"
+	outputfile "OneLong/Utils/OutPutfile"
 	"bytes"
 	"fmt"
 	"github.com/remeh/sizedwaitgroup"
+	"github.com/tidwall/gjson"
 	"os"
 	"os/exec"
-	"path/filepath"
-	"runtime"
 	"strconv"
 	"strings"
 	"sync"
@@ -43,11 +43,13 @@ type Masscan struct {
 }
 
 // NewMasscan 创建masscan对象
-func NewMasscan(config Config) *Masscan {
-	config.CmdBin = filepath.Join(Utils.GetPathDir(), "Script/Port/Masscan/masscan")
-	if runtime.GOOS == "windows" {
-		config.CmdBin = filepath.Join(Utils.GetPathDir(), "Script/Port/Masscan/masscan.exe")
-	}
+func NewMasscan(config Config, option *Utils.LongOptions) *Masscan {
+	config.CmdBin = option.LongConfig.Port.Masscan.Masscanpath
+	config.Rate = option.LongConfig.Port.Masscan.Rate
+	config.Port = option.LongConfig.Port.Masscan.Port
+	//if runtime.GOOS == "windows" {
+	//	config.CmdBin = filepath.Join(Utils.GetPathDir(), "Script/Port/Masscan/masscan.exe")
+	//}
 	return &Masscan{Config: config}
 }
 
@@ -272,13 +274,72 @@ func (m *Masscan) Do() {
 	FilterIPHasTooMuchPort(&m.Result, false)
 }
 
+// 用于保护 addedURLs
+func GetEnInfoPort(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
+	respons := gjson.Get(response, "Port").Array()
+
+	ensInfos := &Utils.EnInfos{}
+	ensInfos.Infos = make(map[string][]gjson.Result)
+	ensInfos.SType = "Github"
+	ensOutMap := make(map[string]*outputfile.ENSMap)
+	for k, v := range GetENMap() {
+		ensOutMap[k] = &outputfile.ENSMap{Name: v.Name, Field: v.Field, KeyWord: v.KeyWord}
+	}
+
+	addedURLs := make(map[string]bool)
+	for aa, _ := range respons {
+		ResponseJia := respons[aa].String()
+		url := gjson.Parse(ResponseJia).Get("hostname").String()
+		DomainsIP.Domains = append(DomainsIP.Domains, url)
+		// 检查是否已存在相同的 URL
+		if !addedURLs[url] {
+			// 如果不存在重复则将 URL 添加到 Infos["Urls"] 中，并在 map 中标记为已添加
+			ensInfos.Infos["Port"] = append(ensInfos.Infos["Port"], gjson.Parse(ResponseJia))
+			addedURLs[url] = true
+		}
+
+	}
+
+	//命令输出展示
+
+	var data [][]string
+	var keyword []string
+	for _, y := range GetENMap() {
+		for _, ss := range y.KeyWord {
+			if ss == "数据关联" {
+				continue
+			}
+			keyword = append(keyword, ss)
+		}
+
+		for _, res := range ensInfos.Infos["Port"] {
+			results := gjson.GetMany(res.Raw, y.Field...)
+			var str []string
+			for _, s := range results {
+				str = append(str, s.String())
+			}
+			data = append(data, str)
+		}
+
+	}
+	Utils.DomainTableShow(keyword, data, "Masscan/Nmap端口爆破")
+
+	//zuo := strings.ReplaceAll(response, "[", "")
+	//you := strings.ReplaceAll(zuo, "]", "")
+
+	//ensInfos.Infos["hostname"] = append(ensInfos.Infos["hostname"], gjson.Parse(Result[1].String()))
+	//getCompanyInfoById(pid, 1, true, "", options.Getfield, ensInfos, options)
+	return ensInfos, ensOutMap
+
+}
+
 // doMasscanPlusNmap masscan进行端口扫描，nmap -sV进行详细扫描
-func DoMasscanPlusNmap(config Config) {
+func DoMasscanPlusNmap(config Config, option *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) {
 	resultPortScan := &Result{
 		IPResult: make(map[string]*IPResult),
 	}
 	//masscan扫描
-	masscan := NewMasscan(config)
+	masscan := NewMasscan(config, option)
 	masscan.Do()
 	ipPortMap := getResultIPPortMap(masscan.Result.IPResult)
 	//nmap多线程扫描
@@ -291,7 +352,7 @@ func DoMasscanPlusNmap(config Config) {
 		swg.Add()
 		go func(c Config) {
 			defer swg.Done()
-			nmap := NewNmap(c)
+			nmap := NewNmap(c, option)
 			nmap.nmapDo()
 			resultPortScan.Lock()
 			for nip, r := range nmap.Result.IPResult {
@@ -302,5 +363,26 @@ func DoMasscanPlusNmap(config Config) {
 	}
 	swg.Wait()
 
+	result := "{\"Port\":["
+
+	for add, res := range resultPortScan.IPResult {
+		for port, other := range res.Ports {
+			if len(other.PortAttrs) == 2 {
+				result += "{\"Address\"" + ":" + "\"" + add + "\"" + "," + "\"PORT\"" + ":" + "\"" + strconv.Itoa(port) + "\"" + "," + "\"SERVICE\"" + ":" + "\"" + other.PortAttrs[0].Content + "\"" + "," + "\"VERSION\"" + ":" + "\"" + other.PortAttrs[1].Content + "\"" + "},"
+			} else if len(other.PortAttrs) == 1 {
+				result += "{\"Address\"" + ":" + "\"" + add + "\"" + "," + "\"PORT\"" + ":" + "\"" + strconv.Itoa(port) + "\"" + "," + "\"SERVICE\"" + ":" + "\"" + other.PortAttrs[0].Content + "\"" + "},"
+			} else if len(other.PortAttrs) == 0 {
+				result += "{\"Address\"" + ":" + "\"" + add + "\"" + "," + "\"PORT\"" + ":" + "\"" + strconv.Itoa(port) + "},"
+			}
+			if len(other.PortAttrs) > 0 && strings.Contains(other.PortAttrs[0].Content, "http") {
+				DomainsIP.Domains = append(DomainsIP.Domains, add+":"+strconv.Itoa(port))
+			}
+
+		}
+	}
+	result = result + "]}"
+	res, ensOutMap := GetEnInfoPort(result, DomainsIP)
+
+	outputfile.MergeOutPut(res, ensOutMap, "Port", option)
 	return
 }

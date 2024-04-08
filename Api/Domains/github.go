@@ -18,7 +18,7 @@ import (
 
 // 用于保护 addedURLs
 func GetEnInfoGithub(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
-	respons := gjson.Get(response, "hosts").Array()
+	respons := gjson.Get(response, "passive_dns").Array()
 
 	ensInfos := &Utils.EnInfos{}
 	ensInfos.Infos = make(map[string][]gjson.Result)
@@ -30,7 +30,7 @@ func GetEnInfoGithub(response string, DomainsIP *outputfile.DomainsIP) (*Utils.E
 
 	addedURLs := make(map[string]bool)
 	for aa, _ := range respons {
-		ResponseJia := "{" + "\"hostname\"" + ":" + "\"" + respons[aa].String() + "\"" + "}"
+		ResponseJia := respons[aa].String()
 		url := gjson.Parse(ResponseJia).Get("hostname").String()
 		DomainsIP.Domains = append(DomainsIP.Domains, url)
 		// 检查是否已存在相同的 URL
@@ -65,7 +65,7 @@ func GetEnInfoGithub(response string, DomainsIP *outputfile.DomainsIP) (*Utils.E
 
 	}
 
-	Utils.DomainTableShow(keyword, data, "Fullhunt")
+	Utils.DomainTableShow(keyword, data, "Github")
 
 	//zuo := strings.ReplaceAll(response, "[", "")
 	//you := strings.ReplaceAll(zuo, "]", "")
@@ -114,14 +114,18 @@ func Github(domain string, options *Utils.LongOptions, DomainsIP *outputfile.Dom
 				break
 			}
 		}
-		if resp.RawResponse == nil || err != nil {
+		if resp.RawResponse == nil || err != nil && add == 1 {
 			gologger.Errorf("Github 链接无法访问尝试切换代理 \n")
 			return ""
+		} else if err != nil && add != 1 {
+			continue
 		}
-		if gjson.Get(string(resp.Body()), "total_count").Int() == 0 {
+		if gjson.Get(string(resp.Body()), "total_count").Int() == 0 && add == 1 {
 			//gologger.Labelf("github 未发现域名 %s\n", domain)
 			return ""
 		} else if len(gjson.Get(string(resp.Body()), "items").Array()) == 0 {
+			break
+		} else if gjson.Get(string(resp.Body()), "total_count").Int() == 0 && add != 1 {
 			break
 		}
 		hostname := `(?:[a-z0-9](?:[a-z0-9\-]{0,61}[a-z0-9])?\.)+` + regexp.QuoteMeta(domain)
@@ -140,6 +144,7 @@ func Github(domain string, options *Utils.LongOptions, DomainsIP *outputfile.Dom
 		result += "{\"hostname\"" + ":" + "\"" + Hostname[add] + "\"" + "},"
 		DomainsIP.Domains = append(DomainsIP.Domains, Hostname[add])
 	}
+	result = result + "]}"
 	res, ensOutMap := GetEnInfoGithub(result, DomainsIP)
 
 	outputfile.MergeOutPut(res, ensOutMap, "Github", options)

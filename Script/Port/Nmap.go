@@ -9,17 +9,17 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
-	"runtime"
 	"strconv"
 	"strings"
 )
 
 // NewNmap 创建nmap对象
-func NewNmap(config Config) *Nmap {
-	config.CmdBin = "nmap"
-	if runtime.GOOS == "windows" {
-		config.CmdBin = "nmap.exe"
-	}
+func NewNmap(config Config, option *Utils.LongOptions) *Nmap {
+	config.CmdBin = option.LongConfig.Port.NmapPath
+	config.Rate = option.LongConfig.Port.Masscan.Rate
+	//if runtime.GOOS == "windows" {
+	//	config.CmdBin = "nmap.exe"
+	//}
 	return &Nmap{Config: config}
 }
 
@@ -225,15 +225,15 @@ func (nmap *Nmap) RunNmap(targets []string, ipv6 bool) {
 	var cmdArgs []string
 	cmdArgs = append(
 		cmdArgs,
-		nmap.Config.Tech, "-T4", "--open", "-n", "--randomize-hosts",
+		nmap.Config.Tech, "-T4", "--open", "-n", "--randomize-hosts", "-Pn",
 		"--min-rate", strconv.Itoa(nmap.Config.Rate), "-oX", resultTempFile, "-iL", inputTargetFile,
 	)
 	if ipv6 {
 		cmdArgs = append(cmdArgs, "-6")
 	}
-	if !nmap.Config.IsPing {
-		cmdArgs = append(cmdArgs, "-Pn")
-	}
+	//if !nmap.Config.IsPing {
+	//	cmdArgs = append(cmdArgs, "-Pn")
+	//}
 	if strings.HasPrefix(nmap.Config.Port, "--top-ports") {
 		cmdArgs = append(cmdArgs, "--top-ports")
 		cmdArgs = append(cmdArgs, strings.Split(nmap.Config.Port, " ")[1])

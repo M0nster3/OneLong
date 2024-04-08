@@ -23,7 +23,6 @@ type DomainsIP struct {
 	DomainA     []string //DomainA 指纹识别里面需要的
 	C           []string
 	IP          []string
-	C           []string
 	IPA         []string //ipa 指纹识别里面需要的
 	TitleBUff   []string
 	Size        []string

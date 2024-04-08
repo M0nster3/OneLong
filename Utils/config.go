@@ -109,6 +109,15 @@ type LongConfig struct {
 		TombaKey    string `yaml:"tombaKey"`
 		TombaSecret string `yaml:"tombaSecret"`
 	}
+	Port struct {
+		Masscan struct {
+			Masscanpath string `yaml:"masscanpath"`
+			Rate        int    `yaml:"rate"`
+			Port        string `yaml:"port"`
+		}
+
+		NmapPath string `yaml:"nmappath"`
+	}
 }
 
 type EnInfos struct {
@@ -228,12 +237,12 @@ email:
   intelxEmail: ''		# Email Intelx Token
   tombaKey: ''			# Email tombaKey
   tombaSecret: ''		# Email tombaSecret
-Port:
-  Masscan:
-	masscanpath: "masscan"					# Masscan放的位置如果是在环境变量中
-    Rate: "5000"					# Masscan速率，速率如果太大很有可能直接带宽占满
+port:
+  masscan:
+    masscanpath: ''		    # Masscan放的位置如果是在环境变量中则默认就行
+    rate: '5000' 				# Masscan速率，速率如果太大很有可能直接带宽占满
     port: "--top-ports 1000"		# 爆破的端口，默认未Top1000，还可修改为100或者10
-  Nmap: ''		# Email Intelx Token
+  nmappath: 'nmap'	
 #Afrog配置
 reverse:
   alphalog:

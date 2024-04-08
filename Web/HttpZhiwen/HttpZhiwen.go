@@ -55,6 +55,8 @@ func Status(domaina string, options *Utils.LongOptions, DomainsIP *outputfile.Do
 	wg.Wait()
 	DomainsIP.IPA = Utils.SetStr(DomainsIP.IPA)
 	DomainsIP.Domains = Utils.SetStr(DomainsIP.Domains)
+	color.RGBStyleFromString("244,211,49").Println("\n--------------------爆破C段端口--------------------")
+
 	for _, C := range DomainsIP.IPA {
 		ip := net.ParseIP(C)
 		if ip == nil {
@@ -68,27 +70,12 @@ func Status(domaina string, options *Utils.LongOptions, DomainsIP *outputfile.Do
 		DomainsIP.C = append(DomainsIP.C, ipnet.String())
 	}
 
-	for _, ipStr := range DomainsIP.Domains {
-		ip := net.ParseIP(ipStr)
-		if ip == nil {
-			continue
-		}
-
-		// 提取C段
-		cidr := fmt.Sprintf("%s/24", ip.String()) // 使用/24表示C段
-		_, ipnet, err := net.ParseCIDR(cidr)
-		if err != nil {
-			continue
-		}
-		// 输出C段
-		DomainsIP.C = append(DomainsIP.C, ipnet.String())
-	}
 	var Config Port.Config
 	for _, C := range DomainsIP.C {
 		Config.Target = C
-		Config.Rate = 5000
-		Config.Port = "1-65535"
-		Port.DoMasscanPlusNmap(Config)
+		Config.Rate = options.LongConfig.Port.Masscan.Rate
+		Config.Port = options.LongConfig.Port.Masscan.Port
+		Port.DoMasscanPlusNmap(Config, options)
 	}
 
 	color.RGBStyleFromString("244,211,49").Println("\n--------------------检测指纹以及域名存活--------------------")
