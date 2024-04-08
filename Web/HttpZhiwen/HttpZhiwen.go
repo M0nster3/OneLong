@@ -75,7 +75,7 @@ func Status(domaina string, options *Utils.LongOptions, DomainsIP *outputfile.Do
 		Config.Target = C
 		Config.Rate = options.LongConfig.Port.Masscan.Rate
 		Config.Port = options.LongConfig.Port.Masscan.Port
-		Port.DoMasscanPlusNmap(Config, options)
+		Port.DoMasscanPlusNmap(Config, options, DomainsIP)
 	}
 
 	color.RGBStyleFromString("244,211,49").Println("\n--------------------检测指纹以及域名存活--------------------")
