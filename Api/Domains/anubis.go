@@ -113,6 +113,8 @@ func Anubis(domain string, options *Utils.ENOptions, DomainsIP *outputfile.Domai
 		return ""
 	} else if strings.Contains(string(resp.Body()), "Not Found") {
 		return ""
+	} else if len(gjson.Parse(string(resp.Body())).Array()) == 0 {
+		return ""
 	}
 	res, ensOutMap := GetEnInfoAnubis(string(resp.Body()), DomainsIP)
 

@@ -7,6 +7,7 @@ import (
 	"github.com/remeh/sizedwaitgroup"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
 	"strconv"
 	"strings"
@@ -43,9 +44,9 @@ type Masscan struct {
 
 // NewMasscan 创建masscan对象
 func NewMasscan(config Config) *Masscan {
-	config.CmdBin = "/Users/Monster/Downloads/masscan-1.3.2/bin/masscan"
+	config.CmdBin = filepath.Join(Utils.GetPathDir(), "Script/Port/Masscan/masscan")
 	if runtime.GOOS == "windows" {
-		config.CmdBin = "masscan.exe"
+		config.CmdBin = filepath.Join(Utils.GetPathDir(), "Script/Port/Masscan/masscan.exe")
 	}
 	return &Masscan{Config: config}
 }

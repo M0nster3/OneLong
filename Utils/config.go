@@ -238,14 +238,6 @@ reverse:
     domain: ""
   dnslogcn:
     domain: dnslog.cn
-  eye:
-    host: ""
-    token: ""
-    domain: ""
-  jndi:
-    jndi_address: ""
-    ldap_port: ""
-    api_port: ""
   xray:
     x_token: ""
     domain: ""

@@ -138,8 +138,14 @@ func ParseLoginurl(options *Utils.ENOptions, DomainsIP *outputfile.DomainsIP) {
 	wg.Wait()
 	passive_dns := "{\"passive_dns\":["
 	var add int
+
 	for add = 0; add < len(DomainsIP.LoginUrlA); add++ {
-		passive_dns += "{\"hostname\"" + ":" + "\"" + DomainsIP.LoginUrlA[add] + "\"" + "," + "\"title\"" + ":" + "\"" + DomainsIP.LoginTitle[add] + "\"" + "},"
+		if add < len(DomainsIP.LoginUrlA) && add < len(DomainsIP.LoginTitle) {
+			passive_dns += "{\"hostname\"" + ":" + "\"" + DomainsIP.LoginUrlA[add] + "\"" + "," + "\"title\"" + ":" + "\"" + DomainsIP.LoginTitle[add] + "\"" + "},"
+		} else if add < len(DomainsIP.LoginUrlA) {
+			passive_dns += "{\"hostname\"" + ":" + "\"" + DomainsIP.LoginUrlA[add] + "\"" + "},"
+		}
+
 	}
 	passive_dns = passive_dns + "]}"
 
