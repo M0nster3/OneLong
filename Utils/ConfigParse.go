@@ -10,6 +10,11 @@ import (
 
 func ConfigParse(options *LongOptions) {
 	// 配置文件检查
+	if options.Low {
+		options.NoPoc = true
+		options.NoBao = true
+		options.NoPort = true
+	}
 	options.IsHold = true
 	options.IsSupplier = true
 	options.IsGetBranch = true

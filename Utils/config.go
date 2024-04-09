@@ -9,6 +9,9 @@ import (
 type LongOptions struct {
 	NoBao     bool
 	NoPoc     bool
+	NoPort    bool
+	Low       bool
+	Port      string
 	Domain    string
 	KeyWord   string // Keyword of Search
 	CompanyID string // Company ID
@@ -241,7 +244,6 @@ port:
   masscan:
     masscanpath: 'masscan'		    # Masscan放的位置如果是在环境变量中则默认就行
     rate: 5000 				# Masscan速率，速率如果太大很有可能直接带宽占满
-    port: "--top-ports 1000"		# 爆破的端口，默认未Top1000，还可修改为100或者10
   nmappath: 'nmap'	
 #Afrog配置
 reverse:

@@ -58,38 +58,40 @@ func Status(domaina string, options *Utils.LongOptions, DomainsIP *outputfile.Do
 	wg.Wait()
 	DomainsIP.IPA = Utils.SetStr(DomainsIP.IPA)
 	DomainsIP.Domains = Utils.SetStr(DomainsIP.Domains)
+	if !options.NoPort {
+		CCC := make(map[string]bool)
+		for _, C := range DomainsIP.IPA {
+			ip := net.ParseIP(C)
+			if ip == nil {
+				continue
+			}
+			cidr := fmt.Sprintf("%s/24", ip.String())
+			_, ipnet, err := net.ParseCIDR(cidr)
+			if err != nil {
+				continue
+			}
+			if !CCC[ipnet.String()] {
+				DomainsIP.C = append(DomainsIP.C, ipnet.String())
+				CCC[ipnet.String()] = true
+			}
+		}
+		color.RGBStyleFromString("244,211,49").Println("\n--------------------爆破C段端口--------------------")
+		Cs := strings.Join(DomainsIP.C, " , ")
+		gologger.Infof("共有C段 %d 个\n%s\n", len(DomainsIP.C), Cs)
+		var Config Port.Config
+		for _, C := range DomainsIP.C {
+			wg1.Add(1)
+			go func() {
+				Config.Target = C
+				Config.Rate = options.LongConfig.Port.Masscan.Rate
+				Config.Port = options.LongConfig.Port.Masscan.Port
+				Port.DoMasscanPlusNmap(Config, options, DomainsIP)
+				wg1.Done()
+			}()
+		}
+		wg1.Wait()
+	}
 
-	CCC := make(map[string]bool)
-	for _, C := range DomainsIP.IPA {
-		ip := net.ParseIP(C)
-		if ip == nil {
-			continue
-		}
-		cidr := fmt.Sprintf("%s/24", ip.String())
-		_, ipnet, err := net.ParseCIDR(cidr)
-		if err != nil {
-			continue
-		}
-		if !CCC[ipnet.String()] {
-			DomainsIP.C = append(DomainsIP.C, ipnet.String())
-			CCC[ipnet.String()] = true
-		}
-	}
-	color.RGBStyleFromString("244,211,49").Println("\n--------------------爆破C段端口--------------------")
-	Cs := strings.Join(DomainsIP.C, " , ")
-	gologger.Infof("共有C段 %d 个\n%s\n", len(DomainsIP.C), Cs)
-	var Config Port.Config
-	for _, C := range DomainsIP.C {
-		wg1.Add(1)
-		go func() {
-			Config.Target = C
-			Config.Rate = options.LongConfig.Port.Masscan.Rate
-			Config.Port = options.LongConfig.Port.Masscan.Port
-			Port.DoMasscanPlusNmap(Config, options, DomainsIP)
-			wg1.Done()
-		}()
-	}
-	wg1.Wait()
 	color.RGBStyleFromString("244,211,49").Println("\n--------------------检测指纹以及域名存活--------------------")
 	client := resty.New()
 	client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})

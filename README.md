@@ -14,57 +14,74 @@
 
 使用方式比较简单，现在主要针对不同需求实现了两种信息收集的方式，一种是根据企业关键字去进行信息搜集，这里需要填写aqc和qcc的API，第二种方式是需要填写公司域名，去进行搜集
 
-注意：在调用API的时候有些需要科学上网，最好在进行使用的时候加上-proxy=http://127.0.0.1:7897 进行科学上网。
+注意：在调用API的时候有些需要科学上网，***最好在进行使用的时候加上-proxy=http://127.0.0.1:7897*** 进行科学上网。
 
 1、根据企业关键字去进行信息搜集，最后填写正确完整的关键字，这部分主要参考了[ENScan_GO](https://github.com/wgpsec/ENScan_GO),相关搜索企业细节以及方法和它是一样，注意的是使用这种方式必须填写aqc和qcc的Cookie
 
-- OneLong -n 企业名称 -proxy=http://127.0.0.1:7890
+- ***OneLong -n 企业名称 -proxy=http://127.0.0.1:7890***
 
 2、根据企业域名去进行信息搜集
 
-- OneLong -d target.com -proxy=http://127.0.0.1:7890
+- ***OneLong -d target.com -proxy=http://127.0.0.1:7890***
 
 3、批量域名信息搜集
 
-- OneLong -f file.txt -proxy=http://127.0.0.1:7890
+- ***OneLong -f file.txt -proxy=http://127.0.0.1:7890***
 
-4、如果目标企业存在安全设备，并且IP资源不多的话，可以只进行被动探测
+4、如果目标企业存在安全设备，并且IP资源不多的话，可以只进行被动扫描，不进行子域名以及端口爆破，不进行漏洞扫描
 
-- OneLong -d target.com/-n 企业名称 -nb -np -proxy=http://127.0.0.1:7890
+- ***OneLong -d target.com/-n 企业名称 -low -proxy=http://127.0.0.1:7890***
 
 
+
+## 0x03、参数讲解
+
+默认就是上面的三种方式进行使用 ***-d*** ***-f*** ***-n***
+
+有一些相关企业的参数需要结合 ***-n*** 使用有 ***-deep*** ***-invest*** ***-is-branch*** 这些参数必须先使用***-n*** 
+
+ ***-low*** ：使用这个参数就相当于同时使用   ***-nport***   *** -npoc***   *** -nbao*** 只进行被动API进行扫描
+
+***-o***：设置输出Excel的文件夹，最后输出的excel回保存到这个参数重
+
+***-p***：进行端口爆破的时候指定的端口，代码中内置了三种***“--top-ports 1000”*** ***“--top-ports 100”*** ***“--top-ports 10”*** 默认爆破top 1000
 
 ```
   -d string
-        域名
+    	域名
   -deep int
-        递归搜索n层公司 (default 5)
+    	递归搜索n层公司 (default 5)
   -delay int
-        填写最大延迟时间（秒）将会在1-n间随机延迟
+    	填写最大延迟时间（秒）将会在1-n间随机延迟
   -f string
-        批量扫描
+    	批量扫描
   -invest float
-        投资比例  (default 70)
+    	投资比例  (default 70)
   -is-branch
-        深度查询分支机构信息（数量巨大），默认不查询
+    	深度查询分支机构信息（数量巨大），默认不查询
+  -low
+    	只进行被动扫描，不进行子域名以及端口爆破，不进行漏洞扫描
   -n string
-        企业关键词 eg 百度
-  -nb
-        不进行爆破子域名
-  -np
-        不进行漏洞扫描
+    	企业关键词 eg 百度
+  -nbao
+    	不进行爆破子域名
+  -npoc
+    	不进行漏洞扫描
+  -nport
+    	不进行爆破端口
   -o string
-        结果输出的文件夹位置(可选)
+    	结果输出的文件夹位置(可选)
+  -p string
+    	端口爆破默认为Top1000，还可修改为100或者10 (default "--top-ports 1000")
   -proxy string
-        设置代理例如:-proxy=http://127.0.0.1:7897
+    	设置代理例如:-proxy=http://127.0.0.1:7897
   -timeout int
-        每个请求默认1（分钟）超时 (default 1)
-
+    	每个请求默认1（分钟）超时 (default 1)
 ```
 
+<img src="Images\long.jpeg" alt="login" />
 
-
-## 0x03、相关配置文件解读
+## 0x04、相关配置文件解读
 
 ### 子域名相关配置文件
 
@@ -107,7 +124,19 @@
 
 - massdnsPath:将Script/MassDns下的MassDns应用程序名称添加进来，如果是Linux的则需要把MassDns.exe改为相应的名称
 
+### Email模块
+
+[emailhunter](https://hunter.io/) , [intelxEmail](https://intelx.io/) , [tombaKey/tombaSecret](https://tomba.io/) 
+
+### Port模块
+
+***masscanpath***: Masscan工具放的位置如果是在环境变量中则默认就行，比如kali之类的
+***rate***: Masscan速率，速率如果太大很有可能直接带宽占满
+***nmappath***: Nmap工具放的位置如果是在环境变量中则默认就行
+
 ### [Afrog](https://github.com/zan8in/afrog)
+
+这个主要还是参考官方网站配置即可
 
 #### ceye
 
@@ -144,6 +173,7 @@ MassDns：这个里面主要就是放MassDns进行爆破的应用程序和所需
 <img src="Images\20240401165726.png" alt="login" />
 
 ```
+
 Utils:
   output: ""            # 导出文件位置
 cookies:
@@ -182,6 +212,11 @@ email:
   intelxEmail: ''		# Email Intelx Token
   tombaKey: ''			# Email tombaKey
   tombaSecret: ''		# Email tombaSecret
+port:
+  masscan:
+    masscanpath: 'masscan'		    # Masscan放的位置如果是在环境变量中则默认就行
+    rate: 5000 										# Masscan速率，速率如果太大很有可能直接带宽占满
+  nmappath: 'nmap'	
 #Afrog配置
 reverse:
   alphalog:
@@ -192,22 +227,15 @@ reverse:
     domain: ""
   dnslogcn:
     domain: dnslog.cn
-  eye:
-    host: ""
-    token: ""
-    domain: ""
-  jndi:
-    jndi_address: ""
-    ldap_port: ""
-    api_port: ""
   xray:
     x_token: ""
     domain: ""
     api_url: http://x.x.x.x:8777
 
+
 ```
 
-## 0x04、效果图
+## 0x05、效果图
 
 <img src="Images/1711968305378.png" alt="login" />
 
@@ -215,7 +243,7 @@ reverse:
 
 <img src="Images\1711968830642.png" alt="login" />
 
-## 0x05、参考
+## 0x06、参考
 
 [ENScan_GO](https://github.com/wgpsec/ENScan_GO)
 

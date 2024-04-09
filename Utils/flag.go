@@ -26,8 +26,11 @@ func Banner() {
 
 func Flag(Info *LongOptions) {
 	Banner()
-	flag.BoolVar(&Info.NoBao, "nb", false, "不进行爆破子域名")
-	flag.BoolVar(&Info.NoPoc, "np", false, "不进行漏洞扫描") //InputFile
+	flag.BoolVar(&Info.Low, "low", false, "只进行被动扫描，不进行子域名以及端口爆破，不进行漏洞扫描")
+	flag.BoolVar(&Info.NoBao, "nbao", false, "不进行爆破子域名")
+	flag.BoolVar(&Info.NoPoc, "npoc", false, "不进行漏洞扫描")
+	flag.BoolVar(&Info.NoPort, "nport", false, "不进行爆破端口")
+	flag.StringVar(&Info.Port, "p", "--top-ports 1000", "端口爆破默认为Top1000，还可修改为100或者10")
 	flag.StringVar(&Info.InputFile, "f", "", "批量扫描")
 	flag.StringVar(&Info.KeyWord, "n", "", "企业关键词 eg 百度")
 	flag.StringVar(&Info.Domain, "d", "", "域名")

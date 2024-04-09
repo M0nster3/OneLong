@@ -46,7 +46,7 @@ type Masscan struct {
 func NewMasscan(config Config, option *Utils.LongOptions) *Masscan {
 	config.CmdBin = option.LongConfig.Port.Masscan.Masscanpath
 	config.Rate = option.LongConfig.Port.Masscan.Rate
-	config.Port = option.LongConfig.Port.Masscan.Port
+	config.Port = option.Port
 	//if runtime.GOOS == "windows" {
 	//	config.CmdBin = filepath.Join(Utils.GetPathDir(), "Script/Port/Masscan/masscan.exe")
 	//}

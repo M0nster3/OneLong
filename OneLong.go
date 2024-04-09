@@ -12,14 +12,5 @@ func main() {
 	Utils.ConfigParse(&enOptions)
 	//Domains.Github("baidu.com", &enOptions, &Domainip)
 	Gogogo.StartScan(&enOptions)
-	//var Config Port.Config
-	//Config.Target = ""
-	//Config.Rate = 5000
-	//Config.Port = "1-65535"
-	//Port.DoMasscanPlusNmap(Config, &enOptions, &Domainip)
-	//outputfile.OutPutExcelByMergeEnInfo(&enOptions)
-	//
-	//Port.Port()
-	//Email.Email(enOptions.Domain, &enOptions, &Domainip)
 
 }
