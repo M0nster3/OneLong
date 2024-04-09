@@ -17,7 +17,7 @@ func main() {
 	//Config.Rate = 5000
 	//Config.Port = "1-65535"
 	//Port.DoMasscanPlusNmap(Config, &enOptions, &Domainip)
-
+	//outputfile.OutPutExcelByMergeEnInfo(&enOptions)
 	//
 	//Port.Port()
 	//Email.Email(enOptions.Domain, &enOptions, &Domainip)

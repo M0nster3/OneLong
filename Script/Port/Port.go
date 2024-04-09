@@ -286,18 +286,9 @@ func GetEnInfoPort(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnI
 		ensOutMap[k] = &outputfile.ENSMap{Name: v.Name, Field: v.Field, KeyWord: v.KeyWord}
 	}
 
-	addedURLs := make(map[string]bool)
 	for aa, _ := range respons {
 		ResponseJia := respons[aa].String()
-		url := gjson.Parse(ResponseJia).Get("hostname").String()
-		DomainsIP.Domains = append(DomainsIP.Domains, url)
-		// 检查是否已存在相同的 URL
-		if !addedURLs[url] {
-			// 如果不存在重复则将 URL 添加到 Infos["Urls"] 中，并在 map 中标记为已添加
-			ensInfos.Infos["Port"] = append(ensInfos.Infos["Port"], gjson.Parse(ResponseJia))
-			addedURLs[url] = true
-		}
-
+		ensInfos.Infos["Port"] = append(ensInfos.Infos["Port"], gjson.Parse(ResponseJia))
 	}
 
 	//命令输出展示
@@ -322,7 +313,10 @@ func GetEnInfoPort(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnI
 		}
 
 	}
-	Utils.DomainTableShow(keyword, data, "Masscan/Nmap端口爆破")
+	ip := gjson.Get(response, "Port.#.Address").Array()
+	if len(ip) > 0 {
+		Utils.PortTableShow(keyword, data, ip[0].String()+" 端口爆破")
+	}
 
 	//zuo := strings.ReplaceAll(response, "[", "")
 	//you := strings.ReplaceAll(zuo, "]", "")
@@ -384,5 +378,4 @@ func DoMasscanPlusNmap(config Config, option *Utils.LongOptions, DomainsIP *outp
 	res, ensOutMap := GetEnInfoPort(result, DomainsIP)
 
 	outputfile.MergeOutPut(res, ensOutMap, "Port", option)
-	return
 }

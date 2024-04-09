@@ -6,6 +6,7 @@ import (
 	"OneLong/Script/Port"
 	"OneLong/Utils"
 	outputfile "OneLong/Utils/OutPutfile"
+	"OneLong/Utils/gologger"
 	"OneLong/Web/CDN"
 	"crypto/tls"
 	"fmt"
@@ -13,6 +14,7 @@ import (
 	"github.com/gookit/color"
 	"github.com/tidwall/gjson"
 	"net"
+	"strings"
 	"sync"
 	"time"
 )
@@ -38,6 +40,7 @@ func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) 
 
 }
 func Status(domaina string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) {
+	var wg1 sync.WaitGroup
 	DomainsIP.IP = Utils.SetStr(DomainsIP.IP)
 	//Ip反差域名
 
@@ -55,29 +58,38 @@ func Status(domaina string, options *Utils.LongOptions, DomainsIP *outputfile.Do
 	wg.Wait()
 	DomainsIP.IPA = Utils.SetStr(DomainsIP.IPA)
 	DomainsIP.Domains = Utils.SetStr(DomainsIP.Domains)
-	color.RGBStyleFromString("244,211,49").Println("\n--------------------爆破C段端口--------------------")
 
+	CCC := make(map[string]bool)
 	for _, C := range DomainsIP.IPA {
 		ip := net.ParseIP(C)
 		if ip == nil {
 			continue
 		}
-		cidr := fmt.Sprint("%s/24", ip.String())
+		cidr := fmt.Sprintf("%s/24", ip.String())
 		_, ipnet, err := net.ParseCIDR(cidr)
 		if err != nil {
 			continue
 		}
-		DomainsIP.C = append(DomainsIP.C, ipnet.String())
+		if !CCC[ipnet.String()] {
+			DomainsIP.C = append(DomainsIP.C, ipnet.String())
+			CCC[ipnet.String()] = true
+		}
 	}
-
+	color.RGBStyleFromString("244,211,49").Println("\n--------------------爆破C段端口--------------------")
+	Cs := strings.Join(DomainsIP.C, " , ")
+	gologger.Infof("共有C段 %d 个\n%s\n", len(DomainsIP.C), Cs)
 	var Config Port.Config
 	for _, C := range DomainsIP.C {
-		Config.Target = C
-		Config.Rate = options.LongConfig.Port.Masscan.Rate
-		Config.Port = options.LongConfig.Port.Masscan.Port
-		Port.DoMasscanPlusNmap(Config, options, DomainsIP)
+		wg1.Add(1)
+		go func() {
+			Config.Target = C
+			Config.Rate = options.LongConfig.Port.Masscan.Rate
+			Config.Port = options.LongConfig.Port.Masscan.Port
+			Port.DoMasscanPlusNmap(Config, options, DomainsIP)
+			wg1.Done()
+		}()
 	}
-
+	wg1.Wait()
 	color.RGBStyleFromString("244,211,49").Println("\n--------------------检测指纹以及域名存活--------------------")
 	client := resty.New()
 	client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})

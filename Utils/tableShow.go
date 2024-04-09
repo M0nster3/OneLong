@@ -30,3 +30,14 @@ func DomainTableShow(keys []string, values [][]string, Gong string) {
 	table.Render()
 
 }
+func PortTableShow(keys []string, values [][]string, Gong string) {
+	mu.Lock()
+	defer mu.Unlock()
+	color.RGBStyleFromString("205,155,29").Println("\n", Gong)
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetAlignment(tablewriter.ALIGN_CENTER)
+	table.SetHeader(keys)
+	table.AppendBulk(values)
+	table.Render()
+
+}
