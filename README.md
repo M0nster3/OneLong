@@ -126,6 +126,8 @@
 
 ### Email模块
 
+最好设置 [githubtoken](https://github.com/settings/tokens) 这里的Email也会调用这个Cookie里面的token，github搜索效果比较好
+
 [emailhunter](https://hunter.io/) , [intelxEmail](https://intelx.io/) , [tombaKey/tombaSecret](https://tomba.io/) 
 
 ### Port模块
