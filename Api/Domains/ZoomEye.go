@@ -65,9 +65,13 @@ func GetEnInfoZoomEye(response string, DomainsIP *outputfile.DomainsIP) (*Utils.
 
 		for _, res := range ensInfos.Infos["Urls"] {
 			results := gjson.GetMany(res.Raw, y.Field...)
+
 			var str []string
-			for _, s := range results {
-				str = append(str, s.String())
+			for aa, s := range results {
+				if aa != 0 {
+					str = append(str, s.String())
+				}
+
 			}
 			data = append(data, str)
 		}
@@ -117,21 +121,28 @@ func ZoomEye(domain string, options *Utils.LongOptions, DomainsIP *outputfile.Do
 				break
 			}
 		}
-		if err != nil {
-			gologger.Errorf("ZoomEye 威胁平台链接访问失败尝试切换代理\n")
-			return ""
-		}
-		if resp.Body() == nil || gjson.Get(string(resp.Body()), "total").Int() == 0 {
-			//gologger.Labelf("ZoomEye 威胁平台未发现域名 %s\n", domain)
-			return ""
-		}
 		responselist := gjson.Get(string(resp.Body()), "list").Array()
-		for _, item := range responselist {
-			result = result + item.String()
+		if len(responselist) > 0 {
+			for _, item := range responselist {
+				result = result + item.String()
+			}
 		}
 		currentPage++
 		if len(responselist) == 0 || currentPage == 10 {
 			result = result + "], }"
+			break
+		}
+
+		if err != nil && currentPage == 1 {
+			gologger.Errorf("ZoomEye 威胁平台链接访问失败尝试切换代理\n")
+			return ""
+		} else if err != nil {
+			result = result + "], }"
+			break
+		}
+		if resp.Body() == nil || gjson.Get(string(resp.Body()), "total").Int() == 0 {
+			result = result + "], }"
+			//gologger.Labelf("ZoomEye 威胁平台未发现域名 %s\n", domain)
 			break
 		}
 

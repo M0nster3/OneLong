@@ -134,6 +134,12 @@ func Sitedossier(domain string, options *Utils.LongOptions, DomainsIP *outputfil
 	totalItems, _ := strconv.Atoi(totalItemsStr)
 
 	for add := 0; add < totalItems; add += 100 {
+		if add != 0 {
+			clientRR := client.R()
+			//强制延时1s
+			time.Sleep(3 * time.Second)
+			resp, _ = clientRR.Get(urls)
+		}
 
 		if strings.Contains(string(resp.Body()), "Show next") || strings.Contains(string(resp.Body()), "Show remaining") || add == 0 {
 			doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(resp.Body())))
@@ -152,7 +158,7 @@ func Sitedossier(domain string, options *Utils.LongOptions, DomainsIP *outputfil
 				}
 			})
 
-			urls = UrlsB + "/" + strconv.Itoa(add)
+			urls = UrlsB + "/" + strconv.Itoa(add+100)
 
 		} else if strings.Contains(string(resp.Body()), "No data currently available.") {
 			return ""
@@ -160,7 +166,7 @@ func Sitedossier(domain string, options *Utils.LongOptions, DomainsIP *outputfil
 			break
 		} else if strings.Contains(string(resp.Body()), "you may see this page again. Thank you") {
 			gologger.Labelf("如果想查询更多域名进入 www.sitedossier.com 输入验证码\n")
-			return ""
+			break
 		}
 
 	}

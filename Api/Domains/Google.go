@@ -118,13 +118,15 @@ func Google(domain string, options *Utils.LongOptions, DomainsIP *outputfile.Dom
 				break
 			}
 		}
-		if err != nil {
+		if err != nil && start == 1 {
 			gologger.Errorf("Google 链接无法访问尝试切换代理 \n")
 			return ""
+		} else if err != nil {
+			break
 		}
 		if response.Size() == 3 {
 			//gologger.Labelf("Google未查询到域名 \n")
-			return ""
+			break
 		}
 		time.Sleep(3 * time.Second)
 		llink := gjson.Get(string(response.Body()), "items.#.link").Array()

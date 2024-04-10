@@ -8,6 +8,8 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/tidwall/gjson"
 	"net/http"
+	"strings"
+
 	//"strconv"
 	//"strings"
 	"time"
@@ -31,7 +33,8 @@ func GetEnInfoCertspotter(response string, DomainsIP *outputfile.DomainsIP) (*Ut
 		dns_namesArray := gjson.Get(respons[aa].Raw, "dns_names").Array()
 
 		for bb, _ := range dns_namesArray {
-			ResponseJia := "{" + "\"hostname\"" + ":" + "\"" + dns_namesArray[bb].String() + "\"" + "}"
+			res := strings.ReplaceAll(dns_namesArray[bb].String(), "*.", "")
+			ResponseJia := "{" + "\"hostname\"" + ":" + "\"" + res + "\"" + "}"
 			url := gjson.Parse(ResponseJia).Get("hostname").String()
 
 			// 检查是否已存在相同的 URL

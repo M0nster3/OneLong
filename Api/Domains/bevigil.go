@@ -107,6 +107,9 @@ func Bevigil(domain string, options *Utils.LongOptions, DomainsIP *outputfile.Do
 	if err != nil {
 		gologger.Errorf("Bevigil 空间探测链接访问失败尝试切换代理\n")
 		return ""
+	} else if strings.Contains(string(resp.Body()), "No Credits left") {
+		gologger.Errorf("Bevigil 空间探测没有积分\n")
+		return ""
 	}
 	if len(gjson.Get(string(resp.Body()), "subdomains").Array()) == 0 || len(gjson.Get(string(resp.Body()), "subdomains").Array()) == 1 {
 		//gologger.Labelf("Bevigil 空间探测未发现域名 %s\n", domain)

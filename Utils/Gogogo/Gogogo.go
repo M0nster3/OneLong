@@ -43,9 +43,10 @@ func StartScan(options *Utils.LongOptions) {
 
 		time.Sleep(5 * time.Second)
 		res = Utils.SetStr(res)
-		gologger.Infof("--------------------批量查询%d条资产--------------------\n", len(res))
+		color.RGBStyleFromString("237,64,35").Printf(fmt.Sprintf("--------------------批量查询%d条域名资产--------------------\n", len(res)))
 
-		for _, v := range res {
+		for id, v := range res {
+			color.RGBStyleFromString("237,64,35").Printf(fmt.Sprintf("--------------------当前是第 %d 条域名,还剩 %d 条--------------------\n", id+1, len(res)-id+1))
 			if v == "" {
 				continue
 			}
@@ -218,7 +219,4 @@ func DomainRunJob(options *Utils.LongOptions) {
 	color.RGBStyleFromString("244,211,49").Println("\n--------------------探测网站后台--------------------")
 	Login.Login(Domainip.DomainA, options, &Domainip)
 
-	//if options.IsMergeOut && options.InputFile == "" {
-	//	outputfile.OutPutExcelByMergeEnInfo(options)
-	//}
 }

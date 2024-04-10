@@ -3,15 +3,13 @@ package baidu
 import (
 	"OneLong/Utils"
 	outputfile "OneLong/Utils/OutPutfile"
-	"OneLong/Utils/gologger"
-	"crypto/tls"
 	"fmt"
-	"github.com/go-resty/resty/v2"
+	"github.com/projectdiscovery/goflags"
+	"github.com/projectdiscovery/httpx/runner"
+
 	"github.com/tidwall/gjson"
-	"net/http"
 	"regexp"
 	"strings"
-	"time"
 )
 
 func GetEnInfo(response string, DomainsIP *outputfile.DomainsIP) (*Utils.EnInfos, map[string]*outputfile.ENSMap) {
@@ -102,60 +100,95 @@ func Baidu(domain string, options *Utils.LongOptions, DomainsIP *outputfile.Doma
 	//gologger.Infof("Alienvault\n")
 
 	urlss := baiduparseUrl(domain)
+	var inputTargetHost goflags.StringSlice
+	for _, url := range urlss {
+		inputTargetHost = append(inputTargetHost, url)
+	}
+
+	// 更新 httpxoptions 中的 InputTargetHost
+
 	var respnsehe string
-	for _, urls := range urlss {
-
-		client := resty.New()
-		// 获取系统根证书列表
-		//roots, err := x509.SystemCertPool()
-		//if err != nil {
-		//	// 处理错误
-		//}
-
-		client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
-		client.SetTimeout(time.Duration(options.TimeOut) * time.Minute)
-		if options.Proxy != "" {
-			client.SetProxy(options.Proxy)
-		}
-		client.Header = http.Header{
-			"Accept":          {"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"},
-			"Host":            {"www.baidu.com"},
-			"User-Agent":      {"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36"},
-			"Accept-Encoding": {"gzip"},
-		}
-
-		//强制延时1s
-		time.Sleep(3 * time.Second)
-		//加入随机延迟
-		time.Sleep(time.Duration(options.GetDelayRTime()) * time.Second)
-		clientR := client.R()
-
-		clientR.URL = urls
-		resp, err := clientR.Get(urls)
-
-		for add := 1; add < 4; add += 1 {
-			if resp.RawResponse == nil {
-				resp, _ = clientR.Get(urls)
-				time.Sleep(3 * time.Second)
-			} else if resp.Body() != nil {
-				break
-			} else if strings.Contains(string(resp.Body()), "网络不给力，请稍后重试") {
-				break
+	httpxoptions := runner.Options{
+		Methods:         "GET",
+		InputTargetHost: inputTargetHost,
+		RateLimit:       1,
+		Threads:         3,
+		HTTPProxy:       options.Proxy,
+		//InputFile: "./targetDomains.txt", // path to file containing the target domains list
+		OnResult: func(r runner.Result) {
+			// handle error
+			if r.Err != nil {
+				fmt.Printf("[Err] %s: %s\n", r.Input, r.Err)
 			}
-		}
-		if err != nil || strings.Contains(string(resp.Body()), "网络不给力，请稍后重试") {
-			gologger.Errorf("Baidu 爬虫失败尝试切换代理\n")
-			break
-		}
-		respnsehe += string(resp.Body())
-
+			//fmt.Printf("%s %s %d\n", r.Input, r.Host, r.StatusCode)
+			respnsehe += r.Raw
+		},
 	}
 
+	if err := httpxoptions.ValidateOptions(); err != nil {
+		//log.Fatal(err)
+	}
+
+	httpxRunner, err := runner.New(&httpxoptions)
+	if err != nil {
+		//log.Fatal(err)
+	}
+	defer httpxRunner.Close()
+
+	httpxRunner.RunEnumeration()
+	//for _, urls := range urlss {
+
+	//client := resty.New()
+	//// 获取系统根证书列表
+	////roots, err := x509.SystemCertPool()
+	////if err != nil {
+	////	// 处理错误
+	////}
+	//
+	//client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
+	//client.SetTimeout(time.Duration(options.TimeOut) * time.Minute)
+	//if options.Proxy != "" {
+	//	client.SetProxy(options.Proxy)
+	//}
+	//client.Header = http.Header{
+	//	"Accept":          {"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"},
+	//	"Host":            {"www.baidu.com"},
+	//	"User-Agent":      {"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36"},
+	//	"Accept-Encoding": {"gzip"},
+	//}
+	//
+	////强制延时1s
+	//time.Sleep(3 * time.Second)
+	////加入随机延迟
+	//time.Sleep(time.Duration(options.GetDelayRTime()) * time.Second)
+	//clientR := client.R()
+	//
+	//clientR.URL = urls
+	//resp, err := clientR.Get(urls)
+	//
+	//for add := 1; add < 4; add += 1 {
+	//	if resp.RawResponse == nil {
+	//		resp, _ = clientR.Get(urls)
+	//		time.Sleep(3 * time.Second)
+	//	} else if resp.Body() != nil {
+	//		break
+	//	} else if strings.Contains(string(resp.Body()), "网络不给力，请稍后重试") {
+	//		break
+	//	}
+	//}
+	//if err != nil || strings.Contains(string(resp.Body()), "网络不给力，请稍后重试") {
+	//	gologger.Errorf("Baidu 爬虫失败尝试切换代理\n")
+	//	break
+	//}
+	//respnsehe += string(resp.Body())
+
+	//}
+	//
 	respnsehe = clearresponse(respnsehe)
-	if strings.Contains(respnsehe, "title 百度安全验证  title ") {
-		gologger.Errorf("Baidu需要进行验证\n")
-		return
-	}
+	//if strings.Contains(respnsehe, "title 百度安全验证  title ") {
+	//	gologger.Errorf("Baidu需要进行验证\n")
+	//	return
+	//}
 	Email := `[a-zA-Z0-9.\-_+#~!$&',;=:]+@` + `[a-zA-Z0-9.-]*` + strings.ReplaceAll(domain, "www.", "")
 
 	re := regexp.MustCompile(Email)

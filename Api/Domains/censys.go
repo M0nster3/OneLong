@@ -10,6 +10,8 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
+	"sync"
+
 	//"strconv"
 	//"strings"
 	"time"
@@ -86,7 +88,7 @@ func Censys(domain string, options *Utils.LongOptions, DomainsIP *outputfile.Dom
 	}
 	var cursor string
 	result := "["
-
+	var wg1 sync.WaitGroup
 	for add := 1; add < 10; add += 1 {
 		requestBody := map[string]interface{}{
 			"q":        domain,
@@ -128,28 +130,32 @@ func Censys(domain string, options *Utils.LongOptions, DomainsIP *outputfile.Dom
 		} else if strings.Contains(string(resp.Body()), "our account is limited to 10 page") {
 			gologger.Labelf("Censys 空间探测当前Token只能查询10页 \n")
 			return ""
-		} else if gjson.Get(string(resp.Body()), "result.total").Int() == 0 {
-			//gologger.Labelf("Censys 空间探测未发现域名 %s\n", domain)
-			return ""
 		} else if resp.StatusCode() == 403 {
 			gologger.Labelf("Censys 空间探测Cookie失效\n")
+			return ""
+		} else if gjson.Get(string(resp.Body()), "result.total").Int() == 0 {
+			//gologger.Labelf("Censys 空间探测未发现域名 %s\n", domain)
 			return ""
 		}
 		hostname := gjson.Get(string(resp.Body()), "result.hits.#.names").Array()
 		for aa, _ := range hostname {
-			zuo := strings.ReplaceAll(hostname[aa].String(), "[", "")
-			zhong := strings.ReplaceAll(zuo, "*.", "")
-			you := strings.ReplaceAll(zhong, "]", "")
-			host := regexp.MustCompile(`(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}`)
-			ip := regexp.MustCompile(`(?:\d{1,3}\.){3}\d{1,3}`)
-			// 编译正则表达式
-			hostrea := host.FindAllStringSubmatch(strings.TrimSpace(you), -1)
-			iprea := ip.FindAllStringSubmatch(strings.TrimSpace(you), -1)
-			if hostrea != nil && iprea == nil {
-				result += you + ","
-			}
-
+			wg1.Add(1)
+			go func() {
+				zuo := strings.ReplaceAll(hostname[aa].String(), "[", "")
+				zhong := strings.ReplaceAll(zuo, "*.", "")
+				you := strings.ReplaceAll(zhong, "]", "")
+				host := regexp.MustCompile(`(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}`)
+				ip := regexp.MustCompile(`(?:\d{1,3}\.){3}\d{1,3}`)
+				// 编译正则表达式
+				hostrea := host.FindAllStringSubmatch(strings.TrimSpace(you), -1)
+				iprea := ip.FindAllStringSubmatch(strings.TrimSpace(you), -1)
+				if hostrea != nil && iprea == nil {
+					result += you + ","
+				}
+				wg1.Done()
+			}()
 		}
+		wg1.Wait()
 		next := gjson.Get(string(resp.Body()), "result.links.next").String()
 		if next == "" {
 			break

@@ -106,37 +106,41 @@ func Netlas(domain string, options *Utils.LongOptions, DomainsIP *outputfile.Dom
 		gologger.Errorf("Netlas 威胁平台访问失败尝试切换代理\n")
 		return ""
 	}
+	if strings.Contains(string(resp.Body()), "You can wait while daily rate limit will ") {
+		gologger.Errorf("Netlas 威胁平台 请切换IP 当日访问上限")
+	}
 	if gjson.Get(string(resp.Body()), "count").Int() == 0 {
 		//gologger.Labelf("Netlas 威胁平台未发现域名 %s\n", domain)
 		return ""
 	}
-	if strings.Contains(string(resp.Body()), "You can wait while daily rate limit will ") {
-		gologger.Errorf("请切换IP 当日访问上限")
-	}
+
 	count := gjson.Get(string(resp.Body()), "count").Int()
 	var address []string
 	var hostname []string
 	var ipss string
 	for i := 0; i < int(count); i += 20 {
-		endpoint := "https://app.netlas.io/api/domains/"
-		params := url.Values{}
+		endpoint1 := "https://app.netlas.io/api/domains/"
+		params1 := url.Values{}
 		offset := strconv.Itoa(i)
 		query := fmt.Sprintf("domain:(domain:*.%s AND NOT domain:%s)", domain, domain)
-		params.Set("q", query)
-		params.Set("source_type", "include")
-		params.Set("start", offset)
-		params.Set("fields", "*")
-		apiUrl := endpoint + "?" + params.Encode()
+		params1.Set("q", query)
+		params1.Set("source_type", "include")
+		params1.Set("start", offset)
+		params1.Set("fields", "*")
+		apiUrl := endpoint1 + "?" + params1.Encode()
 		client.Header = http.Header{
 			"User-Agent": {"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"},
 			"Accept":     {"text/html,application/json,application/xhtml+xml, image/jxr, */*"},
-			"api-key":    {"R5yHhXQgud0eDV34IR8TUck3AchS99dS"},
+			"api-key":    {options.LongConfig.Cookies.Netlas},
 		}
-		clientR := client.R()
+		clientRR := client.R()
 
-		clientR.URL = apiUrl
-		resp, _ := clientR.Get(urls)
-		buff := gjson.Get(string(resp.Body()), "items.#.data").Array()
+		clientRR.URL = apiUrl
+		respp, _ := clientRR.Get(apiUrl)
+		if strings.Contains(string(respp.String()), "only 1 search pages available for current plan") {
+			break
+		}
+		buff := gjson.Get(string(respp.Body()), "items.#.data").Array()
 		for _, item := range buff {
 			ips := item.Get("a").Array()
 			hostnames := item.Get("domain").String()

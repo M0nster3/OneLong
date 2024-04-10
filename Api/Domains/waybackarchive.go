@@ -106,21 +106,24 @@ func Waybackarchive(domain string, options *Utils.LongOptions, DomainsIP *output
 
 	clientR.URL = urls
 	resp, err := clientR.Get(urls)
-	for attempt := 0; attempt < 4; attempt++ {
-		if attempt == 2 { // 在第三次尝试时切换到HTTPS
-			break
-		}
-		resp, err = client.R().Get(urls)
-		if err != nil || resp == nil || resp.RawResponse == nil {
-			time.Sleep(3 * time.Second) // 在重试前等待
-			continue
-		}
-		// 如果得到有效响应，处理响应
-		if resp.Body() != nil {
-			// 处理响应的逻辑
-			break
+	if err != nil {
+		for attempt := 0; attempt < 4; attempt++ {
+			if attempt == 2 { // 在第三次尝试时切换到HTTPS
+				break
+			}
+			resp, err = client.R().Get(urls)
+			if err != nil || resp == nil || resp.RawResponse == nil {
+				time.Sleep(3 * time.Second) // 在重试前等待
+				continue
+			}
+			// 如果得到有效响应，处理响应
+			if resp.Body() != nil {
+				// 处理响应的逻辑
+				break
+			}
 		}
 	}
+
 	if err != nil {
 		gologger.Errorf("waybackarchive 历史快照链接访问失败尝试切换代理\n")
 		return ""
