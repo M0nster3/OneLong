@@ -46,7 +46,7 @@ func StartScan(options *Utils.LongOptions) {
 		color.RGBStyleFromString("237,64,35").Printf(fmt.Sprintf("--------------------批量查询%d条域名资产--------------------\n", len(res)))
 
 		for id, v := range res {
-			color.RGBStyleFromString("237,64,35").Printf(fmt.Sprintf("--------------------当前是第 %d 条域名,还剩 %d 条--------------------\n", id+1, len(res)-id+1))
+			color.RGBStyleFromString("237,64,35").Printf(fmt.Sprintf("当前批量查询第 %d 条域名,还剩 %d 条\n", id+1, len(res)-id-1))
 			if v == "" {
 				continue
 			}
@@ -201,8 +201,8 @@ func DomainRunJob(options *Utils.LongOptions) {
 	re := regexp.MustCompile(`(?:\d{1,3}\.){3}\d{1,3}`)
 	matches := re.FindAllStringSubmatch(options.Domain, -1)
 	if matches != nil {
-		color.RGBStyleFromString("244,211,49").Println("当前不支持IP查询")
-		os.Exit(0)
+		color.RGBStyleFromString("244,211,49").Println("\n当前不支持IP查询")
+		return
 	}
 
 	color.RGBStyleFromString("244,211,49").Println("\n--------------------查询子域名--------------------")

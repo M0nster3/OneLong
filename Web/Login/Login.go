@@ -45,7 +45,7 @@ func GetEnInfo(response string) (*Utils.EnInfos, map[string]*outputfile.ENSMap) 
 
 }
 func Login(domains []string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) {
-	//color.RGBStyleFromString("244,211,49").Println("\n--------------------探测网站后台--------------------")
+	////color.RGBStyleFromString("244,211,49").Println("\n--------------------探测网站后台--------------------")
 
 	gologger.Infof("扫描网站后台，当前共有存活子域%d个\n", len(domains))
 	for domainint, domain := range domains {

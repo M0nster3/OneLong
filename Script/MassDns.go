@@ -30,6 +30,7 @@ func checkWildcardDNS(domain string) bool {
 }
 
 func Massdns(domain string, ENOptions *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) {
+
 	if checkWildcardDNS(domain) {
 		gologger.Errorf("[%s存在泛解析不进行爆破]\n", domain)
 		return

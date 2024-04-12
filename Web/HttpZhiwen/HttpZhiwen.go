@@ -59,6 +59,7 @@ func Status(domaina string, options *Utils.LongOptions, DomainsIP *outputfile.Do
 	DomainsIP.IPA = Utils.SetStr(DomainsIP.IPA)
 	DomainsIP.Domains = Utils.SetStr(DomainsIP.Domains)
 	if !options.NoPort {
+
 		CCC := make(map[string]bool)
 		for _, C := range DomainsIP.IPA {
 			ip := net.ParseIP(C)
