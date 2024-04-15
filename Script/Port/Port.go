@@ -5,6 +5,7 @@ import (
 	outputfile "OneLong/Utils/OutPutfile"
 	"bytes"
 	"fmt"
+	"github.com/gookit/color"
 	"github.com/remeh/sizedwaitgroup"
 	"github.com/tidwall/gjson"
 	"os"
@@ -267,7 +268,9 @@ func (m *Masscan) Do() {
 	cmd.Stderr = &stderr
 	err = cmd.Run()
 	if err != nil {
-
+		//fmt.Println("Error:", err)
+		//fmt.Println("端口爆破失败:\n", stderr.String())
+		color.RGBStyleFromString("237,64,35").Printf(fmt.Sprintf("端口爆破失败:\n%s", stderr.String()))
 		return
 	}
 	m.parsResult(resultTempFile)

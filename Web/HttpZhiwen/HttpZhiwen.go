@@ -82,6 +82,7 @@ func Status(domaina string, options *Utils.LongOptions, DomainsIP *outputfile.Do
 		var Config Port.Config
 		for _, C := range DomainsIP.C {
 			wg1.Add(1)
+			C := C
 			go func() {
 				Config.Target = C
 				Config.Rate = options.LongConfig.Port.Masscan.Rate
