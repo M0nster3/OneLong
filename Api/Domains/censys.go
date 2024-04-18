@@ -131,7 +131,7 @@ func Censys(domain string, options *Utils.LongOptions, DomainsIP *outputfile.Dom
 			gologger.Labelf("Censys 空间探测当前Token只能查询10页 \n")
 			return ""
 		} else if resp.StatusCode() == 403 {
-			gologger.Labelf("Censys 空间探测Cookie失效\n")
+			gologger.Errorf("Censys 空间探测Cookie失效\n")
 			return ""
 		} else if gjson.Get(string(resp.Body()), "result.total").Int() == 0 {
 			//gologger.Labelf("Censys 空间探测未发现域名 %s\n", domain)

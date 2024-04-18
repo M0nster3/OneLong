@@ -161,7 +161,7 @@ func (s *FinScan) fingerScan(DomainsIP *outputfile.DomainsIP) {
 			cmss := strings.Join(cms, ",")
 			out := Outrestul{data.url, cmss, data.server, data.statuscode, data.length, data.title}
 			s.AllResult = append(s.AllResult, out)
-			if len(out.Cms) != 0 {
+			if len(out.Cms) != 0 && !strings.Contains(out.Server, "cloudflare") {
 				outstr := fmt.Sprintf("[ %s | %s | %s | %d | %d | %s ]", out.Url, out.Cms, out.Server, out.Statuscode, out.Length, out.Title)
 				color.RGBStyleFromString("237,64,35").Println(outstr)
 				s.FocusResult = append(s.FocusResult, out)
@@ -196,7 +196,7 @@ func (s *FinScan) fingerScan(DomainsIP *outputfile.DomainsIP) {
 					}
 				}
 
-			} else {
+			} else if !strings.Contains(out.Server, "cloudflare") {
 				outstr := fmt.Sprintf("[ %s | %s | %s | %d | %d | %s ]", out.Url, out.Cms, out.Server, out.Statuscode, out.Length, out.Title)
 				fmt.Println(outstr)
 				var zhiwen string

@@ -88,7 +88,12 @@ func WaybackarchiveLogin(domain string, options *Utils.LongOptions, DomainsIP *o
 	}
 
 	loginurls := strings.Split(string(resp.Body()), "\n")
-	last := "svg,css,eot,ttf,woff,jpg,png,jpeg,js,woff2,htm,gif,html,xml"
+	last, err := os.ReadFile(filepath.Join(Utils.GetPathDir(), "Script/Dict/ExcludeLogin.txt"))
+	if err != nil {
+		gologger.Errorf("Alienvault API 读取 ExcludeLogin 文件失败\n")
+		return ""
+	}
+	//last := "svg,css,eot,ttf,woff,jpg,png,jpeg,js,woff2,htm,gif,html,xml,swf"
 	var mu sync.Mutex // 用于保护 addedURLs
 	addedURLs := sync.Map{}
 	for _, loginurl := range loginurls {
@@ -100,9 +105,9 @@ func WaybackarchiveLogin(domain string, options *Utils.LongOptions, DomainsIP *o
 				if strings.Contains(loginurl, content) {
 					wen := strings.Split(loginurl, "?")
 					if len(wen) > 1 {
-						lastThree := strings.Split(loginurl, ".")
+						lastThree := strings.Split(wen[0], ".")
 						lastWen := strings.Split(lastThree[len(lastThree)-1], "?")
-						if !strings.Contains(last, lastThree[len(lastThree)-1]) && !strings.Contains(last, lastWen[0]) {
+						if !strings.Contains(string(last), strings.ToLower(lastThree[len(lastThree)-1])) && !strings.Contains(string(last), lastWen[0]) {
 							mu.Lock()
 							if _, ok := addedURLs.LoadOrStore(wen[0], true); !ok {
 								gologger.Infof("waybackarchive 匹配到链接:%s\n", loginurl)
@@ -114,7 +119,7 @@ func WaybackarchiveLogin(domain string, options *Utils.LongOptions, DomainsIP *o
 					} else {
 						lastThree := strings.Split(loginurl, ".")
 						lastWen := strings.Split(lastThree[len(lastThree)-1], "?")
-						if !strings.Contains(last, lastThree[len(lastThree)-1]) && !strings.Contains(last, lastWen[0]) {
+						if !strings.Contains(string(last), strings.ToLower(lastThree[len(lastThree)-1])) && !strings.Contains(string(last), lastWen[0]) {
 							gologger.Infof("waybackarchive 匹配到链接:%s\n", loginurl)
 							//fmt.Println("AlienvaultLogin 匹配到链接:", loginurl.String())
 							DomainsIP.LoginUrl = append(DomainsIP.LoginUrl, loginurl)

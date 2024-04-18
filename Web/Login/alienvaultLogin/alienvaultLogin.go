@@ -88,6 +88,13 @@ func AlienvaultLogin(domain string, options *Utils.LongOptions, DomainsIP *outpu
 		return
 	}
 	intcount := int(count)
+	last, err := os.ReadFile(filepath.Join(Utils.GetPathDir(), "Script/Dict/ExcludeLogin.txt"))
+	if err != nil {
+		gologger.Errorf("Alienvault API 读取 ExcludeLogin 文件失败\n")
+		return
+	}
+	var mu sync.Mutex // 用于保护 addedURLs
+	addedURLs := sync.Map{}
 	for add := 1; add <= intcount/100+1; add += 1 {
 		urls = fmt.Sprintf("https://otx.alienvault.com/api/v1/indicators/domain/%s/url_list?limit=100&page=%d", domain, add)
 		resp, err = clientR.Get(urls)
@@ -99,9 +106,30 @@ func AlienvaultLogin(domain string, options *Utils.LongOptions, DomainsIP *outpu
 			go func() {
 				for content := range contentSet {
 					if strings.Contains(loginurl.String(), content) {
-						gologger.Infof("AlienvaultLogin 匹配到链接:%s\n", loginurl.String())
-						//fmt.Println("AlienvaultLogin 匹配到链接:", loginurl.String())
-						DomainsIP.LoginUrl = append(DomainsIP.LoginUrl, loginurl.String())
+						wen := strings.Split(loginurl.String(), "?")
+						if len(wen) > 1 {
+							lastThree := strings.Split(wen[0], ".")
+							lastWen := strings.Split(lastThree[len(lastThree)-1], "?")
+							if !strings.Contains(string(last), strings.ToLower(lastThree[len(lastThree)-1])) && !strings.Contains(string(last), lastWen[0]) {
+								mu.Lock()
+								if _, ok := addedURLs.LoadOrStore(wen[0], true); !ok {
+									gologger.Infof("AlienvaultLogin 匹配到链接:%s\n", wen[0])
+									//fmt.Println("AlienvaultLogin 匹配到链接:", loginurl.String())
+									DomainsIP.LoginUrl = append(DomainsIP.LoginUrl, loginurl.String())
+								}
+								mu.Unlock()
+
+							}
+						} else {
+							lastThree := strings.Split(loginurl.String(), ".")
+							lastWen := strings.Split(lastThree[len(lastThree)-1], "?")
+							if !strings.Contains(string(last), strings.ToLower(lastThree[len(lastThree)-1])) && !strings.Contains(string(last), lastWen[0]) {
+								gologger.Infof("AlienvaultLogin 匹配到链接:%s\n", loginurl.String())
+								//fmt.Println("AlienvaultLogin 匹配到链接:", loginurl.String())
+								DomainsIP.LoginUrl = append(DomainsIP.LoginUrl, loginurl.String())
+							}
+						}
+
 					}
 				}
 				wg.Done()
