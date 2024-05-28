@@ -118,7 +118,7 @@ func Baidu(domain string, options *Utils.LongOptions, DomainsIP *outputfile.Doma
 		OnResult: func(r runner.Result) {
 			// handle error
 			if r.Err != nil {
-				fmt.Printf("[Err] %s: %s\n", r.Input, r.Err)
+				//fmt.Printf("[Err] %s: %s\n", r.Input, r.Err)
 
 			}
 			//fmt.Printf("%s %s %d\n", r.Input, r.Host, r.StatusCode)

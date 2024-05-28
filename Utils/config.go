@@ -105,6 +105,7 @@ type LongConfig struct {
 		Resolvers   string `yaml:"resolvers"`
 		Wordlist    string `yaml:"wordlist"`
 		MassdnsPath string `yaml:"massdnsPath"`
+		Thread      int    `yaml:"thread"`
 	}
 	Email struct {
 		Emailhunter string `yaml:"emailhunter"`
@@ -117,6 +118,7 @@ type LongConfig struct {
 			Masscanpath string `yaml:"masscanpath"`
 			Rate        int    `yaml:"rate"`
 			Port        string `yaml:"port"`
+			Routermac   string `yaml:"routermac"`
 		}
 
 		NmapPath string `yaml:"nmappath"`
@@ -235,6 +237,7 @@ massdns:
   resolvers: 'resolvers.txt'			# resolvers 文件名称
   wordlist: 'names.txt'			# 子域名爆破文件名称
   massdnsPath: 'massdns.exe'		# Massdns工具名称
+  thread: 10000
 email:
   emailhunter: ''		# Email hunter Token
   intelxEmail: ''		# Email Intelx Token
@@ -244,6 +247,7 @@ port:
   masscan:
     masscanpath: 'masscan'		    # Masscan放的位置如果是在环境变量中则默认就行
     rate: 5000 				# Masscan速率，速率如果太大很有可能直接带宽占满
+    routermac: '' 				# 如果masscan出现这个问题 https://github.com/M0nster3/OneLong/issues/5 尝试加入网关 mac 的参数例如 66-55-44-33-22-11但是这里要添加你自己的
   nmappath: 'nmap'	
 #Afrog配置
 reverse:

@@ -58,7 +58,7 @@ func Massdns(domain string, ENOptions *Utils.LongOptions, DomainsIP *outputfile.
 		Retries:            5,
 		Verbose:            true,
 		NoColor:            true,
-		Threads:            300,
+		Threads:            ENOptions.LongConfig.Massdns.Thread,
 		MassdnsRaw:         "",
 		WildcardThreads:    25,
 		StrictWildcard:     true,

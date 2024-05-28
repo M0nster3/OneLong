@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"sync"
 
@@ -19,7 +20,7 @@ import (
 	"time"
 )
 
-func WaybackarchiveLogin(domain string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) string {
+func WaybackarchiveLogin(domain string, options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP, login int) string {
 	//gologger.Infof("waybackarchive 历史快照查询\n")
 	var wg sync.WaitGroup
 	dir := filepath.Join(Utils.GetPathDir(), "Script/Dict/Login.txt")
@@ -78,8 +79,11 @@ func WaybackarchiveLogin(domain string, options *Utils.LongOptions, DomainsIP *o
 			break
 		}
 	}
-	if err != nil {
+	if err != nil && login == 1 {
 		gologger.Errorf("waybackarchive 历史快照链接访问失败尝试切换代理\n")
+		return ""
+	}
+	if err != nil {
 		return ""
 	}
 	if resp.Body() == nil {
@@ -101,8 +105,14 @@ func WaybackarchiveLogin(domain string, options *Utils.LongOptions, DomainsIP *o
 		loginurl := loginurl
 
 		go func() {
+
 			for content := range contentSet {
-				if strings.Contains(loginurl, content) {
+				host := regexp.MustCompile(`(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}`)
+				url := host.FindAllStringSubmatch(strings.TrimSpace(loginurl), -1)
+				if strings.Contains(url[0][0], content) {
+					gologger.Infof("waybackarchive 匹配到链接:%s\n", loginurl)
+					DomainsIP.LoginUrl = append(DomainsIP.LoginUrl, loginurl)
+				} else if strings.Contains(loginurl, content) {
 					wen := strings.Split(loginurl, "?")
 					if len(wen) > 1 {
 						lastThree := strings.Split(wen[0], ".")

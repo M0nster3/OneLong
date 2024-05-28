@@ -25,6 +25,7 @@ type Config struct {
 	IsPing        bool   `json:"ping"`
 	Tech          string `json:"tech"` //nmap -sV
 	CmdBin        string `json:"cmdBin"`
+	Routermac     string
 }
 
 // Result 端口扫描结果
@@ -48,6 +49,7 @@ func NewMasscan(config Config, option *Utils.LongOptions) *Masscan {
 	config.CmdBin = option.LongConfig.Port.Masscan.Masscanpath
 	config.Rate = option.LongConfig.Port.Masscan.Rate
 	config.Port = option.Port
+	config.Routermac = option.LongConfig.Port.Masscan.Routermac
 	//if runtime.GOOS == "windows" {
 	//	config.CmdBin = filepath.Join(Utils.GetPathDir(), "Script/Port/Masscan/masscan.exe")
 	//}
@@ -240,10 +242,14 @@ func (m *Masscan) Do() {
 		return
 	}
 	var cmdArgs []string
+
 	cmdArgs = append(
 		cmdArgs,
 		"--open", "--rate", strconv.Itoa(m.Config.Rate), "-iL", inputTargetFile, "-oL", resultTempFile,
 	)
+	if m.Config.Routermac != "" {
+		cmdArgs = append(cmdArgs, "--router-mac", m.Config.Routermac)
+	}
 	if strings.HasPrefix(m.Config.Port, "--top-ports") {
 		cmdArgs = append(cmdArgs, "-p")
 		switch strings.Split(m.Config.Port, " ")[1] {

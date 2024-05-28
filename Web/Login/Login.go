@@ -55,7 +55,7 @@ func Login(domains []string, options *Utils.LongOptions, DomainsIP *outputfile.D
 		domain = strings.ReplaceAll(domain, "http://", "")
 		if !strings.Contains(domain, "\\") {
 			alienvaultLogin.AlienvaultLogin(domain, options, DomainsIP)
-			WaybackarchiveLogin.WaybackarchiveLogin(domain, options, DomainsIP)
+			WaybackarchiveLogin.WaybackarchiveLogin(domain, options, DomainsIP, domainint+1)
 			//CommoncrawlLogin.CommoncrawlLogin(domain, options, DomainsIP)
 		}
 	}
