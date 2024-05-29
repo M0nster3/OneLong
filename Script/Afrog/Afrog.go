@@ -52,7 +52,7 @@ func Afrog(options *Utils.LongOptions, DomainsIP *outputfile.DomainsIP) {
 	tempOutputFile := Utils.GetTempJsonPathFileName()
 	tempInputFile := Utils.GetTempPathFileName()
 	file, _ := os.OpenFile(tempInputFile, os.O_CREATE|os.O_WRONLY, 0644)
-	for _, url := range DomainsIP.DomainA {
+	for _, url := range DomainsIP.LoginDomain {
 		_, err := file.WriteString(url + "\n")
 		if err != nil {
 			break

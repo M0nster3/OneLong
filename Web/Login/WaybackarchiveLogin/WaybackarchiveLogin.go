@@ -129,11 +129,30 @@ OuterLoop:
 				index := strings.Index(lowurl, content)
 				if index != -1 {
 					// 截取到之前的内容和 content本身
-					result := loginurl[:index+len(content)]
-					if !LoginUrls[result] {
+					//result := loginurl[:index+len(content)]
+					Hurl := loginurl
+					protocol := ""
+					if strings.HasPrefix(Hurl, "http://") {
+						protocol = "http://"
+						Hurl = Hurl[len("http://"):]
+					} else if strings.HasPrefix(Hurl, "https://") {
+						protocol = "https://"
+						Hurl = Hurl[len("https://"):]
+					}
+
+					parts := strings.Split(Hurl, "/")
+
+					if len(parts) > 1 {
+						Hurl = protocol + parts[0] + "/" + parts[1]
+					} else {
+						Hurl = protocol + Hurl
+					}
+					if !LoginUrls[Hurl] {
+
 						gologger.Infof("waybackarchive 匹配到链接:%s\n", loginurl)
 						DomainsIP.LoginUrl = append(DomainsIP.LoginUrl, loginurl)
-						LoginUrls[result] = true
+						//LoginUrls[result] = true
+						LoginUrls[Hurl] = true
 					}
 				}
 				//if strings.Contains(loginurl, content) {
