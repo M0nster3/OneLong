@@ -175,7 +175,7 @@ func CompanyRunJob(options *Utils.LongOptions) {
 	//color.RGBStyleFromString("244,211,49").Println("\n--------------------整合域名、IP、指纹--------------------")
 	HttpZhiwen.Status(domain, options, &Domainip)
 	color.RGBStyleFromString("244,211,49").Println("\n--------------------探测网站后台--------------------")
-	Login.Login(Domainip.DomainA, options, &Domainip)
+	Login.Login(Domainip.LoginDomain, options, &Domainip)
 	// 如果不是API模式，而且不是批量文件形式查询 不是API 就合并导出到表格里面
 	if !options.NoPoc {
 		color.RGBStyleFromString("244,211,49").Println("\n--------------------漏洞扫描--------------------")
@@ -217,6 +217,6 @@ func DomainRunJob(options *Utils.LongOptions) {
 		Afrog.Afrog(options, &Domainip)
 	}
 	color.RGBStyleFromString("244,211,49").Println("\n--------------------探测网站后台--------------------")
-	Login.Login(Domainip.DomainA, options, &Domainip)
+	Login.Login(Domainip.LoginDomain, options, &Domainip)
 
 }

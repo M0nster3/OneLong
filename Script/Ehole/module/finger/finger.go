@@ -183,6 +183,9 @@ func (s *FinScan) fingerScan(DomainsIP *outputfile.DomainsIP) {
 							DomainsIP.Status_code = append(DomainsIP.Status_code, strconv.Itoa(out.Statuscode))
 							DomainsIP.TitleBUff = append(DomainsIP.TitleBUff, out.Title)
 							DomainsIP.Size = append(DomainsIP.Size, strconv.Itoa(out.Length))
+							if out.Statuscode == 200 {
+								DomainsIP.LoginDomain = append(DomainsIP.LoginDomain, out.Url)
+							}
 						}
 					} else {
 						if out.Statuscode != 502 && out.Length != 0 {
@@ -192,6 +195,9 @@ func (s *FinScan) fingerScan(DomainsIP *outputfile.DomainsIP) {
 							DomainsIP.Status_code = append(DomainsIP.Status_code, strconv.Itoa(out.Statuscode))
 							DomainsIP.TitleBUff = append(DomainsIP.TitleBUff, out.Title)
 							DomainsIP.Size = append(DomainsIP.Size, strconv.Itoa(out.Length))
+							if out.Statuscode == 200 {
+								DomainsIP.LoginDomain = append(DomainsIP.LoginDomain, out.Url)
+							}
 						}
 					}
 				}
@@ -224,6 +230,9 @@ func (s *FinScan) fingerScan(DomainsIP *outputfile.DomainsIP) {
 							DomainsIP.Status_code = append(DomainsIP.Status_code, strconv.Itoa(out.Statuscode))
 							DomainsIP.TitleBUff = append(DomainsIP.TitleBUff, out.Title)
 							DomainsIP.Size = append(DomainsIP.Size, strconv.Itoa(out.Length))
+							if out.Statuscode == 200 {
+								DomainsIP.LoginDomain = append(DomainsIP.LoginDomain, out.Url)
+							}
 						}
 					} else {
 						if out.Statuscode != 502 && out.Length != 0 {
@@ -233,6 +242,9 @@ func (s *FinScan) fingerScan(DomainsIP *outputfile.DomainsIP) {
 							DomainsIP.Status_code = append(DomainsIP.Status_code, strconv.Itoa(out.Statuscode))
 							DomainsIP.TitleBUff = append(DomainsIP.TitleBUff, out.Title)
 							DomainsIP.Size = append(DomainsIP.Size, strconv.Itoa(out.Length))
+							if out.Statuscode == 200 {
+								DomainsIP.LoginDomain = append(DomainsIP.LoginDomain, out.Url)
+							}
 						}
 					}
 				}

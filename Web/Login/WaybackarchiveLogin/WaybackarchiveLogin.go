@@ -66,76 +66,110 @@ func WaybackarchiveLogin(domain string, options *Utils.LongOptions, DomainsIP *o
 
 	clientR.URL = urls
 	resp, err := clientR.Get(urls)
-	for attempt := 0; attempt < 4; attempt++ {
-		time.Sleep(5 * time.Second) // 在重试前等待
-		resp, err = client.R().Get(urls)
-		if err != nil || resp == nil || resp.RawResponse == nil {
+	if err != nil {
+		for attempt := 0; attempt < 4; attempt++ {
 			time.Sleep(5 * time.Second) // 在重试前等待
-			continue
-		}
-		// 如果得到有效响应，处理响应
-		if resp.Body() != nil {
-			// 处理响应的逻辑
-			break
+			resp, err = client.R().Get(urls)
+			if err != nil || resp == nil || resp.RawResponse == nil {
+				time.Sleep(5 * time.Second) // 在重试前等待
+				continue
+			}
+			// 如果得到有效响应，处理响应
+			if resp.Body() != nil {
+				// 处理响应的逻辑
+				break
+			}
 		}
 	}
+
 	if err != nil && login == 1 {
 		gologger.Errorf("waybackarchive 历史快照链接访问失败尝试切换代理\n")
 		return ""
 	}
-	if err != nil {
+	if err != nil || resp.Body() == nil {
 		return ""
 	}
-	if resp.Body() == nil {
-		//gologger.Labelf("waybackarchive 历史快照未发现域名 %s\n", domain)
-		return ""
-	}
+	//if resp.Body() == nil {
+	//	//gologger.Labelf("waybackarchive 历史快照未发现域名 %s\n", domain)
+	//	return ""
+	//}
 
 	loginurls := strings.Split(string(resp.Body()), "\n")
-	last, err := os.ReadFile(filepath.Join(Utils.GetPathDir(), "Script/Dict/ExcludeLogin.txt"))
-	if err != nil {
-		gologger.Errorf("Alienvault API 读取 ExcludeLogin 文件失败\n")
-		return ""
-	}
+	//last, err := os.ReadFile(filepath.Join(Utils.GetPathDir(), "Script/Dict/ExcludeLogin.txt"))
+	//if err != nil {
+	//	gologger.Errorf("Alienvault API 读取 ExcludeLogin 文件失败\n")
+	//	return ""
+	//}
 	//last := "svg,css,eot,ttf,woff,jpg,png,jpeg,js,woff2,htm,gif,html,xml,swf"
-	var mu sync.Mutex // 用于保护 addedURLs
-	addedURLs := sync.Map{}
+	//var mu sync.Mutex // 用于保护 addedURLs
+	//addedURLs := sync.Map{}
+	LoginUrls := make(map[string]bool)
+OuterLoop:
 	for _, loginurl := range loginurls {
-		wg.Add(1)
 		loginurl := loginurl
-
-		go func() {
-
+		host := regexp.MustCompile(`(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}`)
+		url := host.FindAllStringSubmatch(strings.TrimSpace(loginurl), -1)
+		if url != nil && len(url) > 0 {
 			for content := range contentSet {
-				host := regexp.MustCompile(`(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}`)
-				url := host.FindAllStringSubmatch(strings.TrimSpace(loginurl), -1)
 				if strings.Contains(url[0][0], content) {
-					gologger.Infof("waybackarchive 匹配到链接:%s\n", loginurl)
-					DomainsIP.LoginUrl = append(DomainsIP.LoginUrl, loginurl)
-				} else if strings.Contains(loginurl, content) {
-					wen := strings.Split(loginurl, "?")
-					if len(wen) > 1 {
-						lastThree := strings.Split(wen[0], ".")
-						lastWen := strings.Split(lastThree[len(lastThree)-1], "?")
-						if !strings.Contains(string(last), strings.ToLower(lastThree[len(lastThree)-1])) && !strings.Contains(string(last), lastWen[0]) {
-							mu.Lock()
-							if _, ok := addedURLs.LoadOrStore(wen[0], true); !ok {
-								gologger.Infof("waybackarchive 匹配到链接:%s\n", loginurl)
-								DomainsIP.LoginUrl = append(DomainsIP.LoginUrl, loginurl)
-							}
-							mu.Unlock()
+					if !LoginUrls[url[0][0]] {
+						gologger.Infof("waybackarchive 匹配到链接:%s\n", loginurl)
+						DomainsIP.LoginUrl = append(DomainsIP.LoginUrl, loginurl)
+						LoginUrls[url[0][0]] = true
+					}
+					continue OuterLoop
+				}
+			}
+		}
 
-						}
-					} else {
-						lastThree := strings.Split(loginurl, ".")
-						lastWen := strings.Split(lastThree[len(lastThree)-1], "?")
-						if !strings.Contains(string(last), strings.ToLower(lastThree[len(lastThree)-1])) && !strings.Contains(string(last), lastWen[0]) {
-							gologger.Infof("waybackarchive 匹配到链接:%s\n", loginurl)
-							//fmt.Println("AlienvaultLogin 匹配到链接:", loginurl.String())
-							DomainsIP.LoginUrl = append(DomainsIP.LoginUrl, loginurl)
-						}
+		wg.Add(1)
+		go func() {
+			for content := range contentSet {
+				lowurl := strings.ToLower(loginurl)
+				index := strings.Index(lowurl, content)
+				if index != -1 {
+					// 截取到之前的内容和 content本身
+					result := loginurl[:index+len(content)]
+					if !LoginUrls[result] {
+						gologger.Infof("waybackarchive 匹配到链接:%s\n", loginurl)
+						DomainsIP.LoginUrl = append(DomainsIP.LoginUrl, loginurl)
+						LoginUrls[result] = true
 					}
 				}
+				//if strings.Contains(loginurl, content) {
+				//	//wen := strings.Split(loginurl, "?")
+				//	//if len(wen) > 1 {
+				//	//	lastThree := strings.Split(wen[0], ".")
+				//	//	lastWen := strings.Split(lastThree[len(lastThree)-1], "?")
+				//	//	if !strings.Contains(string(last), strings.ToLower(lastThree[len(lastThree)-1])) && !strings.Contains(string(last), lastWen[0]) {
+				//	//		mu.Lock()
+				//	//		if _, ok := addedURLs.LoadOrStore(wen[0], true); !ok {
+				//	//			index := strings.Index(loginurl, content)
+				//	//			if index != -1 {
+				//	//				// 截取到之前的内容和 content本身
+				//	//				result := loginurl[:index+len(content)]
+				//	//				if !LoginUrls[result] {
+				//	//					gologger.Infof("waybackarchive 匹配到链接:%s\n", loginurl)
+				//	//					DomainsIP.LoginUrl = append(DomainsIP.LoginUrl, loginurl)
+				//	//					LoginUrls[result] = true
+				//	//				}
+				//	//			}
+				//	//
+				//	//		}
+				//	//		mu.Unlock()
+				//	//
+				//	//	}
+				//	//} else {
+				//	//	lastThree := strings.Split(loginurl, ".")
+				//	//	lastWen := strings.Split(lastThree[len(lastThree)-1], "?")
+				//	//	if !strings.Contains(string(last), strings.ToLower(lastThree[len(lastThree)-1])) && !strings.Contains(string(last), lastWen[0]) {
+				//	//		gologger.Infof("waybackarchive 匹配到链接:%s\n", loginurl)
+				//	//		//fmt.Println("AlienvaultLogin 匹配到链接:", loginurl.String())
+				//	//		DomainsIP.LoginUrl = append(DomainsIP.LoginUrl, loginurl)
+				//	//	}
+				//	//}
+				//
+				//}
 			}
 			wg.Done()
 		}()

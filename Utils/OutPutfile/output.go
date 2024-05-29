@@ -21,6 +21,7 @@ type ENSMap struct {
 type DomainsIP struct {
 	Domains     []string
 	DomainA     []string //DomainA 指纹识别里面需要的
+	LoginDomain []string
 	C           []string
 	IP          []string
 	IPA         []string //ipa 指纹识别里面需要的
