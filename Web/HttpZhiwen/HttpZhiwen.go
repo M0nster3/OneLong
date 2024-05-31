@@ -109,15 +109,15 @@ func Status(domaina string, options *Utils.LongOptions, DomainsIP *outputfile.Do
 	var add int
 	if len(DomainsIP.DomainA) < len(DomainsIP.IPA) {
 		for add = 0; add < len(DomainsIP.DomainA); add++ {
-			result += "{\"hostname\"" + ":" + "\"" + DomainsIP.DomainA[add] + "\"" + "," + "\"address\"" + ":" + "\"" + DomainsIP.IPA[add] + "\"" + "," + "\"A\"" + ":" + "\"" + DomainsIP.A[add] + "\"" + "," + "\"Size\"" + ":" + "\"" + DomainsIP.Size[add] + "\"" + "," + "\"status_code\"" + ":" + "\"" + DomainsIP.Status_code[add] + "\"" + "," + "\"title\"" + ":" + "\"" + DomainsIP.TitleBUff[add] + "\"" + "," + "\"Zhiwen\"" + ":" + "\"" + DomainsIP.Zhiwen[add] + "\"" + "},"
+			result += "{\"hostname\"" + ":" + "\"" + DomainsIP.DomainA[add] + "\"" + "," + "\"pang\"" + ":" + "\"" + DomainsIP.PangURLS[add] + "\"" + "," + "\"address\"" + ":" + "\"" + DomainsIP.IPA[add] + "\"" + "," + "\"A\"" + ":" + "\"" + DomainsIP.A[add] + "\"" + "," + "\"Size\"" + ":" + "\"" + DomainsIP.Size[add] + "\"" + "," + "\"status_code\"" + ":" + "\"" + DomainsIP.Status_code[add] + "\"" + "," + "\"title\"" + ":" + "\"" + DomainsIP.TitleBUff[add] + "\"" + "," + "\"Zhiwen\"" + ":" + "\"" + DomainsIP.Zhiwen[add] + "\"" + "},"
 		}
 		for ii := add; ii < len(DomainsIP.IPA); ii++ {
-			result += "{\"address\"" + ":" + "\"" + DomainsIP.IPA[ii] + "\"" + "},"
+			result += "{\"address\"" + ":" + "\"" + DomainsIP.IPA[ii] + "\"" + "," + "\"pang\"" + ":" + "\"" + DomainsIP.PangURLS[add] + "\"" + "},"
 		}
 
 	} else {
 		for add = 0; add < len(DomainsIP.IPA); add++ {
-			result += "{\"hostname\"" + ":" + "\"" + DomainsIP.DomainA[add] + "\"" + "," + "\"address\"" + ":" + "\"" + DomainsIP.IPA[add] + "\"" + "," + "\"A\"" + ":" + "\"" + DomainsIP.A[add] + "\"" + "," + "\"Size\"" + ":" + "\"" + DomainsIP.Size[add] + "\"" + "," + "\"status_code\"" + ":" + "\"" + DomainsIP.Status_code[add] + "\"" + "," + "\"title\"" + ":" + "\"" + DomainsIP.TitleBUff[add] + "\"" + "," + "\"Zhiwen\"" + ":" + "\"" + DomainsIP.Zhiwen[add] + "\"" + "},"
+			result += "{\"hostname\"" + ":" + "\"" + DomainsIP.DomainA[add] + "\"" + "," + "\"pang\"" + ":" + "\"" + DomainsIP.PangURLS[add] + "\"" + "," + "\"address\"" + ":" + "\"" + DomainsIP.IPA[add] + "\"" + "," + "\"A\"" + ":" + "\"" + DomainsIP.A[add] + "\"" + "," + "\"Size\"" + ":" + "\"" + DomainsIP.Size[add] + "\"" + "," + "\"status_code\"" + ":" + "\"" + DomainsIP.Status_code[add] + "\"" + "," + "\"title\"" + ":" + "\"" + DomainsIP.TitleBUff[add] + "\"" + "," + "\"Zhiwen\"" + ":" + "\"" + DomainsIP.Zhiwen[add] + "\"" + "},"
 
 		}
 

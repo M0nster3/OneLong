@@ -120,78 +120,78 @@ OuterLoop:
 					continue OuterLoop
 				}
 			}
-		}
 
-		wg.Add(1)
-		go func() {
-			for content := range contentSet {
-				lowurl := strings.ToLower(loginurl)
-				index := strings.Index(lowurl, content)
-				if index != -1 {
-					// 截取到之前的内容和 content本身
-					//result := loginurl[:index+len(content)]
-					Hurl := loginurl
-					protocol := ""
-					if strings.HasPrefix(Hurl, "http://") {
-						protocol = "http://"
-						Hurl = Hurl[len("http://"):]
-					} else if strings.HasPrefix(Hurl, "https://") {
-						protocol = "https://"
-						Hurl = Hurl[len("https://"):]
+			wg.Add(1)
+			go func() {
+				for content := range contentSet {
+					lowurl := strings.ToLower(loginurl)
+					index := strings.Index(lowurl, content)
+					if index != -1 {
+						// 截取到之前的内容和 content本身
+						//result := loginurl[:index+len(content)]
+						Hurl := loginurl
+						protocol := ""
+						if strings.HasPrefix(Hurl, "http://") {
+							protocol = "http://"
+							Hurl = Hurl[len("http://"):]
+						} else if strings.HasPrefix(Hurl, "https://") {
+							protocol = "https://"
+							Hurl = Hurl[len("https://"):]
+						}
+
+						parts := strings.Split(Hurl, "/")
+
+						if len(parts) > 1 {
+							Hurl = protocol + parts[0] + "/" + parts[1]
+						} else {
+							Hurl = protocol + Hurl
+						}
+						if !LoginUrls[Hurl] {
+
+							gologger.Infof("waybackarchive 匹配到链接:%s\n", loginurl)
+							DomainsIP.LoginUrl = append(DomainsIP.LoginUrl, loginurl)
+							//LoginUrls[result] = true
+							LoginUrls[Hurl] = true
+						}
 					}
-
-					parts := strings.Split(Hurl, "/")
-
-					if len(parts) > 1 {
-						Hurl = protocol + parts[0] + "/" + parts[1]
-					} else {
-						Hurl = protocol + Hurl
-					}
-					if !LoginUrls[Hurl] {
-
-						gologger.Infof("waybackarchive 匹配到链接:%s\n", loginurl)
-						DomainsIP.LoginUrl = append(DomainsIP.LoginUrl, loginurl)
-						//LoginUrls[result] = true
-						LoginUrls[Hurl] = true
-					}
+					//if strings.Contains(loginurl, content) {
+					//	//wen := strings.Split(loginurl, "?")
+					//	//if len(wen) > 1 {
+					//	//	lastThree := strings.Split(wen[0], ".")
+					//	//	lastWen := strings.Split(lastThree[len(lastThree)-1], "?")
+					//	//	if !strings.Contains(string(last), strings.ToLower(lastThree[len(lastThree)-1])) && !strings.Contains(string(last), lastWen[0]) {
+					//	//		mu.Lock()
+					//	//		if _, ok := addedURLs.LoadOrStore(wen[0], true); !ok {
+					//	//			index := strings.Index(loginurl, content)
+					//	//			if index != -1 {
+					//	//				// 截取到之前的内容和 content本身
+					//	//				result := loginurl[:index+len(content)]
+					//	//				if !LoginUrls[result] {
+					//	//					gologger.Infof("waybackarchive 匹配到链接:%s\n", loginurl)
+					//	//					DomainsIP.LoginUrl = append(DomainsIP.LoginUrl, loginurl)
+					//	//					LoginUrls[result] = true
+					//	//				}
+					//	//			}
+					//	//
+					//	//		}
+					//	//		mu.Unlock()
+					//	//
+					//	//	}
+					//	//} else {
+					//	//	lastThree := strings.Split(loginurl, ".")
+					//	//	lastWen := strings.Split(lastThree[len(lastThree)-1], "?")
+					//	//	if !strings.Contains(string(last), strings.ToLower(lastThree[len(lastThree)-1])) && !strings.Contains(string(last), lastWen[0]) {
+					//	//		gologger.Infof("waybackarchive 匹配到链接:%s\n", loginurl)
+					//	//		//fmt.Println("AlienvaultLogin 匹配到链接:", loginurl.String())
+					//	//		DomainsIP.LoginUrl = append(DomainsIP.LoginUrl, loginurl)
+					//	//	}
+					//	//}
+					//
+					//}
 				}
-				//if strings.Contains(loginurl, content) {
-				//	//wen := strings.Split(loginurl, "?")
-				//	//if len(wen) > 1 {
-				//	//	lastThree := strings.Split(wen[0], ".")
-				//	//	lastWen := strings.Split(lastThree[len(lastThree)-1], "?")
-				//	//	if !strings.Contains(string(last), strings.ToLower(lastThree[len(lastThree)-1])) && !strings.Contains(string(last), lastWen[0]) {
-				//	//		mu.Lock()
-				//	//		if _, ok := addedURLs.LoadOrStore(wen[0], true); !ok {
-				//	//			index := strings.Index(loginurl, content)
-				//	//			if index != -1 {
-				//	//				// 截取到之前的内容和 content本身
-				//	//				result := loginurl[:index+len(content)]
-				//	//				if !LoginUrls[result] {
-				//	//					gologger.Infof("waybackarchive 匹配到链接:%s\n", loginurl)
-				//	//					DomainsIP.LoginUrl = append(DomainsIP.LoginUrl, loginurl)
-				//	//					LoginUrls[result] = true
-				//	//				}
-				//	//			}
-				//	//
-				//	//		}
-				//	//		mu.Unlock()
-				//	//
-				//	//	}
-				//	//} else {
-				//	//	lastThree := strings.Split(loginurl, ".")
-				//	//	lastWen := strings.Split(lastThree[len(lastThree)-1], "?")
-				//	//	if !strings.Contains(string(last), strings.ToLower(lastThree[len(lastThree)-1])) && !strings.Contains(string(last), lastWen[0]) {
-				//	//		gologger.Infof("waybackarchive 匹配到链接:%s\n", loginurl)
-				//	//		//fmt.Println("AlienvaultLogin 匹配到链接:", loginurl.String())
-				//	//		DomainsIP.LoginUrl = append(DomainsIP.LoginUrl, loginurl)
-				//	//	}
-				//	//}
-				//
-				//}
-			}
-			wg.Done()
-		}()
+				wg.Done()
+			}()
+		}
 
 	}
 	wg.Wait()

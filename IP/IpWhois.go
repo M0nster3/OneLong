@@ -64,10 +64,14 @@ func IpWhois(domain string, ip string, options *Utils.LongOptions, DomainsIP *ou
 		} else {
 			resdoaminc = resdoamin
 		}
+		var domainStrings []string
+		for _, domains := range Domains {
+			domainStrings = append(domainStrings, domains.String())
+		}
 		if strings.Contains(domain, resdoaminc) {
 			DomainsIP.IPA = append(DomainsIP.IPA, ip)
 			DomainsIP.Domains = append(DomainsIP.Domains, resdoamin)
-
+			DomainsIP.PangURLS = append(DomainsIP.PangURLS, strings.Join(domainStrings, ","))
 		} else if add == 15 {
 			break
 		} else {

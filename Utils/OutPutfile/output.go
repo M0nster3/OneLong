@@ -25,6 +25,7 @@ type DomainsIP struct {
 	C           []string
 	IP          []string
 	IPA         []string //ipa 指纹识别里面需要的
+	PangURLS    []string //IP反差域名
 	TitleBUff   []string
 	Size        []string
 	Status_code []string
