@@ -101,7 +101,7 @@ func WaybackarchiveLogin(domain string, options *Utils.LongOptions, DomainsIP *o
 	//	return ""
 	//}
 	//last := "svg,css,eot,ttf,woff,jpg,png,jpeg,js,woff2,htm,gif,html,xml,swf"
-	//var mu sync.Mutex // 用于保护 addedURLs
+	var mu sync.Mutex // 用于保护 addedURLs
 	//addedURLs := sync.Map{}
 	LoginUrls := make(map[string]bool)
 OuterLoop:
@@ -146,6 +146,7 @@ OuterLoop:
 						} else {
 							Hurl = protocol + Hurl
 						}
+						mu.Lock()
 						if !LoginUrls[Hurl] {
 
 							gologger.Infof("waybackarchive 匹配到链接:%s\n", loginurl)
@@ -153,6 +154,7 @@ OuterLoop:
 							//LoginUrls[result] = true
 							LoginUrls[Hurl] = true
 						}
+						mu.Unlock()
 					}
 					//if strings.Contains(loginurl, content) {
 					//	//wen := strings.Split(loginurl, "?")

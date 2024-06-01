@@ -4,7 +4,6 @@ import (
 	"OneLong/Email/Github"
 	"OneLong/Email/Intelx"
 	"OneLong/Email/Tomba"
-	"OneLong/Email/baidu"
 	"OneLong/Email/brave"
 	"OneLong/Email/duckduckgo"
 	"OneLong/Email/hunter"
@@ -25,7 +24,7 @@ func Email(domain string, enOptions *Utils.LongOptions, Domainip *outputfile.Dom
 
 	// 创建一个函数切片，包含要执行的函数及其参数
 	funcInfos := []FuncInfo{
-		{baidu.Baidu},
+		//{baidu.Baidu},
 		{brave.Brave},
 		{duckduckgo.Duckduckgo},
 		{yahoo.YahooEmail},

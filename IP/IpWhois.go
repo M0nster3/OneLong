@@ -66,12 +66,13 @@ func IpWhois(domain string, ip string, options *Utils.LongOptions, DomainsIP *ou
 		}
 		var domainStrings []string
 		for _, domains := range Domains {
-			domainStrings = append(domainStrings, domains.String())
+			url := gjson.Get(domains.String(), "domain").String()
+			domainStrings = append(domainStrings, url)
 		}
 		if strings.Contains(domain, resdoaminc) {
 			DomainsIP.IPA = append(DomainsIP.IPA, ip)
 			DomainsIP.Domains = append(DomainsIP.Domains, resdoamin)
-			DomainsIP.PangURLS = append(DomainsIP.PangURLS, strings.Join(domainStrings, ","))
+			DomainsIP.PangURLS = append(DomainsIP.PangURLS, strings.Join(domainStrings, ",\n"))
 		} else if add == 15 {
 			break
 		} else {

@@ -237,7 +237,7 @@ massdns:
   resolvers: 'resolvers.txt'			# resolvers 文件名称
   wordlist: 'names.txt'			# 子域名爆破文件名称
   massdnsPath: 'massdns.exe'		# Massdns工具名称
-  thread: 10000
+  thread: 3000
 email:
   emailhunter: ''		# Email hunter Token
   intelxEmail: ''		# Email Intelx Token
