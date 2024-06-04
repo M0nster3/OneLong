@@ -135,7 +135,9 @@ func Google(domain string, options *Utils.LongOptions, DomainsIP *outputfile.Dom
 		re := regexp.MustCompile(hostname)
 		for _, aa := range llink {
 			matches := re.FindAllStringSubmatch(strings.TrimSpace(aa.String()), -1)
-			buff = append(buff, matches[0][0])
+			if len(matches) > 0 {
+				buff = append(buff, matches[0][0])
+			}
 
 		}
 		// 查找匹配的内容
@@ -171,7 +173,9 @@ func Google(domain string, options *Utils.LongOptions, DomainsIP *outputfile.Dom
 				re := regexp.MustCompile(hostname)
 				for _, aa := range llink {
 					matches := re.FindAllStringSubmatch(strings.TrimSpace(aa.String()), -1)
-					buff = append(buff, matches[0][0])
+					if len(matches) > 0 {
+						buff = append(buff, matches[0][0])
+					}
 
 				}
 				// 查找匹配的内容

@@ -131,11 +131,14 @@ func Github(domain string, options *Utils.LongOptions, DomainsIP *outputfile.Dom
 		hostname := `(?:[a-z0-9](?:[a-z0-9\-]{0,61}[a-z0-9])?\.)+` + regexp.QuoteMeta(domain)
 		re := regexp.MustCompile(hostname)
 		matches := re.FindAllStringSubmatch(string(resp.Body()), -1)
-		for _, aa := range matches {
-			if strings.Contains(aa[0], domain) {
-				Hostname = append(Hostname, aa[0])
+		if len(matches) > 0 {
+			for _, aa := range matches {
+				if strings.Contains(aa[0], domain) {
+					Hostname = append(Hostname, aa[0])
+				}
 			}
 		}
+
 	}
 	Hostname = Utils.SetStr(Hostname)
 	result := "{\"passive_dns\":["

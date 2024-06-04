@@ -104,6 +104,7 @@ func WaybackarchiveLogin(domain string, options *Utils.LongOptions, DomainsIP *o
 	var mu sync.Mutex // 用于保护 addedURLs
 	//addedURLs := sync.Map{}
 	LoginUrls := make(map[string]bool)
+	WenUrls := make(map[string]bool)
 OuterLoop:
 	for _, loginurl := range loginurls {
 		loginurl := loginurl
@@ -148,11 +149,22 @@ OuterLoop:
 						}
 						mu.Lock()
 						if !LoginUrls[Hurl] {
+							wen := strings.Split(loginurl, "?")
+							if len(wen) != 0 {
+								if !WenUrls[wen[0]] {
+									gologger.Infof("waybackarchive 匹配到链接:%s\n", loginurl)
+									DomainsIP.LoginUrl = append(DomainsIP.LoginUrl, loginurl)
+									//LoginUrls[result] = true
+									LoginUrls[Hurl] = true
+									WenUrls[wen[0]] = true
+								}
+							} else {
+								gologger.Infof("waybackarchive 匹配到链接:%s\n", loginurl)
+								DomainsIP.LoginUrl = append(DomainsIP.LoginUrl, loginurl)
+								//LoginUrls[result] = true
+								LoginUrls[Hurl] = true
+							}
 
-							gologger.Infof("waybackarchive 匹配到链接:%s\n", loginurl)
-							DomainsIP.LoginUrl = append(DomainsIP.LoginUrl, loginurl)
-							//LoginUrls[result] = true
-							LoginUrls[Hurl] = true
 						}
 						mu.Unlock()
 					}

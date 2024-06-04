@@ -137,9 +137,12 @@ func Dnsrepo(domain string, options *Utils.LongOptions, DomainsIP *outputfile.Do
 
 					// 查找匹配的内容
 					matches := re.FindAllStringSubmatch(href, -1)
-					for _, bu := range matches {
-						Address = append(Address, bu[0])
+					if len(matches) > 0 {
+						for _, bu := range matches {
+							Address = append(Address, bu[0])
+						}
 					}
+
 				})
 
 			})

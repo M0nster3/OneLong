@@ -32,13 +32,15 @@ func GetEnInfoAlienvault(response string, DomainsIP *outputfile.DomainsIP) (*Uti
 			re := regexp.MustCompile(`(?:\d{1,3}\.){3}\d{1,3}`)
 			ip := gjson.Get(respons[aa].String(), "address").String()
 			matches := re.FindAllStringSubmatch(strings.TrimSpace(ip), -1)
-			for _, bu := range matches {
-				if !addedURLs[bu[0]] {
-					// 如果不存在重复则将 URL 添加到 Infos["Urls"] 中，并在 map 中标记为已添加
-					DomainsIP.IP = append(DomainsIP.IP, bu[0])
-					addedURLs[bu[0]] = true
+			if len(matches) > 0 {
+				for _, bu := range matches {
+					if !addedURLs[bu[0]] {
+						// 如果不存在重复则将 URL 添加到 Infos["Urls"] 中，并在 map 中标记为已添加
+						DomainsIP.IP = append(DomainsIP.IP, bu[0])
+						addedURLs[bu[0]] = true
+					}
+					break
 				}
-				break
 			}
 
 		}

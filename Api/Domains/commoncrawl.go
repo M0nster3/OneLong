@@ -71,7 +71,7 @@ func Commoncrawl(domain string, options *Utils.LongOptions, DomainsIP *outputfil
 	urls := "https://index.commoncrawl.org/collinfo.json"
 	client := resty.New()
 	client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
-	client.SetTimeout(time.Duration(options.TimeOut) * time.Minute)
+	client.SetTimeout(3 * time.Minute)
 	if options.Proxy != "" {
 		client.SetProxy(options.Proxy)
 		//client.SetProxy("192.168.203.111:1111")
@@ -90,7 +90,6 @@ func Commoncrawl(domain string, options *Utils.LongOptions, DomainsIP *outputfil
 	//加入随机延迟
 	time.Sleep(time.Duration(options.GetDelayRTime()) * time.Second)
 	clientR := client.R()
-
 	clientR.URL = urls
 	resp, err := clientR.Get(urls)
 	for add := 1; add < 4; add += 1 {
@@ -129,7 +128,7 @@ func Commoncrawl(domain string, options *Utils.LongOptions, DomainsIP *outputfil
 		clienta.URL = url
 		time.Sleep(3 * time.Second)
 		respa, err := clienta.Get(url)
-		for add := 1; add < 20; add += 1 {
+		for add := 1; add < 4; add += 1 {
 			if err != nil || respa.StatusCode() == 503 {
 				clients := resty.New()
 				clientaa := clients.R()
@@ -146,6 +145,9 @@ func Commoncrawl(domain string, options *Utils.LongOptions, DomainsIP *outputfil
 				break
 			}
 		}
+		if err != nil {
+			continue
+		}
 		if respa.StatusCode() == 503 {
 			fmt.Printf("503")
 			return ""
@@ -160,11 +162,13 @@ func Commoncrawl(domain string, options *Utils.LongOptions, DomainsIP *outputfil
 
 		// 查找匹配的内容
 		matches := re.FindAllStringSubmatch(strings.TrimSpace(string(respa.Body())), -1)
-		for _, bu := range matches {
-			if !addedURLs[bu[0]] {
-				// 如果不存在重复则将 URL 添加到 Infos["Urls"] 中，并在 map 中标记为已添加
-				result = append(result, bu[0])
-				addedURLs[bu[0]] = true
+		if len(matches) > 0 {
+			for _, bu := range matches {
+				if !addedURLs[bu[0]] {
+					// 如果不存在重复则将 URL 添加到 Infos["Urls"] 中，并在 map 中标记为已添加
+					result = append(result, bu[0])
+					addedURLs[bu[0]] = true
+				}
 			}
 		}
 

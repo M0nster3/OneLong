@@ -103,25 +103,27 @@ func Rapiddns(domain string, options *Utils.LongOptions, DomainsIP *outputfile.D
 	}
 	host := regexp.MustCompile(`<td>((?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,})</td>`)
 	hostrea := host.FindAllStringSubmatch(strings.TrimSpace(string(response.Body())), -1)
-	var Hostname []string
-	// 使用 HTML 解析器解析 HTML 内容
-	for _, bu := range hostrea {
-		Hostname = append(Hostname, bu[1])
-	}
-	Hostname = Utils.SetStr(Hostname)
-	// 查找具有特定 class 的元素并获取其内容
-	//var Hostname []string
+	if len(hostrea) > 0 {
+		var Hostname []string
+		// 使用 HTML 解析器解析 HTML 内容
+		for _, bu := range hostrea {
+			Hostname = append(Hostname, bu[1])
+		}
+		Hostname = Utils.SetStr(Hostname)
+		// 查找具有特定 class 的元素并获取其内容
+		//var Hostname []string
 
-	var result string
-	result = "{\"passive_dns\":["
-	for i := 0; i < len(Hostname); i++ {
-		result += "{\"hostname\"" + ":" + "\"" + Hostname[i] + "\"" + "},"
-		DomainsIP.Domains = append(DomainsIP.Domains, Hostname[i])
-	}
-	result = result + "]}"
-	res, ensOutMap := GetEnInfoRapiddns(result, DomainsIP)
+		var result string
+		result = "{\"passive_dns\":["
+		for i := 0; i < len(Hostname); i++ {
+			result += "{\"hostname\"" + ":" + "\"" + Hostname[i] + "\"" + "},"
+			DomainsIP.Domains = append(DomainsIP.Domains, Hostname[i])
+		}
+		result = result + "]}"
+		res, ensOutMap := GetEnInfoRapiddns(result, DomainsIP)
 
-	outputfile.MergeOutPut(res, ensOutMap, "Rapiddns", options)
+		outputfile.MergeOutPut(res, ensOutMap, "Rapiddns", options)
+	}
 
 	return "Success"
 }

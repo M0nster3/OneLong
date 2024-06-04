@@ -156,16 +156,17 @@ func YahooEmail(domain string, options *Utils.LongOptions, DomainsIP *outputfile
 	re := regexp.MustCompile(Email)
 
 	Emails := re.FindAllStringSubmatch(strings.TrimSpace(respnsehe), -1)
+	if len(Emails) > 0 {
+		result1 := "{\"Email\":["
+		for add := 0; add < len(Emails); add++ {
+			result1 += "{" + "\"Email\"" + ":" + "\"" + Emails[add][0] + "\"" + "}" + ","
 
-	result1 := "{\"Email\":["
-	for add := 0; add < len(Emails); add++ {
-		result1 += "{" + "\"Email\"" + ":" + "\"" + Emails[add][0] + "\"" + "}" + ","
+		}
+		result1 = result1 + "]}"
 
+		res, ensOutMap := GetEnInfo(result1, DomainsIP)
+		//
+		outputfile.MergeOutPut(res, ensOutMap, "Yahoo", options)
 	}
-	result1 = result1 + "]}"
-
-	res, ensOutMap := GetEnInfo(result1, DomainsIP)
-	//
-	outputfile.MergeOutPut(res, ensOutMap, "Yahoo", options)
 
 }

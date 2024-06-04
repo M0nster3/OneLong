@@ -125,20 +125,22 @@ func Digitorus(domain string, options *Utils.LongOptions, DomainsIP *outputfile.
 
 	// 查找匹配的内容
 	matches := re.FindAllStringSubmatch(string(resp.Body()), -1)
-	var ia5StringContent []string
-	// 遍历匹配项
-	ia5StringContent = append(ia5StringContent, "[")
-	for _, match := range matches {
-		zuo := strings.ReplaceAll(match[1], "IA5String &#39;", "\"")
-		you := strings.ReplaceAll(zuo, "&#39;", "\"")
-		// 第一个捕获组匹配的内容即为你需要的字符串
-		ia5StringContent = append(ia5StringContent, you+",")
-	}
-	ia5StringContent = append(ia5StringContent, "]")
-	respjoin := strings.Join(ia5StringContent, " ")
-	res, ensOutMap := GetEnInfoDigitorus(respjoin, DomainsIP)
+	if len(matches) > 0 {
+		var ia5StringContent []string
+		// 遍历匹配项
+		ia5StringContent = append(ia5StringContent, "[")
+		for _, match := range matches {
+			zuo := strings.ReplaceAll(match[1], "IA5String &#39;", "\"")
+			you := strings.ReplaceAll(zuo, "&#39;", "\"")
+			// 第一个捕获组匹配的内容即为你需要的字符串
+			ia5StringContent = append(ia5StringContent, you+",")
+		}
+		ia5StringContent = append(ia5StringContent, "]")
+		respjoin := strings.Join(ia5StringContent, " ")
+		res, ensOutMap := GetEnInfoDigitorus(respjoin, DomainsIP)
 
-	outputfile.MergeOutPut(res, ensOutMap, "Digitorus 证书查询", options)
+		outputfile.MergeOutPut(res, ensOutMap, "Digitorus 证书查询", options)
+	}
 
 	return "Success"
 }

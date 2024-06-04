@@ -150,20 +150,22 @@ func Brave(domain string, options *Utils.LongOptions, DomainsIP *outputfile.Doma
 	re := regexp.MustCompile(Email)
 
 	Emails := re.FindAllStringSubmatch(strings.TrimSpace(respnsehe), -1)
+	if len(Emails) > 0 {
+		result1 := "{\"Email\":["
+		for add := 0; add < len(Emails); add++ {
+			result1 += "{" + "\"Email\"" + ":" + "\"" + Emails[add][0] + "\"" + "}" + ","
 
-	result1 := "{\"Email\":["
-	for add := 0; add < len(Emails); add++ {
-		result1 += "{" + "\"Email\"" + ":" + "\"" + Emails[add][0] + "\"" + "}" + ","
+		}
+		result1 = result1 + "]}"
 
+		//for _, aa := range matches {
+		//	fmt.Print("111111\n")
+		//	fmt.Print(aa)
+		//}
+		res, ensOutMap := GetEnInfo(result1, DomainsIP)
+		outputfile.MergeOutPut(res, ensOutMap, "Brave", options)
 	}
-	result1 = result1 + "]}"
 
-	//for _, aa := range matches {
-	//	fmt.Print("111111\n")
-	//	fmt.Print(aa)
-	//}
-	res, ensOutMap := GetEnInfo(result1, DomainsIP)
-	outputfile.MergeOutPut(res, ensOutMap, "Brave", options)
 	//
 
 }

@@ -318,27 +318,30 @@ func GetReqReturnPage(url string, options *Utils.LongOptions) *html.Node {
 func UpCookie(res string, options *Utils.LongOptions) {
 	re := regexp.MustCompile(`arg1='([\w\s]+)';`)
 	rr := re.FindAllStringSubmatch(res, 1)
-	str := rr[0][1]
-	if str != "" {
-		if options.LongConfig.Cookies.Tianyancha != "" {
-			re = regexp.MustCompile(`acw_sc__v2=([\w\s]+)`)
-			rr = re.FindAllStringSubmatch(options.LongConfig.Cookies.Tianyancha, 1)
-			if len(rr) > 0 {
-				str2 := rr[0][1]
-				if str2 != "" {
-					gologger.Infof("【TYC】反爬计算签名成功！\n")
-					options.LongConfig.Cookies.Tianyancha = strings.ReplaceAll(options.LongConfig.Cookies.Tianyancha, str2, SingAwcSCV2(str))
-				} else {
-					gologger.Errorf("【TYC】反爬Cookie存在问题\n")
+	if len(rr) > 0 {
+		str := rr[0][1]
+		if str != "" {
+			if options.LongConfig.Cookies.Tianyancha != "" {
+				re = regexp.MustCompile(`acw_sc__v2=([\w\s]+)`)
+				rr = re.FindAllStringSubmatch(options.LongConfig.Cookies.Tianyancha, 1)
+				if len(rr) > 0 {
+					str2 := rr[0][1]
+					if str2 != "" {
+						gologger.Infof("【TYC】反爬计算签名成功！\n")
+						options.LongConfig.Cookies.Tianyancha = strings.ReplaceAll(options.LongConfig.Cookies.Tianyancha, str2, SingAwcSCV2(str))
+					} else {
+						gologger.Errorf("【TYC】反爬Cookie存在问题\n")
+					}
 				}
+			} else {
+				gologger.Infof("【TYC】未登录反爬计算签名成功！\n")
+				options.LongConfig.Cookies.Tianyancha = SingAwcSCV2(str)
 			}
 		} else {
-			gologger.Infof("【TYC】未登录反爬计算签名成功！\n")
-			options.LongConfig.Cookies.Tianyancha = SingAwcSCV2(str)
+			gologger.Errorf("【TYC】反爬存在问题\n")
 		}
-	} else {
-		gologger.Errorf("【TYC】反爬存在问题\n")
 	}
+
 }
 
 // SingAwcSCV2 acw_sc__v2

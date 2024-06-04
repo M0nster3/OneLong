@@ -109,10 +109,10 @@ func PostBuffer(domain string, options *Utils.LongOptions, token string, client 
 
 			// 查找匹配的内容
 			matches := re.FindAllStringSubmatch(strings.TrimSpace(td3.Text()), -1)
-			for _, bu := range matches {
-
-				Hostname = append(Hostname, bu[0])
-
+			if len(matches) > 0 {
+				for _, bu := range matches {
+					Hostname = append(Hostname, bu[0])
+				}
 			}
 
 		})
@@ -125,9 +125,11 @@ func PostBuffer(domain string, options *Utils.LongOptions, token string, client 
 
 			// 查找匹配的内容
 			matches := re.FindAllStringSubmatch(strings.TrimSpace(td4.Text()), -1)
-			for _, bu := range matches {
-				Address = append(Address, bu[0])
+			if len(matches) > 0 {
+				for _, bu := range matches {
+					Address = append(Address, bu[0])
 
+				}
 			}
 
 		})
