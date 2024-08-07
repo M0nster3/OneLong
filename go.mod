@@ -14,6 +14,7 @@ require (
 	github.com/mattn/go-colorable v0.1.13
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/oschwald/geoip2-golang v1.9.0
+	github.com/parnurzeal/gorequest v0.3.0
 	github.com/projectdiscovery/chaos-client v0.5.1
 	github.com/projectdiscovery/goflags v0.1.41
 	github.com/projectdiscovery/httpx v1.6.0
@@ -68,6 +69,7 @@ require (
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/dsnet/compress v0.0.2-0.20210315054119-f66993602bf5 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
+	github.com/elazarl/goproxy v0.0.0-20240618083138-03be62527ccb // indirect
 	github.com/fatih/color v1.15.0 // indirect
 	github.com/gaukas/godicttls v0.0.4 // indirect
 	github.com/getsentry/sentry-go v0.16.0 // indirect
@@ -117,6 +119,7 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
+	github.com/moul/http2curl v1.0.0 // indirect
 	github.com/muesli/reflow v0.3.0 // indirect
 	github.com/muesli/termenv v0.15.1 // indirect
 	github.com/natefinch/lumberjack v2.0.0+incompatible // indirect

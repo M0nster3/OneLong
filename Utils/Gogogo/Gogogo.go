@@ -11,6 +11,7 @@ import (
 	"OneLong/Utils"
 	outputfile "OneLong/Utils/OutPutfile"
 	"OneLong/Utils/gologger"
+	"OneLong/Web/CNAME"
 	"OneLong/Web/HttpZhiwen"
 	"OneLong/Web/Login"
 	"fmt"
@@ -174,6 +175,9 @@ func CompanyRunJob(options *Utils.LongOptions) {
 	//Domains.Domains(domain, options, &Domainip)
 	//color.RGBStyleFromString("244,211,49").Println("\n--------------------整合域名、IP、指纹--------------------")
 	HttpZhiwen.Status(domain, options, &Domainip)
+
+	color.RGBStyleFromString("244,211,49").Println("\n--------------------子域名接管--------------------")
+	CNAME.Cname(&Domainip)
 	color.RGBStyleFromString("244,211,49").Println("\n--------------------探测网站后台--------------------")
 	Login.Login(Domainip.LoginDomain, options, &Domainip)
 	// 如果不是API模式，而且不是批量文件形式查询 不是API 就合并导出到表格里面
@@ -208,7 +212,8 @@ func DomainRunJob(options *Utils.LongOptions) {
 	color.RGBStyleFromString("244,211,49").Println("\n--------------------查询子域名--------------------")
 	Domains.Domains(options.Domain, options, &Domainip)
 	HttpZhiwen.Status(options.Domain, options, &Domainip)
-
+	color.RGBStyleFromString("244,211,49").Println("\n--------------------子域名接管--------------------")
+	CNAME.Cname(&Domainip)
 	color.RGBStyleFromString("244,211,49").Println("\n--------------------探测邮箱--------------------")
 	Email.Email(options.Domain, options, &Domainip)
 
