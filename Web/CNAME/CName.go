@@ -31,9 +31,9 @@ var Targets []string
 
 var (
 	HostsList  string
-	Threads    int
+	Threads    = 20
 	All        bool
-	Verbose    bool
+	Verbose    = true
 	ForceHTTPS bool
 	Timeout    int
 	OutputFile string
